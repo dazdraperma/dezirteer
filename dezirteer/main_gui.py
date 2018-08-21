@@ -1,5 +1,3 @@
-#test
-#import hahaha
 import os
 import gui_support
 import matplotlib
