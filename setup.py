@@ -21,4 +21,8 @@ setup(
     url='https://github.com/dazdraperma/dezirteer',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
+	install_requires=[
+        "matplotlib",
+        "scipy",
+    ],
 )
