@@ -1,0 +1,12 @@
+README.rst
+setup.py
+Dezirteer.egg-info/PKG-INFO
+Dezirteer.egg-info/SOURCES.txt
+Dezirteer.egg-info/dependency_links.txt
+Dezirteer.egg-info/requires.txt
+Dezirteer.egg-info/top_level.txt
+dezirteer/__init__.py
+dezirteer/const.py
+dezirteer/gui_support.py
+dezirteer/main_gui.py
+dezirteer/math_module.py
