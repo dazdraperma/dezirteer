@@ -1,3 +1,6 @@
+#addition for checking connection
+abc=1
+
 import os
 import gui_support
 import matplotlib
