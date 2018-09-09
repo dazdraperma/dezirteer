@@ -1,3 +1,6 @@
+#addition for checking connection
+abc=1
+
 import os
 import gui_support
 import matplotlib
@@ -1142,14 +1145,7 @@ class OperationWindow(Frame):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
-            if g_graph_settings.conc_type == 0:
-                ellipse_width = 0.15
-                ellipse_height = 0.015
-            else:
-                ellipse_width = 0.07
-                ellipse_height = 0.007
-            e0 = Ellipse(xy=(x, y), width=ellipse_width, height=ellipse_height, color='black', fill=True)
-            self.ax_conc.add_patch(e0)
+            self.ax_conc.plot(x,y,'ko')
             self.ax_conc.text(x, y, str(t), style='italic', )
             # self.ax_conc.annotate(str(t), xy=(x, y), xytext=(x-0.4*x, y+0.4*y),
             #            arrowprops=dict(facecolor='black', shrink=0.05))
