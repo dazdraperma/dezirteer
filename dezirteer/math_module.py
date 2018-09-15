@@ -239,6 +239,16 @@ def header_pos(imported_list):
         else:
             l_list.append([-1, -1])
 
+        if 'Final232_204' in file_header:
+            l_list.append([file_header.index('Final232_204'), file_header.index('Final232_204_Int2SE')])
+        else:
+            l_list.append([-1, -1])
+
+        if 'Final238_204' in file_header:
+            l_list.append([file_header.index('Final238_204'), file_header.index('Final238_204_Int2SE')])
+        else:
+            l_list.append([-1, -1])
+
     elif imported_list[1] == "glitter":
         pass
     return l_list
@@ -328,6 +338,22 @@ def file_to_analysis(imp_file, index):
             pb208_pb204.append(-1)
             pb208_pb204.append(-1)
 
+        th232_pb204 = []
+        if header[13][0] != -1:
+            th232_pb204.append(float(an[header[13][0]]))
+            th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+        else:
+            th232_pb204.append(-1)
+            th232_pb204.append(-1)
+
+        u238_pb204 = []
+        if header[14][0] != -1:
+            u238_pb204.append(float(an[header[14][0]]))
+            u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+        else:
+            u238_pb204.append(-1)
+            u238_pb204.append(-1)
+
     else: #glitter routine
         file_len = imp_file[2]
         sigma_level = 1.0 #check if all glitter files have this by default
@@ -361,12 +387,15 @@ def file_to_analysis(imp_file, index):
         pb206_pb204 = [-1, -1]
         pb207_pb204 = [-1, -1]
         pb208_pb204 = [-1, -1]
+        th232_pb204 = [-1, -1]
+        u238_pb204 = [-1, -1]
 
         corr_coef_75_68 = (pb206_u238[1]/pb206_u238[0])/(pb207_u235[1]/pb207_u235[0])
         corr_coef_86_76 = ((1/pb206_u238[1])/(1/pb206_u238[0])) / (pb207_pb206[1]/pb207_pb206[0])
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
-                          pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204, sigma_level)
+                          pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
+                          th232_pb204, u238_pb204, sigma_level)
     return l_analysis
 
 
@@ -380,8 +409,8 @@ class Analysis(object):
     _registry = []
     def __init__(self, analysis_name="",  exposure_time="",
                  pb206_u238=(0, 0), pb207_u235=(0, 0), corr_coef_75_68=0, corr_coef_86_76=0, pb208_th232=(0, 0),
-                 pb207_pb206=(0, 0), u_conc=(0, 0), pbc=(0, 0), pb208_pb204=(0, 0), pb207_pb204=(0, 0),
-                 pb206_pb204=(0, 0), sigma_level=0):
+                 pb207_pb206=(0, 0), u_conc=(0, 0), pbc=(0, 0), pb206_pb204=(0, 0), pb207_pb204=(0, 0),
+                 pb208_pb204=(0, 0), th232_pb204=(0, 0), u238_pb204=(0, 0), sigma_level=0):
         self._registry.append(self)
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
@@ -393,9 +422,11 @@ class Analysis(object):
         self.__pb207_pb206 = pb207_pb206
         self.__u_conc = u_conc
         self.__pbc = pbc
-        self.__pb208_pb204 = pb208_pb204
-        self.__pb207_pb204 = pb207_pb204
         self.__pb206_pb204 = pb206_pb204
+        self.__pb207_pb204 = pb207_pb204
+        self.__pb208_pb204 = pb208_pb204
+        self.__th232_pb204 = th232_pb204
+        self.__u238_pb204 = u238_pb204
         self.__sigma_level = sigma_level
 
     def __repr__(self):
@@ -482,12 +513,12 @@ class Analysis(object):
         self.__pbc = value
 
     @property
-    def pb208_pb204(self):
-        return self.__pb208_pb204
+    def pb206_pb204(self):
+        return self.__pb206_pb204
 
-    @pb208_pb204.setter
-    def pb208_pb204(self, value):
-        self.__pb208_pb204 = value
+    @pb206_pb204.setter
+    def pb206_pb204(self, value):
+        self.__pb206_pb204 = value
 
     @property
     def pb207_pb204(self):
@@ -498,12 +529,28 @@ class Analysis(object):
         self.__pb207_pb204 = value
 
     @property
-    def pb206_pb204(self):
-        return self.__pb206_pb204
+    def pb208_pb204(self):
+        return self.__pb208_pb204
 
-    @pb206_pb204.setter
-    def pb206_pb204(self, value):
-        self.__pb206_pb204 = value
+    @pb208_pb204.setter
+    def pb208_pb204(self, value):
+        self.__pb208_pb204 = value
+
+    @property
+    def th232_pb204(self):
+        return self.__th232_pb204
+
+    @th232_pb204.setter
+    def th232_pb204(self, value):
+        self.__th232_pb204 = value
+
+    @property
+    def u238_pb204(self):
+        return self.__u238_pb204
+
+    @u238_pb204.setter
+    def u238_pb204(self, value):
+        self.__u238_pb204 = value
 
     @property
     def sigma_level(self):
