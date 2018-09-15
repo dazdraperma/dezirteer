@@ -21,6 +21,19 @@ def calc_ratio(age):
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206]
 
 
+def pbc_corr(zir, corr_type):
+    if corr_type == 0: #204
+        corr_age=[-1, -1]
+    elif corr_type ==1: #207
+        corr_age = [-1, -1]
+    elif corr_type == 2: #208
+        corr_age = [-1, -1]
+    elif corr_type == 3: #and
+        corr_age = [-1, -1]
+    else:
+        corr_age = [-1, -1]
+    return corr_age
+
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
 
