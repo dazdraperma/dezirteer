@@ -21,9 +21,9 @@ def calc_ratio(age):
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206]
 
 
-def pbc_corr(zir, corr_type):
+def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     if corr_type == 0: #204
-        corr_age=[-1, -1]
+        corr_age = [-1, -1]
     elif corr_type ==1: #207
         corr_age = [-1, -1]
     elif corr_type == 2: #208
