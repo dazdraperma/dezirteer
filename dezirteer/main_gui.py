@@ -1,5 +1,4 @@
-#addition for checking connection
-abc=1
+
 
 import os
 import gui_support
@@ -1435,10 +1434,14 @@ def main():
                         'corr. coef.75_68', 'corr. coef.86_76',
                         'Uconc (approx. ppm)', 'Uconc±1s',
                         'pbc (approx. ppm)', 'pbc±1s',
-                        '206Pb/204Pb', '206Pb/204Pb±1s',
-                        '207Pb/204Pb', '207Pb/204Pb±1s',
-                        '208Pb/204Pb', '208Pb/204Pb±1s',
-                        'Age 208U/232Th', 'Age208/232±1s',
+                        '206Pb/204Pb', '206/204±1s',
+                        '207Pb/204Pb', '207/204±1s',
+                        '208Pb/204Pb', '208/204±1s',
+
+                        '232Th/204Pb', '232/204±1s',
+                        '238U/204Pb', '238/204±1s',
+
+                        'Age 208Pb/232Th', 'Age208/232±1s',
                         'Age 207Pb/206Pb', 'Age207/206±1s',
                         'Age 207Pb/235U', 'Age207/235±1s',
                         'Age 206Pb/238U', 'Age206/238±1s',

@@ -305,6 +305,12 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].pb208_pb204[0]) + ',' +
                        str(an_list[j].pb208_pb204[1]) + ',' +
 
+                       str(an_list[j].th232_pb204[0]) + ',' +
+                       str(an_list[j].th232_pb204[1]) + ',' +
+
+                       str(an_list[j].u238_pb204[0]) + ',' +
+                       str(an_list[j].u238_pb204[1]) + ',' +
+
                        str(an_list[j].calc_age(2)[0]) + ',' +
                        str(an_list[j].calc_age(2)[1]) + ',' +
                        str(an_list[j].calc_age(3)[0]) + ',' +
@@ -391,6 +397,12 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 
                     round(an_list[j].pb208_pb204[0], 1),
                     round(an_list[j].pb208_pb204[1], 1),
+
+                    round(an_list[j].th232_pb204[0], 1),
+                    round(an_list[j].th232_pb204[1], 1),
+
+                    round(an_list[j].u238_pb204[0], 1),
+                    round(an_list[j].u238_pb204[1], 1),
 
 
                     int(an_list[j].calc_age(2)[0]),
