@@ -18,13 +18,46 @@ def calc_ratio(age):
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
     pb207_pb206 = (pb207_u235 / pb206_u238) * (1 / U238_U235)
     u238_pb206 = 1/pb206_u238
-    return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206]
+    pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
+    return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206,pb208_th232]
 
-
+def compb(age,n)'Stacey & Cramers 2 stage pb evolution model
+    if age<=3700:
+        if n==0:
+            return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])'6/4c
+        elif n==1:
+            return 12.998+9.735/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])'7/4c
+        elif n==2:
+            return 31.23+36.837*(calc_ratio(4570)[4]-calc_ratio(age)[4])'8/2c
+    else:
+        if n==0:
+            return 9.307+7.1925*(calc_ratio(4570)[0]-calc_ratio(age)[0])'6/4c
+        elif n==1:
+            return 10.294+7.192/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])'7/4c
+        elif n==2:
+            return 29.476+32.208*(calc_ratio(4570)[4]-calc_ratio(age)[4])'8/2c
+    
 def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     if corr_type == 0: #204
+        'parts of common lead in measured
+        f6=compb(calc_age(0),0)/zir.pb206_pb204
+        f7=compb(calc_age(0),1)/zir.pb207_pb204
+        f8=compb(calc_age(0),2)/zir.pb208_pb204
+        '204pb corrected ratios
+        r68=zir.pb206_u238*(1-f6)
+        r75=zir.pb207_u235*(1-f7)
+        r82=zir.pb208_th232*(1-f8)
         corr_age = [-1, -1]
+        r76c=compb(calc_age(0),1)/compb(calc_age(0),0)
     elif corr_type ==1: #207
+        tx=calc_age(0)
+        ty=calc_age(1)
+        while tx<ty:
+            x=calc_ratio(tx)[3]
+            y=(zir.pb207_pb206-r76c)*zir.pb206_u238*x+r76c
+            ty=math.log(x*y+1)/LAMBDA_235
+            tx=tx-0.001
+        corr_age=tx
         corr_age = [-1, -1]
     elif corr_type == 2: #208
         corr_age = [-1, -1]
