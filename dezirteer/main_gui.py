@@ -1,5 +1,4 @@
 
-
 import os
 import gui_support
 import matplotlib
@@ -25,6 +24,45 @@ from math_module import *
 
 matplotlib.use("TkAgg")
 
+
+def peaks():
+    if g_graph_settings.pdp_kde_hist == 0:
+        g_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
+    else:
+        g_peaks = g_grainset.pdp()[1]
+    return g_peaks
+
+def show_calc_frame(container):
+        list_of_age_calcs = ["number_of_good_grains", "wa_age", "wa_age_err", "wa_age_err_scatter",
+                             "mswd", "max_age", "min_age"]
+
+        frContainer = Frame(container)
+        frContainer.configure(relief=GROOVE)
+        frContainer.configure(borderwidth="2")
+        frContainer.configure(relief=GROOVE)
+        frContainer.configure(background="#d9d9d9")
+        frContainer.configure(highlightbackground="#d9d9d9")
+        frContainer.configure(highlightcolor="black")
+        frContainer.grid(row=0, column=0, sticky='NWES')
+
+        elements = ["number of good grains", "weighted average age", "±1σ", "scatter", "mswd", "max age", "min age"]
+        list_of_labels = []
+        data_values = g_number_of_good_grains+g_grainset.kde(g_graph_settings.bandwidth)[1]
+        counter = 0
+        for n in elements:
+            list_of_labels.append(Label(frContainer))
+            list_of_labels.append(Label(frContainer))
+            list_of_labels[counter*2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
+            list_of_labels[counter*2].configure(text=n)
+            list_of_labels[counter*2+1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
+            list_of_labels[counter*2+1].configure(text=str(g_number_of_good_grains[counter]))
+            counter += 1
+        list_of_labels.append(Label(frContainer))
+        list_of_labels.append(Label(frContainer))
+        list_of_labels[counter * 2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2].configure(text="peaks")
+        list_of_labels[counter * 2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 1].configure(text=peaks())
 
 class OperationWindow(Frame):
     def __init__(self, master):
@@ -691,6 +729,14 @@ class OperationWindow(Frame):
         self.btnDraw.configure(width=20)
         self.btnDraw.configure(command=lambda: self.clear_and_plot())
 
+        self.btnCalcWindow = Button(self.frStatus)
+        self.btnCalcWindow.grid(column=5, row=0, sticky='e', padx=5, pady=6)
+        self.apply_style(self.btnCalcWindow)
+        self.btnCalcWindow.configure(text="Calculations")
+        self.btnCalcWindow.configure(height=2)
+        self.btnCalcWindow.configure(width=20)
+        self.btnCalcWindow.configure(command=lambda: self.show_frame())
+
         self.btnClear = Button(self.frStatus)
         self.btnClear.grid(column=3, row=0, sticky='e', padx=5, pady=6)
         self.apply_style(self.btnClear)
@@ -708,10 +754,10 @@ class OperationWindow(Frame):
         self.btnExport.configure(command=lambda: self.export_dialog())
 
         self.cbShowCalc = Checkbutton(self.frStatus)
-        self.cbShowCalc.grid(row=0, column=5, pady=5, padx = 5, sticky='ew')
+        self.cbShowCalc.grid(row=0, column=6, pady=5, padx = 5, sticky='ew')
         self.apply_style(self.cbShowCalc)
         self.cbShowCalc.configure(justify=LEFT)
-        self.cbShowCalc.configure(text='''Show calc?''')
+        self.cbShowCalc.configure(text='''Show peaks?''')
         self.cbShowCalc.configure(variable=gui_support.varShowCalc)
         self.cbShowCalc.configure(command=lambda: self.plot_text(self.set_pval_dval()[0], self.set_pval_dval()[1]))
 
@@ -900,6 +946,13 @@ class OperationWindow(Frame):
         self.reset_controls(False)
 
     #_____________Class Methods_________________________________________________________________________________________
+    def show_frame(self):#asdf
+
+        winCalc = Toplevel()
+        show_calc_frame(winCalc)
+
+
+
     def apply_style(self, obj):
         obj.configure(activebackground="#f9f9f9")
         obj.configure(activeforeground="black")
@@ -1015,6 +1068,7 @@ class OperationWindow(Frame):
                 for child in var_frame.winfo_children():
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
+            self.btnCalcWindow.configure(state='normal')
             self.lbSeparatorType.configure(state='normal')
             self.cbSeparatorType.configure(state='readonly')
             self.lbImport.configure(state='normal')
@@ -1029,13 +1083,18 @@ class OperationWindow(Frame):
         item_name = self.Table.item(item, "text")
         self.clear_and_plot(item_name)
 
+    '''def peaks(self):
+        global g_peaks
+        if g_graph_settings.pdp_kde_hist == 0:
+            g_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
+        else:
+            g_peaks = g_grainset.pdp()[1]
+        return g_peaks'''
+
     #adds or removes text to the cum_plot, depending on the checked state of the cbShowCalc
     def plot_text(self, pval, dval):
         global g_plot_txt
-        if g_graph_settings.pdp_kde_hist == 0:
-            peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
-        else:
-            peaks=g_grainset.pdp()[1]
+
         if gui_support.varShowCalc.get() == 1:
             text_to_show = \
                 "n={}\n" \
@@ -1056,7 +1115,7 @@ class OperationWindow(Frame):
                     int(g_number_of_good_grains[4]),
                     round(pval, 2),
                     round(dval, 2),
-                    peaks
+                    peaks()
                 )
 
 
@@ -1343,7 +1402,6 @@ class OperationWindow(Frame):
             self.plot_conc_text_peaks()
 
 
-
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
     '''Configure the scrollbars for a widget.'''
@@ -1425,6 +1483,7 @@ class ScrolledTreeView(AutoScroll, ttk.Treeview):
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
+
     g_prev_cum = []
     g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
     g_list_col_names = ['208Pb/232Th', '208/232±1s',
