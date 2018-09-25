@@ -103,7 +103,7 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
             deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
                   (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-        t1 = t + delta
+        t1 = t + delta #
         corr_age[0] = t1
         #error
         c1 = 0
