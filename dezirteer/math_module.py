@@ -83,7 +83,7 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
                 calc_ratio(t)[1]
             deriv = LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(zir.calc_age(0), 3)*LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-            t1 = t + delta
+        t1 = t + delta
         corr_age[0] = t1
         #error
         r75var = U238_U235**2*((zir.pb206_u238[0]*zir.pb207_pb206[1])**2+(zir.pb207_pb206[0]*zir.pb206_u238[1])**2)
@@ -103,7 +103,7 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
             deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
                   (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-            t1 = t + delta
+        t1 = t + delta
         corr_age[0] = t1
         #error
         c1 = 0
