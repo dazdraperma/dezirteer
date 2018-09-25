@@ -24,13 +24,31 @@ from math_module import *
 
 matplotlib.use("TkAgg")
 
+#calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
+#sets 0 values to both variables
+def set_pval_dval():
+    global g_prev_cum, g_grainset
+    if g_prev_cum == []:
+        pval = 0
+        dval = 0
+    else:
+        if g_graph_settings.pdp_kde_hist == 0:
+            curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
+        elif g_graph_settings.pdp_kde_hist == 1:
+            curr_cum = g_grainset.cpdp()
+        else:
+            curr_cum = []
+        dval = d_value(curr_cum, g_prev_cum)
+        pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])
+    return [pval, dval]
+
 
 def peaks():
     if g_graph_settings.pdp_kde_hist == 0:
-        g_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
+        return g_grainset.kde(g_graph_settings.bandwidth)[1]
     else:
-        g_peaks = g_grainset.pdp()[1]
-    return g_peaks
+        return g_grainset.pdp()[1]
+
 
 def show_calc_frame(container):
         frContainer = Frame(container)
@@ -42,7 +60,7 @@ def show_calc_frame(container):
         frContainer.configure(highlightcolor="black")
         frContainer.grid(row=0, column=0, sticky='NWES')
 
-        elements = ["number of good grains", "weighted average age", "±1σ", "scatter", "mswd", "max age", "min age"]
+        elements = ["number of good grains", "weighted average age", "±1σ", "±95% conf.", "MSWD", "max age", "min age"]
         list_of_labels = []
         counter = 0
         for n in elements:
@@ -50,15 +68,41 @@ def show_calc_frame(container):
             list_of_labels.append(Label(frContainer))
             list_of_labels[counter*2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
             list_of_labels[counter*2].configure(text=n)
-            list_of_labels[counter*2+1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
-            list_of_labels[counter*2+1].configure(text=str(g_number_of_good_grains[counter]))
+            list_of_labels[counter*2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
+            list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 1))
             counter += 1
-        list_of_labels.append(Label(frContainer))
-        list_of_labels.append(Label(frContainer))
-        list_of_labels[counter * 2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
-        list_of_labels[counter * 2].configure(text="peaks")
+        for x in range(0, 8):
+            list_of_labels.append(Label(frContainer))
+        list_of_labels[counter * 2 + 0].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 0].configure(text="peaks")
         list_of_labels[counter * 2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
         list_of_labels[counter * 2 + 1].configure(text=peaks())
+
+        list_of_labels[counter * 2 + 2].grid(row=counter + 1, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 2].configure(text="KS p-val")
+        list_of_labels[counter * 2 + 3].grid(row=counter + 1, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 3].configure(text=set_pval_dval()[0])
+
+        list_of_labels[counter * 2 + 4].grid(row=counter + 2, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 4].configure(text="KS d-val")
+        list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 5].configure(text=set_pval_dval()[1])
+
+        list_of_labels[counter * 2 + 6].grid(row=counter + 3, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 6].configure(text="Peak_weight")
+        list_of_labels[counter * 2 + 7].grid(row=counter + 3, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 7].configure(text=calc_peaks_weight(peaks(), g_grainset))
+
+        calc_peaks_weight
+
+
+        '''if g_graph_settings.pdp_kde_hist == 0:
+            curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
+        elif g_graph_settings.pdp_kde_hist == 1:
+            curr_cum = g_grainset.cpdp()
+        dval = d_value(curr_cum, g_prev_cum)
+        pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])'''
+
 
 class OperationWindow(Frame):
     def __init__(self, master):
@@ -725,14 +769,6 @@ class OperationWindow(Frame):
         self.btnDraw.configure(width=20)
         self.btnDraw.configure(command=lambda: self.clear_and_plot())
 
-        self.btnCalcWindow = Button(self.frStatus)
-        self.btnCalcWindow.grid(column=5, row=0, sticky='e', padx=5, pady=6)
-        self.apply_style(self.btnCalcWindow)
-        self.btnCalcWindow.configure(text="Calculations")
-        self.btnCalcWindow.configure(height=2)
-        self.btnCalcWindow.configure(width=20)
-        self.btnCalcWindow.configure(command=lambda: self.show_frame())
-
         self.btnClear = Button(self.frStatus)
         self.btnClear.grid(column=3, row=0, sticky='e', padx=5, pady=6)
         self.apply_style(self.btnClear)
@@ -750,12 +786,20 @@ class OperationWindow(Frame):
         self.btnExport.configure(command=lambda: self.export_dialog())
 
         self.cbShowCalc = Checkbutton(self.frStatus)
-        self.cbShowCalc.grid(row=0, column=6, pady=5, padx = 5, sticky='ew')
+        self.cbShowCalc.grid(row=0, column=5, pady=5, padx = 5, sticky='ew')
         self.apply_style(self.cbShowCalc)
         self.cbShowCalc.configure(justify=LEFT)
         self.cbShowCalc.configure(text='''Show peaks?''')
         self.cbShowCalc.configure(variable=gui_support.varShowCalc)
-        self.cbShowCalc.configure(command=lambda: self.plot_text(self.set_pval_dval()[0], self.set_pval_dval()[1]))
+        self.cbShowCalc.configure(command=lambda: self.plot_text(set_pval_dval()[0], set_pval_dval()[1]))
+
+        self.btnCalcWindow = Button(self.frStatus)
+        self.btnCalcWindow.grid(column=6, row=0, sticky='e', padx=5, pady=6)
+        self.apply_style(self.btnCalcWindow)
+        self.btnCalcWindow.configure(text="Calculations")
+        self.btnCalcWindow.configure(height=2)
+        self.btnCalcWindow.configure(width=20)
+        self.btnCalcWindow.configure(command=lambda: self.show_frame())
 
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
@@ -1125,23 +1169,6 @@ class OperationWindow(Frame):
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
-    #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
-    #sets 0 values to both variables
-    def set_pval_dval(self):
-        global g_prev_cum, g_grainset
-        if g_prev_cum == []:
-            pval = 0
-            dval = 0
-        else:
-            if g_graph_settings.pdp_kde_hist == 0:
-                curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
-            elif g_graph_settings.pdp_kde_hist == 1:
-                curr_cum = g_grainset.cpdp()
-            else:
-                curr_cum = []
-            dval = d_value(curr_cum, g_prev_cum)
-            pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])
-        return [pval, dval]
 
 
     def min_max_ages(self):
@@ -1319,7 +1346,7 @@ class OperationWindow(Frame):
 
     def plot_conc_text_peaks(self):
         global g_prev_n, g_prev_cum
-        self.plot_text(self.set_pval_dval()[0], self.set_pval_dval()[1])
+        self.plot_text(set_pval_dval()[0], set_pval_dval()[1])
         self.canvas_conc.draw()
         #self.canvas_prob.draw() and self.canvas_cum.draw are executed in plot_text
         self.btnClear.configure(state=NORMAL)
