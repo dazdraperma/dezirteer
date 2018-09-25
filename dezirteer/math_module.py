@@ -21,8 +21,11 @@ def calc_ratio(age):
     pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206,pb208_th232]
 
+
 def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
-    if age <= 3700:
+    if n == 3:
+            return compb(age, 1)/compb(age, 0)#7/6c
+    elif n != 3 and age <= 3700:
         if n == 0:
             return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
         elif n == 1:
@@ -36,8 +39,7 @@ def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
             return 10.294+7.192/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
         elif n == 2:
             return 29.476+32.208*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
-        elif n == 3:
-            return compb(age,1)/compb(age, 0)#7/6c
+
     
 def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     delta = 1
@@ -74,12 +76,14 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         
     elif corr_type == 1: #207
         t = 1000
+        t1 = 0
         #age
         while delta > 0.001:
-            f = U238_U235*compb(zir.calc_age(0),3)*(zir.pb206_u238[0]-calc_ratio(t)[0])-zir.pb207_u235[0]+calc_ratio(t)[1]
+            f = U238_U235*compb(zir.calc_age(0), 3)*(zir.pb206_u238[0]-calc_ratio(t)[0])-zir.pb207_u235[0]+\
+                calc_ratio(t)[1]
             deriv = LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(zir.calc_age(0), 3)*LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-            t1 = t + delta
+        t1 = t + delta
         corr_age[0] = t1
         #error
         r75var = U238_U235**2*((zir.pb206_u238[0]*zir.pb207_pb206[1])**2+(zir.pb207_pb206[0]*zir.pb206_u238[1])**2)
@@ -90,15 +94,16 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         corr_age[1] = math.sqrt(n/denom)
         
     elif corr_type == 2: #208
-        t=1000
+        t = 1000
+        t1 = 0
         #age
         while delta > 0.001:
             f = zir.pb206_u238[0]-(calc_ratio(t)[0]+1)+1-zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/\
               compb(zir.calc_age(0),2)*(zir.pb208_th232[0]-(calc_ratio(t)[4]+1)+1)
-            deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
+            deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
                   (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-            t1 = t+delta
+        t1 = t + delta #
         corr_age[0] = t1
         #error
         c1 = 0
