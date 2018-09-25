@@ -22,7 +22,7 @@ def calc_ratio(age):
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206,pb208_th232]
 
 def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
-    if age<=3700:
+    if age <= 3700:
         if n==0:
             return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
         elif n==1:
@@ -36,8 +36,8 @@ def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
             return 10.294+7.192/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
         elif n==2:
             return 29.476+32.208*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
-    if n==3:
-        return compb(age,1)/compb(age,0)#7/6c
+        elif n == 3:
+            return compb(age,1)/compb(age,0)#7/6c
     
 def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     delta = 1
