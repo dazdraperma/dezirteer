@@ -42,19 +42,31 @@ def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
 def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     if corr_type == 0: #204
         #parts of common lead in measured
-        f6=compb(calc_age(0),0)/zir.pb206_pb204
-        f7=compb(calc_age(0),1)/zir.pb207_pb204
-        f8=compb(calc_age(0),2)/zir.pb208_pb204
+        f6=compb(calc_age(0),0)/zir.pb206_pb204[0]
+        f7=compb(calc_age(0),1)/zir.pb207_pb204[0]
+        f8=compb(calc_age(0),2)/zir.pb208_pb204[0]
         #204pb corrected ratios
-        r68=zir.pb206_u238*(1-f6)
-        r75=zir.pb207_u235*(1-f7)
-        r82=zir.pb208_th232*(1-f8)
+        r68=zir.pb206_u238[0]*(1-f6)
+        r75=zir.pb207_u235[0]*(1-f7)
+        r82=zir.pb208_th232[0]*(1-f8)
         r76=r75/r68*1/U238_U235
-        
-        corr_age68 = math.log(r68+1)/LAMBDA_238
-        corr_age75 = math.log(r75+1)/LAMBDA_235
-        corr_age82 = math.log(r82+1)/LAMBDA_232
-        corr_age76 = find_age(r76)
+        #204pb corrected ages       
+        a68 = math.log(r68+1)/LAMBDA_238
+        a75 = math.log(r75+1)/LAMBDA_235
+        a82 = math.log(r82+1)/LAMBDA_232
+        a76 = find_age(r76)
+
+        #age errors
+        tmp64=(zir.pb206_pb204[1]/zir.pb206_pb204[0])**2
+        tmp74=(zir.pb207_pb204[1]/zir.pb207_pb204[0])**2
+        tmp84=(zir.pb208_pb204[1]/zir.pb208_pb204[0])**2
+        r68er=math.sqrt((math.sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
+        r75er=math.sqrt((math.sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
+        r82er=math.sqrt((math.sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
+        a68er=r68er/(1+r68)/LAMBDA_238/1000000
+        a75er=r75er/(1+r75)/LAMBDA_235/1000000
+        a82er=r82er/(1+r82)/LAMBDA_232/1000000
+        a76er=zir.pb207_pb206[1] 
         
     elif corr_type ==1: #207
         t=1000
