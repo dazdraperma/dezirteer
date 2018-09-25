@@ -26,7 +26,7 @@ def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
     if n == 3:
             return compb(age, 1)/compb(age, 0)#7/6c
     elif n != 3 and age <= 3700:
-        if n == 0:
+        if n==0:
             return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
         elif n == 1:
             return 12.998+9.735/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c

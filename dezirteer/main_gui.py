@@ -33,9 +33,6 @@ def peaks():
     return g_peaks
 
 def show_calc_frame(container):
-        list_of_age_calcs = ["number_of_good_grains", "wa_age", "wa_age_err", "wa_age_err_scatter",
-                             "mswd", "max_age", "min_age"]
-
         frContainer = Frame(container)
         frContainer.configure(relief=GROOVE)
         frContainer.configure(borderwidth="2")
@@ -47,7 +44,6 @@ def show_calc_frame(container):
 
         elements = ["number of good grains", "weighted average age", "±1σ", "scatter", "mswd", "max age", "min age"]
         list_of_labels = []
-        data_values = g_number_of_good_grains+g_grainset.kde(g_graph_settings.bandwidth)[1]
         counter = 0
         for n in elements:
             list_of_labels.append(Label(frContainer))
