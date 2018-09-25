@@ -23,21 +23,21 @@ def calc_ratio(age):
 
 def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
     if age <= 3700:
-        if n==0:
+        if n == 0:
             return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
-        elif n==1:
+        elif n == 1:
             return 12.998+9.735/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
-        elif n==2:
+        elif n == 2:
             return 31.23+36.837*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
     else:
-        if n==0:
+        if n == 0:
             return 9.307+7.1925*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
-        elif n==1:
+        elif n == 1:
             return 10.294+7.192/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
-        elif n==2:
+        elif n == 2:
             return 29.476+32.208*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
         elif n == 3:
-            return compb(age,1)/compb(age,0)#7/6c
+            return compb(age,1)/compb(age, 0)#7/6c
     
 def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
     delta = 1
