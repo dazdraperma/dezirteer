@@ -21,8 +21,8 @@ def calc_ratio(age):
     pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206,pb208_th232]
 
-def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
 
+def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
     if n == 3:
             return compb(age, 1)/compb(age, 0)#7/6c
     elif n != 3 and age <= 3700:
