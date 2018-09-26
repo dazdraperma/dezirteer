@@ -13,6 +13,7 @@ def t_student(alpha, gl):
     return scipy.stats.t.ppf(1-(alpha/2), gl)
 
 
+
 def calc_ratio(age):
     pb207_u235 = exp(LAMBDA_235 * age * 1000000) - 1
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
@@ -26,7 +27,7 @@ def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
     if n == 3:
             return compb(age, 1)/compb(age, 0)#7/6c
     elif n != 3 and age <= 3700:
-        if n == 0:
+        if n==0:
             return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
         elif n == 1:
             return 12.998+9.735/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
@@ -120,6 +121,7 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         corr_age = [-1, -1]
     return corr_age
 
+
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
 
@@ -147,7 +149,7 @@ def fill_concordia_table():
             t += 1
 
 
-#calculates pb-pb age from the table of pb-pb ratios,filled in fill_Pb206207_table()
+# calculates pb-pb age from the table of pb-pb ratios,filled in fill_Pb206207_table()
 def find_age(pLeadRatio):
     return bisect(pbpb_table, pLeadRatio) * 5
 
@@ -247,7 +249,6 @@ class Filters(object): #describes filters that should be applied to data in Anal
     @unc_type.setter
     def unc_type(self, value):
         self.__unc_type = value
-
 
 
 def imported_file(p_file_name):
@@ -498,19 +499,11 @@ def file_to_analysis(imp_file, index):
     return l_analysis
 
 
-class IterRegistry(type):
-    def __iter__(cls):
-        return iter(cls._registry)
-
-
 class Analysis(object):
-    __metaclass__ = IterRegistry
-    _registry = []
     def __init__(self, analysis_name="",  exposure_time="",
                  pb206_u238=(0, 0), pb207_u235=(0, 0), corr_coef_75_68=0, corr_coef_86_76=0, pb208_th232=(0, 0),
                  pb207_pb206=(0, 0), u_conc=(0, 0), pbc=(0, 0), pb206_pb204=(0, 0), pb207_pb204=(0, 0),
                  pb208_pb204=(0, 0), th232_pb204=(0, 0), u238_pb204=(0, 0), sigma_level=0):
-        self._registry.append(self)
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
         self.__pb206_u238 = pb206_u238
@@ -663,7 +656,7 @@ class Analysis(object):
         rat238206 = 1 / self.pb206_u238[0]
         return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0])]
 
-    # calculates age±error from isotopic value and uncertainty
+    # calculates age ± error from isotopic value and uncertainty
     def calc_age(self, isotopic_system):
         age_err = -1
         try:
@@ -744,13 +737,13 @@ class Analysis(object):
 
        #decide on the default age system
         if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
-           age_68_67 = 1
-           this_age = 3
+            age_68_67 = 1
+            this_age = 3
         elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
-           age_68_67 = 0
-           this_age = 0
+            age_68_67 = 0
+            this_age = 0
         else:
-           age_68_67=-1 #this is for future implementation of 'based on Uconc' algorithm
+            age_68_67 = -1 #this is for future implementation of 'based on Uconc' algorithm
 
         #filter by measurement error
         if do_err:
@@ -793,11 +786,8 @@ class Analysis(object):
 
 
 class AnalysesSet(object):
-    __metaclass__ = IterRegistry
-    _registry = []
     def __init__(self, analyses_list, name):
         self.__analyses_list = analyses_list
-        self._registry.append(self)
         self.__name = name
         self.__good_set = {}
         self.__bad_set = []
@@ -959,7 +949,7 @@ class AnalysesSet(object):
             return list_ckde
 
 
-#calculates KS d-value
+# calculates KS d-value
 def d_value(list1, list2):
     d = 0
     if list1 is not None and list2 is not None:
@@ -972,7 +962,7 @@ def d_value(list1, list2):
     return d
 
 
-#calculates KS p-value
+# calculates KS p-value
 def p_value(d_val, n1, n2):
     if d_val != -1:
         ne = n1 * n2 / (n1 + n2)
@@ -991,7 +981,7 @@ def p_value(d_val, n1, n2):
     return probks
 
 
-#goes through the analyses names in AnalysesSet, returns list of samples
+# goes through the analyses names in AnalysesSet, returns list of samples
 def same_sample_set(p_set: AnalysesSet, p_str):
     prev_str = ""
     lset = []
@@ -1030,3 +1020,13 @@ def conf_lim (sigma_level):
         return 0.95
     else:
         return -1
+
+def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
+    peak_weight = dict.fromkeys(peaks, 0)
+    for zircon, zircon_age in an_set.good_set.items():
+        for peak in peak_weight:
+            if abs(zircon_age[0]-peak) < (zircon_age[1] * 2): # if difference between a peak and a given age is <2σ
+                peak_weight[peak] = peak_weight[peak] + 1
+            else:
+                pass
+    return peak_weight
