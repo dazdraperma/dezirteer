@@ -58,18 +58,18 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         r76 = r75/r68*1/U238_U235
 
         #204pb corrected ages
-        a68 = math.log(r68+1)/LAMBDA_238
-        a75 = math.log(r75+1)/LAMBDA_235
-        a82 = math.log(r82+1)/LAMBDA_232
+        a68 = log(r68+1)/LAMBDA_238
+        a75 = log(r75+1)/LAMBDA_235
+        a82 = log(r82+1)/LAMBDA_232
         a76 = find_age(r76)
 
         #age errors
         tmp64 = (zir.pb206_pb204[1]/zir.pb206_pb204[0])**2
         tmp74 = (zir.pb207_pb204[1]/zir.pb207_pb204[0])**2
         tmp84 = (zir.pb208_pb204[1]/zir.pb208_pb204[0])**2
-        r68er = math.sqrt((math.sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
-        r75er = math.sqrt((math.sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
-        r82er = math.sqrt((math.sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
+        r68er = sqrt((sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
+        r75er = sqrt((sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
+        r82er = sqrt((sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
         a68er = r68er/(1+r68)/LAMBDA_238/1000000
         a75er = r75er/(1+r75)/LAMBDA_235/1000000
         a82er = r82er/(1+r82)/LAMBDA_232/1000000
@@ -77,26 +77,24 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         
     elif corr_type == 1: #207
         t = 1000
-        t1 = 0
         #age
         while delta > 0.001:
             f = U238_U235*compb(zir.calc_age(0), 3)*(zir.pb206_u238[0]-calc_ratio(t)[0])-zir.pb207_u235[0]+\
                 calc_ratio(t)[1]
             deriv = LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(zir.calc_age(0), 3)*LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-        t1 = t + delta
-        corr_age[0] = t1
+            t = t + delta
+        corr_age[0] = t
         #error
         r75var = U238_U235**2*((zir.pb206_u238[0]*zir.pb207_pb206[1])**2+(zir.pb207_pb206[0]*zir.pb206_u238[1])**2)
         denom =(U238_U235*compb(zir.calc_age(0),3)*LAMBDA_238*(calc_ratio(t)[0]+1)-LAMBDA_235*(calc_ratio(t)[1]+1))**2
         n1 = 0 #n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
         n2 = U238_U235**2*compb(zir.calc_age(0),3)*(compb(zir.calc_age(0),3)-2*zir.pb207_pb206[0])*zir.pb206_u238[1]**2
         n = n1+n2+r75var
-        corr_age[1] = math.sqrt(n/denom)
+        corr_age[1] = sqrt(n/denom)
         
     elif corr_type == 2: #208
         t = 1000
-        t1 = 0
         #age
         while delta > 0.001:
             f = zir.pb206_u238[0]-(calc_ratio(t)[0]+1)+1-zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/\
@@ -104,8 +102,8 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
             deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
                   (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-        t1 = t + delta #
-        corr_age[0] = t1
+            t = t + delta #
+        corr_age[0] = t
         #error
         c1 = 0
         c2 = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/compb(zir.calc_age(0),2)
@@ -113,14 +111,59 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         n2 = c2*zir.pb208_th232[1]*zir.pb206_u238[1]**2
         n = n1+n2
         denom = (c2*LAMBDA_232*(calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1))**2
-        corr_age[1] = math.sqrt(n/denom)
+        corr_age[1] = sqrt(n/denom)
         
     elif corr_type == 3: #and
-        corr_age = [-1, -1]
+        #age
+        t1=zir.pb207_u235
+        xt2 = calc_ratio(t2)[1]
+        yt2 = calc_ratio(t2)[0]
+        zt2 = calc_ratio(t2)[4]
+        c7=15.628/18.7
+        c8=38.63/18.7
+        x=zir.pb207_u235
+        y=zir.pb206_u238
+        z=zir.pb208_th232
+        u=zir.u238_pb204/zir.th232_pb204
+        k=U238_U235
+        zero1 = zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)
+        zero2=zero1
+
+        while zero1>zero2
+            zero1=zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
+            t1=t1+1
+            zero2 = zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
+
+        xt1 = calc_ratio(t1)[1]
+        yt1 = calc_ratio(t1)[0]
+        zt1 = calc_ratio(t1)[4]
+        # ratios, contents of common & lost pb
+        fc=(-y*xt1+y*xt2+yt2*xt1+x*yt1-x*yt2-xt2*yt1)/(-y*xt1+y*xt2+y*c7*k*yt1-y*c7*k*yt2)
+        yr=y*(1-fc)
+        xr=x-y*c7*k*fc
+        zr=z-y*c8*u*fc
+        f1=(yt1-yr)/(yt1-yt2)
+        corr_age = [-1, -1]=t1
+
+        #sigma errors
+        sy=zir.pb206_u238[1]
+        sx=zir.pb207_u235[1]
+        sz=zir.pb208_th232[1]
+        syr=yr*sqrt((sy/y)**2+(sfc/(1-fc))**2)
+
     else:
         corr_age = [-1, -1]
     return corr_age
 
+def zero(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)
+    xt1 = calc_ratio(t1)[1]
+    yt1 = calc_ratio(t1)[0]
+    zt1 = calc_ratio(t1)[4]
+    eq7 = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
+            xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
+                        z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
+                        zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
+    return eq7
 
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
