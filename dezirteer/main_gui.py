@@ -12,8 +12,10 @@ from scipy import stats
 
 try:
     from Tkinter import *
+    from Tkinter import messagebox
 except ImportError:
     from tkinter import *
+    from tkinter import messagebox
 try:
     import ttk
     py3 = False
@@ -71,12 +73,13 @@ def show_calc_frame(container):
             list_of_labels[counter*2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
             list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 1))
             counter += 1
+
         for x in range(0, 8):
             list_of_labels.append(Label(frContainer))
         list_of_labels[counter * 2 + 0].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
-        list_of_labels[counter * 2 + 0].configure(text="peaks")
+        list_of_labels[counter * 2 + 0].configure(text="peaks: weight")
         list_of_labels[counter * 2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 1].configure(text=peaks())
+        list_of_labels[counter * 2 + 1].configure(text=calc_peaks_weight(peaks(), g_grainset))
 
         list_of_labels[counter * 2 + 2].grid(row=counter + 1, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 2].configure(text="KS p-val")
@@ -88,20 +91,7 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
         list_of_labels[counter * 2 + 5].configure(text=set_pval_dval()[1])
 
-        list_of_labels[counter * 2 + 6].grid(row=counter + 3, column=0, pady=5, padx=5, sticky='e')
-        list_of_labels[counter * 2 + 6].configure(text="Peak_weight")
-        list_of_labels[counter * 2 + 7].grid(row=counter + 3, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 7].configure(text=calc_peaks_weight(peaks(), g_grainset))
 
-        calc_peaks_weight
-
-
-        '''if g_graph_settings.pdp_kde_hist == 0:
-            curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
-        elif g_graph_settings.pdp_kde_hist == 1:
-            curr_cum = g_grainset.cpdp()
-        dval = d_value(curr_cum, g_prev_cum)
-        pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])'''
 
 
 class OperationWindow(Frame):
@@ -1005,15 +995,18 @@ class OperationWindow(Frame):
     def open_and_load_file(self):
         try:
             try:
-                global g_plot_txt, g_directory, g_file_type, g_filters, g_list_col_names
+                global g_plot_txt, g_directory, g_file_type, g_filters, g_list_col_names, g_list_of_samples, \
+                    g_grainset, g_number_of_good_grains, pars_onChange
                 if g_plot_txt != "":
                     g_plot_txt.remove()
+                keep_prev = False
                 g_filters.sample_name_filter = []
                 user_file = filedialog.askopenfilename(
                     initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
                                                                     ("Comma separated values files", "*.csv"),
                                                                     ("All files", "*.*")))
-
+                if g_grainset!=[]:
+                    keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
                 g_directory = os.path.split(user_file)[0]
                 root.title(user_file + ' — De-Zir-teer')
                 an_set = []
@@ -1021,21 +1014,20 @@ class OperationWindow(Frame):
                 g_file_type = file[1]
                 for i in range(1, file[2]):
                     an = file_to_analysis(file, i)
-                    if str(an.analysis_name) == "TS16_20":
-                        pass
                     an_set.append(an)
 
-                global g_grainset
+                if keep_prev:
+                    an_set = an_set + g_grainset.analyses_list
+                
                 g_grainset = AnalysesSet(an_set, 'set#1')
                 g_grainset.good_bad_sets(g_filters)
 
-                global pars_onChange
                 pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
                 sys.stdout.flush()
-                global g_number_of_good_grains
-                g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters, g_list_col_names)
-                global g_list_of_samples
+                g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
+                                                                      g_list_col_names)
+
                 g_list_of_samples = same_sample_set(g_grainset, str(self.cbSeparatorType.get()))
                 self.reset_controls(True)
                 self.clear_prev_or_remove_text()
@@ -1123,13 +1115,6 @@ class OperationWindow(Frame):
         item_name = self.Table.item(item, "text")
         self.clear_and_plot(item_name)
 
-    '''def peaks(self):
-        global g_peaks
-        if g_graph_settings.pdp_kde_hist == 0:
-            g_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
-        else:
-            g_peaks = g_grainset.pdp()[1]
-        return g_peaks'''
 
     #adds or removes text to the cum_plot, depending on the checked state of the cbShowCalc
     def plot_text(self, pval, dval):
@@ -1358,7 +1343,7 @@ class OperationWindow(Frame):
 
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
-    def clear_and_plot(self, *args):
+    def  clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
 
@@ -1506,7 +1491,11 @@ class ScrolledTreeView(AutoScroll, ttk.Treeview):
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
-
+    global g_pdp, g_cpdp, g_kde, g_ckde
+    g_pdp = []
+    g_cpdp = []
+    g_kde = []
+    g_ckde = []
     g_prev_cum = []
     g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
     g_list_col_names = ['208Pb/232Th', '208/232±1s',
@@ -1539,6 +1528,7 @@ def main():
     root.wm_resizable(1, 1)
     gui_support.set_Tk_var()
     master = OperationWindow(root)
+    g_grainset = []
     if __name__ == "__main__":
         root.mainloop()
 
