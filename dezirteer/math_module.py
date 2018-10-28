@@ -1029,4 +1029,7 @@ def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
                 peak_weight[peak] = peak_weight[peak] + 1
             else:
                 pass
+    weight_sum = sum(peak_weight.values())
+    for peak in peak_weight:
+        peak_weight[peak] = round(peak_weight[peak]/weight_sum, 2)
     return peak_weight

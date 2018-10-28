@@ -1005,32 +1005,35 @@ class OperationWindow(Frame):
                     initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
                                                                     ("Comma separated values files", "*.csv"),
                                                                     ("All files", "*.*")))
-                if g_grainset!=[]:
-                    keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
-                g_directory = os.path.split(user_file)[0]
-                root.title(user_file + ' — De-Zir-teer')
-                an_set = []
-                file = imported_file(user_file)
-                g_file_type = file[1]
-                for i in range(1, file[2]):
-                    an = file_to_analysis(file, i)
-                    an_set.append(an)
+                if user_file != '':
+                    if g_grainset != []:
+                        keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
+                    g_directory = os.path.split(user_file)[0]
+                    root.title(user_file + ' — De-Zir-teer')
+                    an_set = []
+                    file = imported_file(user_file)
+                    g_file_type = file[1]
+                    for i in range(1, file[2]):
+                        an = file_to_analysis(file, i)
+                        an_set.append(an)
 
-                if keep_prev:
-                    an_set = an_set + g_grainset.analyses_list
-                
-                g_grainset = AnalysesSet(an_set, 'set#1')
-                g_grainset.good_bad_sets(g_filters)
+                    if keep_prev:
+                        an_set = an_set + g_grainset.analyses_list
 
-                pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
+                    g_grainset = AnalysesSet(an_set, 'set#1')
+                    g_grainset.good_bad_sets(g_filters)
 
-                sys.stdout.flush()
-                g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
-                                                                      g_list_col_names)
+                    pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
-                g_list_of_samples = same_sample_set(g_grainset, str(self.cbSeparatorType.get()))
-                self.reset_controls(True)
-                self.clear_prev_or_remove_text()
+                    sys.stdout.flush()
+                    g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
+                                                                          g_list_col_names)
+
+                    g_list_of_samples = same_sample_set(g_grainset, str(self.cbSeparatorType.get()))
+                    self.reset_controls(True)
+                    self.clear_prev_or_remove_text()
+                else:
+                    pass
 
             except ValueError:
                 self.reset_controls(False)
