@@ -360,6 +360,13 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     j = 0
     an_list = p_grainset.analyses_list
     good_grains = p_grainset.good_bad_sets(p_filters)
+    '''pdp = [] 
+    cpdp = []
+    kde = []
+    ckde = []
+    pdp = p_grainset.pdp()
+    cpdp = p_grainset.cpdp()'''
+
     grainset = p_grainset
     filters = p_filters
     p_table.heading("#0", text="Analysis name", anchor='c')
