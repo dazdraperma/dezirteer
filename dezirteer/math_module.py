@@ -2,8 +2,10 @@ from bisect import *
 from const import *
 import operator
 import functools
-from math import sqrt, exp, log
+from math import sqrt, exp, log, fabs
 import scipy.stats
+from scipy import std
+import random
 
 pbpb_table = []
 concordia_table = []
@@ -58,18 +60,18 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         r76 = r75/r68*1/U238_U235
 
         #204pb corrected ages
-        a68 = math.log(r68+1)/LAMBDA_238
-        a75 = math.log(r75+1)/LAMBDA_235
-        a82 = math.log(r82+1)/LAMBDA_232
+        a68 = log(r68+1)/LAMBDA_238
+        a75 = log(r75+1)/LAMBDA_235
+        a82 = log(r82+1)/LAMBDA_232
         a76 = find_age(r76)
 
         #age errors
         tmp64 = (zir.pb206_pb204[1]/zir.pb206_pb204[0])**2
         tmp74 = (zir.pb207_pb204[1]/zir.pb207_pb204[0])**2
         tmp84 = (zir.pb208_pb204[1]/zir.pb208_pb204[0])**2
-        r68er = math.sqrt((math.sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
-        r75er = math.sqrt((math.sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
-        r82er = math.sqrt((math.sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
+        r68er = sqrt((sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
+        r75er = sqrt((sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
+        r82er = sqrt((sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
         a68er = r68er/(1+r68)/LAMBDA_238/1000000
         a75er = r75er/(1+r75)/LAMBDA_235/1000000
         a82er = r82er/(1+r82)/LAMBDA_232/1000000
@@ -77,26 +79,24 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         
     elif corr_type == 1: #207
         t = 1000
-        t1 = 0
         #age
         while delta > 0.001:
             f = U238_U235*compb(zir.calc_age(0), 3)*(zir.pb206_u238[0]-calc_ratio(t)[0])-zir.pb207_u235[0]+\
                 calc_ratio(t)[1]
             deriv = LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(zir.calc_age(0), 3)*LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-        t1 = t + delta
-        corr_age[0] = t1
+            t = t + delta
+        corr_age[0] = t
         #error
         r75var = U238_U235**2*((zir.pb206_u238[0]*zir.pb207_pb206[1])**2+(zir.pb207_pb206[0]*zir.pb206_u238[1])**2)
         denom =(U238_U235*compb(zir.calc_age(0),3)*LAMBDA_238*(calc_ratio(t)[0]+1)-LAMBDA_235*(calc_ratio(t)[1]+1))**2
         n1 = 0 #n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
         n2 = U238_U235**2*compb(zir.calc_age(0),3)*(compb(zir.calc_age(0),3)-2*zir.pb207_pb206[0])*zir.pb206_u238[1]**2
         n = n1+n2+r75var
-        corr_age[1] = math.sqrt(n/denom)
+        corr_age[1] = sqrt(n/denom)
         
     elif corr_type == 2: #208
         t = 1000
-        t1 = 0
         #age
         while delta > 0.001:
             f = zir.pb206_u238[0]-(calc_ratio(t)[0]+1)+1-zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/\
@@ -104,8 +104,8 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
             deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
                   (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
             delta = -f/deriv
-        t1 = t + delta #
-        corr_age[0] = t1
+            t = t + delta #
+        corr_age[0] = t
         #error
         c1 = 0
         c2 = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/compb(zir.calc_age(0),2)
@@ -113,14 +113,71 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         n2 = c2*zir.pb208_th232[1]*zir.pb206_u238[1]**2
         n = n1+n2
         denom = (c2*LAMBDA_232*(calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1))**2
-        corr_age[1] = math.sqrt(n/denom)
+        corr_age[1] = sqrt(n/denom)
         
     elif corr_type == 3: #and
-        corr_age = [-1, -1]
+        #age
+        t2=? #age of pb lost, must enterd by user
+        t1=zir.pb207_u235 
+        xt2 = calc_ratio(t2)[1]
+        yt2 = calc_ratio(t2)[0]
+        zt2 = calc_ratio(t2)[4]
+        c7=15.628/18.7
+        c8=38.63/18.7
+        x=zir.pb207_u235
+        y=zir.pb206_u238
+        z=zir.pb208_th232
+        u=zir.u238_pb204/zir.th232_pb204
+        k=U238_U235
+        corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)
+       
+        #sigma errors
+        for i in range(100):
+            mkx=random.normalvariate(0,1) 
+            mky=mkx*0.91422+sqrt(1-0.91422**2)*random.normalvariate(0,1)
+            mkz=random.normalvariate(0,1)
+            mkx=mkx*0.0191+1.6152
+            mky=mky*0.0014+0.1295
+            mkz=mkz*0.0015+0.1155
+            t1=log(mkx+1)/(9.8485*(10**-10))/(10**6)
+            mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
+            mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
+        ageer=np.std(mkages)
+        fcer=np.std(mkfc)
+        corr_age[1]=ageer
     else:
         corr_age = [-1, -1]
     return corr_age
 
+def andersen(t1,xt2,yt2,zt2,c7,c8,x,y,z,u):
+    k=137.88
+    dt=0.01
+    age=0
+    while age==0: 
+        if eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k) < eq7(t1+dt,xt2,yt2,zt2,c7,c8,x,y,z,u,k) and eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k) < eq7(t1-dt,xt2,yt2,zt2,c7,c8,x,y,z,u,k):
+            age=t1 #solution of equation 7 (Andersen, 2002)
+        else:
+            t1=t1-dt
+    xt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[1]
+    yt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[2]
+    zt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[3]
+    fc=(-y*xt1+y*xt2+yt2*xt1+x*yt1-x*yt2-xt2*yt1)/(-y*xt1+y*xt2+y*c7*k*yt1-y*c7*k*yt2)*100
+    yr=y*(1-fc)
+    xr=x-y*c7*k*fc
+    zr=z-y*c8*u*fc
+    fl=(yt1-yr)/(yt1-yt2)
+    return age,fc,xr,yr,zr,fl #corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
+
+def eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k):
+    xt1 = calc_ratio(t1)[1]
+    yt1 = calc_ratio(t1)[0]
+    zt1 = calc_ratio(t1)[4]
+    zero = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
+            xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
+                        z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
+                        zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
+    zero = fabs(zero)
+    return zero,xt1,yt1,zt1 
 
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
