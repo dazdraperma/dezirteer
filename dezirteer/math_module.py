@@ -7,7 +7,7 @@ import scipy.stats
 from scipy import std
 import random
 
-pbpb_table = []
+pbpb_table =  []
 concordia_table = []
 
 
