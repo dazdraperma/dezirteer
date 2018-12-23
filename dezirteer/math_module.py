@@ -127,38 +127,30 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
-        c7 = 15.628 / 18.7
-        c8 = 38.63 / 18.7
-        x = zir.pb207_u235
-        y = zir.pb206_u238
-        z = zir.pb208_th232
-        u = zir.u238_pb204 / zir.th232_pb204
-        k = U238_U235
-        zero1 = zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)
-        zero2 = zero1
-
-        while zero1 > zero2:
-            zero1 = zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
-            t1 = t1 + 1
-            zero2 = zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
-
-        xt1 = calc_ratio(t1)[1]
-        yt1 = calc_ratio(t1)[0]
-        zt1 = calc_ratio(t1)[4]
-        # ratios, contents of common & lost pb
-        fc = (-y * xt1 + y * xt2 + yt2 * xt1 + x * yt1 - x * yt2 - xt2 * yt1) / (
-                    -y * xt1 + y * xt2 + y * c7 * k * yt1 - y * c7 * k * yt2)
-        yr = y * (1 - fc)
-        xr = x - y * c7 * k * fc
-        zr = z - y * c8 * u * fc
-        f1 = (yt1 - yr) / (yt1 - yt2)
-        corr_age = t1  #ПРОВЕРИТЬ! МОЛОН!
-
-        # sigma errors
-        sy = zir.pb206_u238[1]
-        sx = zir.pb207_u235[1]
-        sz = zir.pb208_th232[1]
-        syr = yr * sqrt((sy / y) ** 2 + (sfc / (1 - fc)) ** 2)
+        c7=15.628/18.7
+        c8=38.63/18.7
+        x=zir.pb207_u235[0]
+        y=zir.pb206_u238[0]
+        z=zir.pb208_th232[0]
+        u=zir.u238_pb204/zir.th232_pb204
+        k=U238_U235
+        corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
+        mkages=[]
+        mkfc=[]
+        #sigma errors
+        for i in range(100):
+            mkx=random.normalvariate(0,1) 
+            mky=mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0,1)
+            mkz=random.normalvariate(0,1)
+            mkx=mkx*zir.pb207_u235[1]+x
+            mky=mky*zir.pb206_u238[1]+y
+            mkz=mkz*zir.pb208_th232[1]+z
+            t1=calc_age(mkx)[0]
+            mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
+            mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
+        ageer=np.std(mkages)
+        fcer=np.std(mkfc)
+        corr_age[1]=ageer
 
     else:
         corr_age = [-1, -1]
