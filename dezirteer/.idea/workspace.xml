@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="54c41e14-d28e-4053-9efc-ea9c3b514e23" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
-    </list>
+    <list default="true" id="54c41e14-d28e-4053-9efc-ea9c3b514e23" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +61,10 @@
         <entry file="file://$PROJECT_DIR$/math_module.py">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret line="53" column="42" lean-forward="true" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+              <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -287,7 +288,10 @@
     <entry file="file://$PROJECT_DIR$/math_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret line="53" column="42" lean-forward="true" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+          <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
