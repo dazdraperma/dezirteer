@@ -2,123 +2,128 @@ from bisect import *
 from const import *
 import operator
 import functools
-from math import sqrt, exp, log, fabs
+from math import sqrt, exp, log
 import scipy.stats
-from scipy import std
-import random
 
 pbpb_table = []
 concordia_table = []
 
 
 def t_student(alpha, gl):
-    return scipy.stats.t.ppf(1-(alpha/2), gl)
-
+    return scipy.stats.t.ppf(1 - (alpha / 2), gl)
 
 
 def calc_ratio(age):
     pb207_u235 = exp(LAMBDA_235 * age * 1000000) - 1
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
     pb207_pb206 = (pb207_u235 / pb206_u238) * (1 / U238_U235)
-    u238_pb206 = 1/pb206_u238
+    u238_pb206 = 1 / pb206_u238
     pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
-    return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206,pb208_th232]
+    return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206, pb208_th232]
 
 
-def compb(age, n):#Stacey & Cramers 2 stage pb evolution model
+def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
     if n == 3:
-            return compb(age, 1)/compb(age, 0)#7/6c
+        return compb(age, 1) / compb(age, 0)  # 7/6c
     elif n != 3 and age <= 3700:
-        if n==0:
-            return 11.152+9.735*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
+        if n == 0:
+            return 11.152 + 9.735 * (calc_ratio(4570)[0] - calc_ratio(age)[0])  # 6/4c
         elif n == 1:
-            return 12.998+9.735/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
+            return 12.998 + 9.735 / U238_U235 * (calc_ratio(4570)[1] - calc_ratio(age)[1])  # 7/4c
         elif n == 2:
-            return 31.23+36.837*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
+            return 31.23 + 36.837 * (calc_ratio(4570)[4] - calc_ratio(age)[4])  # 8/4c
     else:
         if n == 0:
-            return 9.307+7.1925*(calc_ratio(4570)[0]-calc_ratio(age)[0])#6/4c
+            return 9.307 + 7.1925 * (calc_ratio(4570)[0] - calc_ratio(age)[0])  # 6/4c
         elif n == 1:
-            return 10.294+7.192/U238_U235*(calc_ratio(4570)[1]-calc_ratio(age)[1])#7/4c
+            return 10.294 + 7.192 / U238_U235 * (calc_ratio(4570)[1] - calc_ratio(age)[1])  # 7/4c
         elif n == 2:
-            return 29.476+32.208*(calc_ratio(4570)[4]-calc_ratio(age)[4])#8/4c
+            return 29.476 + 32.208 * (calc_ratio(4570)[4] - calc_ratio(age)[4])  # 8/4c
 
-    
-def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
+
+def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     delta = 1
     corr_age = [-1, -1]
-    if corr_type == 0: #204
-        #parts of common lead in measured
-        f6 = compb(zir.calc_age(0), 0)/zir.pb206_pb204[0]
-        f7 = compb(zir.calc_age(0), 1)/zir.pb207_pb204[0]
-        f8 = compb(zir.calc_age(0), 2)/zir.pb208_pb204[0]
+    if corr_type == 0:  # 204
+        # parts of common lead in measured
+        f6 = compb(zir.calc_age(0), 0) / zir.pb206_pb204[0]
+        f7 = compb(zir.calc_age(0), 1) / zir.pb207_pb204[0]
+        f8 = compb(zir.calc_age(0), 2) / zir.pb208_pb204[0]
 
-        #204pb corrected ratios
-        r68 = zir.pb206_u238[0]*(1-f6)
-        r75 = zir.pb207_u235[0]*(1-f7)
-        r82 = zir.pb208_th232[0]*(1-f8)
-        r76 = r75/r68*1/U238_U235
+        # 204pb corrected ratios
+        r68 = zir.pb206_u238[0] * (1 - f6)
+        r75 = zir.pb207_u235[0] * (1 - f7)
+        r82 = zir.pb208_th232[0] * (1 - f8)
+        r76 = r75 / r68 * 1 / U238_U235
 
-        #204pb corrected ages
-        a68 = log(r68+1)/LAMBDA_238
-        a75 = log(r75+1)/LAMBDA_235
-        a82 = log(r82+1)/LAMBDA_232
+        # 204pb corrected ages
+        a68 = log(r68 + 1) / LAMBDA_238
+        a75 = log(r75 + 1) / LAMBDA_235
+        a82 = log(r82 + 1) / LAMBDA_232
         a76 = find_age(r76)
 
-        #age errors
-        tmp64 = (zir.pb206_pb204[1]/zir.pb206_pb204[0])**2
-        tmp74 = (zir.pb207_pb204[1]/zir.pb207_pb204[0])**2
-        tmp84 = (zir.pb208_pb204[1]/zir.pb208_pb204[0])**2
-        r68er = sqrt((sqrt(tmp64)/zir.pb206_pb204[0]/(1-f6))**2+(zir.pb206_u238[1]/zir.pb206_u238[0])**2)*r68
-        r75er = sqrt((sqrt(tmp74)/zir.pb207_pb204[0]/(1-f7))**2+(zir.pb207_u235[1]/zir.pb207_u235[0])**2)*r75
-        r82er = sqrt((sqrt(tmp84)/zir.pb208_pb204[0]/(1-f8))**2+(zir.pb208_th232[1]/zir.pb208_th232[0])**2)*r82
-        a68er = r68er/(1+r68)/LAMBDA_238/1000000
-        a75er = r75er/(1+r75)/LAMBDA_235/1000000
-        a82er = r82er/(1+r82)/LAMBDA_232/1000000
+        # age errors
+        tmp64 = (zir.pb206_pb204[1] / zir.pb206_pb204[0]) ** 2
+        tmp74 = (zir.pb207_pb204[1] / zir.pb207_pb204[0]) ** 2
+        tmp84 = (zir.pb208_pb204[1] / zir.pb208_pb204[0]) ** 2
+        r68er = sqrt(
+            (sqrt(tmp64) / zir.pb206_pb204[0] / (1 - f6)) ** 2 + (zir.pb206_u238[1] / zir.pb206_u238[0]) ** 2) * r68
+        r75er = sqrt(
+            (sqrt(tmp74) / zir.pb207_pb204[0] / (1 - f7)) ** 2 + (zir.pb207_u235[1] / zir.pb207_u235[0]) ** 2) * r75
+        r82er = sqrt(
+            (sqrt(tmp84) / zir.pb208_pb204[0] / (1 - f8)) ** 2 + (zir.pb208_th232[1] / zir.pb208_th232[0]) ** 2) * r82
+        a68er = r68er / (1 + r68) / LAMBDA_238 / 1000000
+        a75er = r75er / (1 + r75) / LAMBDA_235 / 1000000
+        a82er = r82er / (1 + r82) / LAMBDA_232 / 1000000
         a76er = zir.pb207_pb206[1]
-        
-    elif corr_type == 1: #207
+
+    elif corr_type == 1:  # 207
         t = 1000
-        #age
+        # age
         while delta > 0.001:
-            f = U238_U235*compb(zir.calc_age(0), 3)*(zir.pb206_u238[0]-calc_ratio(t)[0])-zir.pb207_u235[0]+\
+            f = U238_U235 * compb(zir.calc_age(0), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
                 calc_ratio(t)[1]
-            deriv = LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(zir.calc_age(0), 3)*LAMBDA_238*(calc_ratio(t)[0]+1)
-            delta = -f/deriv
+            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (
+                        calc_ratio(t)[0] + 1)
+            delta = -f / deriv
             t = t + delta
         corr_age[0] = t
-        #error
-        r75var = U238_U235**2*((zir.pb206_u238[0]*zir.pb207_pb206[1])**2+(zir.pb207_pb206[0]*zir.pb206_u238[1])**2)
-        denom =(U238_U235*compb(zir.calc_age(0),3)*LAMBDA_238*(calc_ratio(t)[0]+1)-LAMBDA_235*(calc_ratio(t)[1]+1))**2
-        n1 = 0 #n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
-        n2 = U238_U235**2*compb(zir.calc_age(0),3)*(compb(zir.calc_age(0),3)-2*zir.pb207_pb206[0])*zir.pb206_u238[1]**2
-        n = n1+n2+r75var
-        corr_age[1] = sqrt(n/denom)
-        
-    elif corr_type == 2: #208
+        # error
+        r75var = U238_U235 ** 2 * (
+                    (zir.pb206_u238[0] * zir.pb207_pb206[1]) ** 2 + (zir.pb207_pb206[0] * zir.pb206_u238[1]) ** 2)
+        denom = (U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
+                    calc_ratio(t)[1] + 1)) ** 2
+        n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
+        n2 = U238_U235 ** 2 * compb(zir.calc_age(0), 3) * (compb(zir.calc_age(0), 3) - 2 * zir.pb207_pb206[0]) * \
+             zir.pb206_u238[1] ** 2
+        n = n1 + n2 + r75var
+        corr_age[1] = sqrt(n / denom)
+
+    elif corr_type == 2:  # 208
         t = 1000
-        #age
+        # age
         while delta > 0.001:
-            f = zir.pb206_u238[0]-(calc_ratio(t)[0]+1)+1-zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/\
-              compb(zir.calc_age(0),2)*(zir.pb208_th232[0]-(calc_ratio(t)[4]+1)+1)
-            deriv = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0), 0)/compb(zir.calc_age(0),2)*LAMBDA_232*\
-                  (calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1)
-            delta = -f/deriv
-            t = t + delta #
+            f = zir.pb206_u238[0] - (calc_ratio(t)[0] + 1) + 1 - zir.th232_pb204[0] / zir.u238_pb204[0] * compb(
+                zir.calc_age(0), 0) / \
+                compb(zir.calc_age(0), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
+            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0),
+                                                                                               2) * LAMBDA_232 * \
+                    (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)
+            delta = -f / deriv
+            t = t + delta  #
         corr_age[0] = t
-        #error
+        # error
         c1 = 0
-        c2 = zir.th232_pb204[0]/zir.u238_pb204[0]*compb(zir.calc_age(0),0)/compb(zir.calc_age(0),2)
+        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0), 2)
         n1 = 0
-        n2 = c2*zir.pb208_th232[1]*zir.pb206_u238[1]**2
-        n = n1+n2
-        denom = (c2*LAMBDA_232*(calc_ratio(t)[4]+1)-LAMBDA_238*(calc_ratio(t)[0]+1))**2
-        corr_age[1] = sqrt(n/denom)
-        
-    elif corr_type == 3: #and
-        #age
-        t2=? #age of pb lost, must enterd by user
-        t1=zir.pb207_u235 
+        n2 = c2 * zir.pb208_th232[1] * zir.pb206_u238[1] ** 2
+        n = n1 + n2
+        denom = (c2 * LAMBDA_232 * (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)) ** 2
+        corr_age[1] = sqrt(n / denom)
+
+    elif corr_type == 3:  # and
+        # age
+        t1 = zir.pb207_u235
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
@@ -146,45 +151,28 @@ def pbc_corr(zir, corr_type, *args): #returns Pbc-corrected ages
         ageer=np.std(mkages)
         fcer=np.std(mkfc)
         corr_age[1]=ageer
+
     else:
         corr_age = [-1, -1]
     return corr_age
 
-def andersen(t1,xt2,yt2,zt2,c7,c8,x,y,z,u):
-    k=137.88
-    dt=0.01
-    age=0
-    while age==0: 
-        if eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k) < eq7(t1+dt,xt2,yt2,zt2,c7,c8,x,y,z,u,k) and eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k) < eq7(t1-dt,xt2,yt2,zt2,c7,c8,x,y,z,u,k):
-            age=t1 #solution of equation 7 (Andersen, 2002)
-        else:
-            t1=t1-dt
-    xt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[1]
-    yt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[2]
-    zt1=eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k)[3]
-    fc=(-y*xt1+y*xt2+yt2*xt1+x*yt1-x*yt2-xt2*yt1)/(-y*xt1+y*xt2+y*c7*k*yt1-y*c7*k*yt2)*100
-    yr=y*(1-fc)
-    xr=x-y*c7*k*fc
-    zr=z-y*c8*u*fc
-    fl=(yt1-yr)/(yt1-yt2)
-    return age,fc,xr,yr,zr,fl #corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
 
-def eq7(t1,xt2,yt2,zt2,c7,c8,x,y,z,u,k):
+def zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
     xt1 = calc_ratio(t1)[1]
     yt1 = calc_ratio(t1)[0]
     zt1 = calc_ratio(t1)[4]
-    zero = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
+    eq7 = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
             xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
-                        z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
-                        zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
-    zero = fabs(zero)
-    return zero,xt1,yt1,zt1 
+                  z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
+                  zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
+    return eq7
+
 
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
 
 
-def fill_pbpb_table(): #fills the table of 207pb-206pb ages
+def fill_pbpb_table():  # fills the table of 207pb-206pb ages
     if len(pbpb_table) == 0:
         i = 5
         while i <= 4600 * 5:
@@ -212,11 +200,11 @@ def find_age(pLeadRatio):
     return bisect(pbpb_table, pLeadRatio) * 5
 
 
-class Filters(object): #describes filters that should be applied to data in Analysis_set object
-    def __init__(self,  filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
-                 filter_by_err=[False, 0.1], include207235Err = False,
+class Filters(object):  # describes filters that should be applied to data in Analysis_set object
+    def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
+                 filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=1,
-                 sample_name_filter=[], unc_type = '0'):
+                 sample_name_filter=[], unc_type='0'):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -313,7 +301,7 @@ def imported_file(p_file_name):
     file_type = ""
     length = 0
     with open(p_file_name) as f_in:
-        lines = list(line for line in (l.strip() for l in f_in) if line) #deleting empty lines
+        lines = list(line for line in (l.strip() for l in f_in) if line)  # deleting empty lines
 
         if any("GLITTER" in s for s in lines):
             file_type = "glitter"
@@ -415,14 +403,15 @@ def header_pos(imported_list):
 def find_in_glitter(lst, predicate):
     return next((i for i, j in enumerate(lst) if predicate(j)), -1)
 
+
 def file_to_analysis(imp_file, index):
     full_data = imp_file[0]
 
-    if imp_file[1] == 'iolite': #iolite routine
+    if imp_file[1] == 'iolite':  # iolite routine
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
         str_temp = str_temp.replace("NAN", "-1")
-        an = str_temp.split() #necessary analysis, split
+        an = str_temp.split()  # necessary analysis, split
         an.pop(4)
         an.pop(3)
         header = header_pos(imp_file)
@@ -432,11 +421,11 @@ def file_to_analysis(imp_file, index):
 
         pb206_u238 = []
         pb206_u238.append(float(an[header[2][0]]))
-        pb206_u238.append(float(an[header[2][1]])/sigma_level)
+        pb206_u238.append(float(an[header[2][1]]) / sigma_level)
 
         pb207_u235 = []
         pb207_u235.append(float(an[header[3][0]]))
-        pb207_u235.append(float(an[header[3][1]])/sigma_level)
+        pb207_u235.append(float(an[header[3][1]]) / sigma_level)
 
         if header[4] != -1:
             corr_coef_75_68 = float(an[header[4]])
@@ -450,16 +439,16 @@ def file_to_analysis(imp_file, index):
 
         pb208_th232 = []
         pb208_th232.append(float(an[header[5][0]]))
-        pb208_th232.append(float(an[header[5][1]])/sigma_level)
+        pb208_th232.append(float(an[header[5][1]]) / sigma_level)
 
         pb207_pb206 = []
         pb207_pb206.append(float(an[header[6][0]]))
-        pb207_pb206.append(float(an[header[6][1]])/sigma_level)
+        pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
 
         u_conc = []
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
-            u_conc.append(float(an[header[7][1]])/sigma_level)
+            u_conc.append(float(an[header[7][1]]) / sigma_level)
         else:
             u_conc.append(-1)
             u_conc.append(-1)
@@ -467,7 +456,7 @@ def file_to_analysis(imp_file, index):
         pbc = []
         if header[8][0] != -1:
             pbc.append(float(an[header[8][0]]))
-            pbc.append(float(an[header[8][1]])/sigma_level)
+            pbc.append(float(an[header[8][1]]) / sigma_level)
         else:
             pbc.append(-1)
             pbc.append(-1)
@@ -475,7 +464,7 @@ def file_to_analysis(imp_file, index):
         pb206_pb204 = []
         if header[10][0] != -1:
             pb206_pb204.append(float(an[header[10][0]]))
-            pb206_pb204.append(float(an[header[10][1]])/sigma_level)
+            pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
         else:
             pb206_pb204.append(-1)
             pb206_pb204.append(-1)
@@ -483,7 +472,7 @@ def file_to_analysis(imp_file, index):
         pb207_pb204 = []
         if header[11][0] != -1:
             pb207_pb204.append(float(an[header[11][0]]))
-            pb207_pb204.append(float(an[header[11][1]])/sigma_level)
+            pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
         else:
             pb207_pb204.append(-1)
             pb207_pb204.append(-1)
@@ -491,7 +480,7 @@ def file_to_analysis(imp_file, index):
         pb208_pb204 = []
         if header[12][0] != -1:
             pb208_pb204.append(float(an[header[12][0]]))
-            pb208_pb204.append(float(an[header[12][1]])/sigma_level)
+            pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
         else:
             pb208_pb204.append(-1)
             pb208_pb204.append(-1)
@@ -512,9 +501,9 @@ def file_to_analysis(imp_file, index):
             u238_pb204.append(-1)
             u238_pb204.append(-1)
 
-    else: #glitter routine
+    else:  # glitter routine
         file_len = imp_file[2]
-        sigma_level = 1.0 #check if all glitter files have this by default
+        sigma_level = 1.0  # check if all glitter files have this by default
         pos_isotopic_ratios_line = find_in_glitter(full_data, lambda x: '_Isotopic_ratios.' in x)
         pos_errors_line = find_in_glitter(full_data, lambda x: '_Isotopic_ratios:_1_sigma_uncertainty' in x)
         an = full_data[index + 1].split()
@@ -548,8 +537,8 @@ def file_to_analysis(imp_file, index):
         th232_pb204 = [-1, -1]
         u238_pb204 = [-1, -1]
 
-        corr_coef_75_68 = (pb206_u238[1]/pb206_u238[0])/(pb207_u235[1]/pb207_u235[0])
-        corr_coef_86_76 = ((1/pb206_u238[1])/(1/pb206_u238[0])) / (pb207_pb206[1]/pb207_pb206[0])
+        corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
+        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
                           pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
@@ -558,7 +547,7 @@ def file_to_analysis(imp_file, index):
 
 
 class Analysis(object):
-    def __init__(self, analysis_name="",  exposure_time="",
+    def __init__(self, analysis_name="", exposure_time="",
                  pb206_u238=(0, 0), pb207_u235=(0, 0), corr_coef_75_68=0, corr_coef_86_76=0, pb208_th232=(0, 0),
                  pb207_pb206=(0, 0), u_conc=(0, 0), pbc=(0, 0), pb206_pb204=(0, 0), pb207_pb204=(0, 0),
                  pb208_pb204=(0, 0), th232_pb204=(0, 0), u238_pb204=(0, 0), sigma_level=0):
@@ -731,7 +720,7 @@ class Analysis(object):
                 age_err = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
 
             elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
-                #.04605 corresponds to age67 ~ 0
+                # .04605 corresponds to age67 ~ 0
                 age = find_age(self.pb207_pb206[0]) * 1000000
                 C1 = 1 / U238_U235
                 C2 = LAMBDA_235
@@ -761,7 +750,7 @@ class Analysis(object):
 
     # checks if a grain passes user-defined Filters
     def is_grain_good(self, pFilter: Filters):
-        do_uconc=pFilter.filter_by_uconc[0]
+        do_uconc = pFilter.filter_by_uconc[0]
         uconc_ppm_cutoff = pFilter.filter_by_uconc[1]
         which_age = pFilter.which_age[0]
         age_fixed_limit = pFilter.which_age[1]
@@ -774,26 +763,26 @@ class Analysis(object):
         sample_name_filter = pFilter.sample_name_filter
         is_grain_in_chosen_sample = True
 
-       #cut out negative ratios
+        # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
             are_ratios_positive = False
         else:
             are_ratios_positive = True
 
-       # filter by Uconc
+        # filter by Uconc
         if do_uconc and (self.u_conc[0] > uconc_ppm_cutoff):
             is_uconc_good = False
         else:
             is_uconc_good = True
 
-        #filter by sample name
-        if sample_name_filter !=[]:
+        # filter by sample name
+        if sample_name_filter != []:
             if str(self.analysis_name).rpartition('_')[0] in sample_name_filter:
                 is_grain_in_chosen_sample = True
             else:
                 is_grain_in_chosen_sample = False
 
-       #decide on the default age system
+        # decide on the default age system
         if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
             age_68_67 = 1
             this_age = 3
@@ -801,9 +790,9 @@ class Analysis(object):
             age_68_67 = 0
             this_age = 0
         else:
-            age_68_67 = -1 #this is for future implementation of 'based on Uconc' algorithm
+            age_68_67 = -1  # this is for future implementation of 'based on Uconc' algorithm
 
-        #filter by measurement error
+        # filter by measurement error
         if do_err:
             age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
             err = self.calc_age(age_68_67 * 3)[1]  # calculates correspondent error
@@ -814,7 +803,7 @@ class Analysis(object):
             if do_207235_err == 1:
                 age207235 = self.calc_age(1)[0]
                 age207235err = self.calc_age(1)[1]
-                if age207235err/age207235 < err_cutoff:
+                if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
                 else:
                     is_207235err_good = False
@@ -824,7 +813,7 @@ class Analysis(object):
             is_err_good = True  # if no need to filter by age error
             is_207235err_good = True
 
-        #filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86
+        # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86
         if type_disc == 0:
             disc = -1  # this is for future implementation of 'based on Uconc' algorithm
         elif type_disc == 1:
@@ -832,12 +821,12 @@ class Analysis(object):
         elif type_disc == 2:
             disc = self.calc_discordance(True)
         elif type_disc == 3:
-            disc = self.calc_discordance(False) #12345
+            disc = self.calc_discordance(False)  # 12345
 
         if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
-           is_disc_good = True
+            is_disc_good = True
         else:
-           is_disc_good = False
+            is_disc_good = False
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
                is_grain_in_chosen_sample, this_age
@@ -884,8 +873,8 @@ class AnalysesSet(object):
     def filters(self):
         return self.__filters
 
-    #sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
-    #number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages
+    # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
+    # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages
     def good_bad_sets(self, p_filter: Filters):
         index = 0
         max_age = 0
@@ -914,7 +903,7 @@ class AnalysesSet(object):
                 self.__good_set.update({zircon: z_age})
                 number_of_good_grains += 1
                 ages.append(z_age[0])
-                errs_inv_sq.append(1/(z_age[1] ** 2))
+                errs_inv_sq.append(1 / (z_age[1] ** 2))
             else:
                 self.__bad_set.append(zircon)
             index += 1
@@ -935,26 +924,27 @@ class AnalysesSet(object):
         wa_age_err_scatter = wa_age_err * sqrt(mswd) * t_student(0.05, number_of_good_grains - 1)
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
 
-    #calculates probability density function for a given age
+    # calculates probability density function for a given age
     def pdp_calc(self, p_age_needed):
         if bool(self.good_set):
             sum_gauss = 0
             for key, value in self.good_set.items():
-                error = 2*value[1]
+                error = 2 * value[1]
                 age = value[0]
-                sum_gauss = sum_gauss+(1/(error*sqrt2pi)) * exp((-(p_age_needed-age)**2)/(2*error**2))
-            return 1/len(self.good_set)*sum_gauss
+                sum_gauss = sum_gauss + (1 / (error * sqrt2pi)) * exp((-(p_age_needed - age) ** 2) / (2 * error ** 2))
+            return 1 / len(self.good_set) * sum_gauss
 
-    #calculates kernel density estimate for a given age
+    # calculates kernel density estimate for a given age
     def kde_calc(self, p_age_needed, p_bandwidth):
         if bool(self.good_set):
             sum_gauss = 0
             for key, value in self.good_set.items():
                 age = value[0]
-                sum_gauss = sum_gauss+(1/(p_bandwidth*sqrt2pi)) * exp((-(p_age_needed-age)**2)/(2*(p_bandwidth)**2))
-            return 1/(p_bandwidth*len(self.good_set))*sum_gauss
+                sum_gauss = sum_gauss + (1 / (p_bandwidth * sqrt2pi)) * exp(
+                    (-(p_age_needed - age) ** 2) / (2 * (p_bandwidth) ** 2))
+            return 1 / (p_bandwidth * len(self.good_set)) * sum_gauss
 
-    #fills and returns a list of pdp's for ages from 0 to EarthAge
+    # fills and returns a list of pdp's for ages from 0 to EarthAge
     def pdp(self):
         index = 0
         list_pdp = []
@@ -962,31 +952,33 @@ class AnalysesSet(object):
         if bool(self.good_set):
             while index < EarthAge:
                 list_pdp.append(self.pdp_calc(index))
-                if index > 1 and list_pdp[index - 2] < list_pdp[index-1] and list_pdp[index] < list_pdp[index-1]:  # peak recognizing
-                    list_peaks.append(index-1)
+                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[
+                    index - 1]:  # peak recognizing
+                    list_peaks.append(index - 1)
                 index += 1
             return [list_pdp, list_peaks]
 
-    #fills and returns a list of kde's for ages from 0 to EarthAge
+    # fills and returns a list of kde's for ages from 0 to EarthAge
     def kde(self, p_bandwidth):
         index = 0
-        #stores non-normalized kde values:
+        # stores non-normalized kde values:
         temp_list = []
         list_peaks = []
-        #stores cumulate kde
+        # stores cumulate kde
         ckde = 0
         if bool(self.good_set):
             while index < EarthAge:
                 curr_kde = self.kde_calc(index, p_bandwidth)
                 temp_list.append(curr_kde)
                 ckde += curr_kde
-                if index > 1 and temp_list[index - 2] < temp_list[index-1] and temp_list[index] < temp_list[index-1]:  # peak recognizing
-                    list_peaks.append(index-1)
+                if index > 1 and temp_list[index - 2] < temp_list[index - 1] and temp_list[index] < temp_list[
+                    index - 1]:  # peak recognizing
+                    list_peaks.append(index - 1)
                 index += 1
             list_kde = [i * (1 / ckde) for i in temp_list]
             return [list_kde, list_peaks]
 
-    #fills and returns a list of cumulative pdp's for ages from 0 to EarthAge
+    # fills and returns a list of cumulative pdp's for ages from 0 to EarthAge
     def cpdp(self):
         if bool(self.good_set):
             pdp = self.pdp()[0]
@@ -996,7 +988,7 @@ class AnalysesSet(object):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
             return list_pdp
 
-    #fills and returns a list of cumulative kde's for ages from 0 to EarthAge
+    # fills and returns a list of cumulative kde's for ages from 0 to EarthAge
     def ckde(self, p_bandwidth):
         if bool(self.good_set):
             kde = self.kde(p_bandwidth)[0]
@@ -1012,7 +1004,7 @@ def d_value(list1, list2):
     d = 0
     if list1 is not None and list2 is not None:
         for age in range(len(list1)):
-            i = abs(list1[age]-list2[age])
+            i = abs(list1[age] - list2[age])
             if i > d:
                 d = i
     else:
@@ -1029,7 +1021,7 @@ def p_value(d_val, n1, n2):
         sum_j = 0
         lam = sqrt(ne) * d_val
         while j < 100:
-            sum_j += ((-1) ** (j-1)) * exp(-2 * (j ** 2) * (lam ** 2))
+            sum_j += ((-1) ** (j - 1)) * exp(-2 * (j ** 2) * (lam ** 2))
             j += 1
         probks = sum_j * 2
         if probks > 1:
@@ -1050,8 +1042,8 @@ def same_sample_set(p_set: AnalysesSet, p_str):
         an = p_set.analyses_list[i]
         temp_str = str(an).rpartition(p_str)[0]
         if (temp_str != prev_str) and (prev_str == ""):
-           lset.append(an)
-           prev_str = temp_str
+            lset.append(an)
+            prev_str = temp_str
         elif (temp_str != prev_str) and (prev_str == ""):
             lset.append(an)
             list_of_analyses_set.append(l_an_set)
@@ -1071,7 +1063,8 @@ def same_sample_set(p_set: AnalysesSet, p_str):
         i += 1
     return list_of_analyses_set
 
-def conf_lim (sigma_level):
+
+def conf_lim(sigma_level):
     if sigma_level == 1:
         return 0.6826
     elif sigma_level == 2:
@@ -1079,15 +1072,13 @@ def conf_lim (sigma_level):
     else:
         return -1
 
+
 def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
     peak_weight = dict.fromkeys(peaks, 0)
     for zircon, zircon_age in an_set.good_set.items():
         for peak in peak_weight:
-            if abs(zircon_age[0]-peak) < (zircon_age[1] * 2): # if difference between a peak and a given age is <2σ
+            if abs(zircon_age[0] - peak) < (zircon_age[1] * 2):  # if difference between a peak and a given age is <2σ
                 peak_weight[peak] = peak_weight[peak] + 1
             else:
                 pass
-    weight_sum = sum(peak_weight.values())
-    for peak in peak_weight:
-        peak_weight[peak] = round(peak_weight[peak]/weight_sum, 2)
     return peak_weight

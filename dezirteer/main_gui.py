@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
 import gui_support
@@ -956,7 +958,7 @@ class OperationWindow(Frame):
                                                               ("Comma separated values files", "*.csv"),
                                                                                  ("All files", "*.*"))))
 
-        mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S", command=lambda: print("Save"))
+        mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S")
 
         mFile.add_separator()
 
@@ -1094,7 +1096,7 @@ class OperationWindow(Frame):
                 status_text = ' data, bad divider'
                 status_color = 'red'
             else:
-                status_text = ' data OK'
+                status_text = '  data OK'
                 status_color = 'green'
             self.lbShowStatus.configure(text=g_file_type+status_text, fg=status_color)
         else:
