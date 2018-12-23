@@ -1,11 +1,14 @@
+#test
 from bisect import *
 from const import *
 import operator
 import functools
-from math import sqrt, exp, log
+from math import sqrt, exp, log, fabs
 import scipy.stats
+from scipy import std
+import random
 
-pbpb_table = []
+pbpb_table =  []
 concordia_table = []
 
 
@@ -123,6 +126,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
     elif corr_type == 3:  # and
         # age
+        t2 =0  # NEED CORRECTION!!!  age of pb lost, must enterd by user
         t1 = zir.pb207_u235
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
@@ -139,7 +143,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         mkfc=[]
         #sigma errors
         for i in range(100):
-            mkx=random.normalvariate(0,1) 
+            mkx=random.normalvariate(0,1)
             mky=mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0,1)
             mkz=random.normalvariate(0,1)
             mkx=mkx*zir.pb207_u235[1]+x
@@ -157,15 +161,38 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     return corr_age
 
 
-def zero(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
+def andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u):
+    k = 137.88
+    dt = 0.01
+    age = 0
+    while age == 0:
+        if eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k) < eq7(t1 + dt, xt2, yt2, zt2, c7, c8, x, y, z, u, k) and eq7(
+                t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k) < eq7(t1 - dt, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
+            age = t1  # solution of equation 7 (Andersen, 2002)
+        else:
+            t1 = t1 - dt
+    xt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[1]
+    yt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[2]
+    zt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[3]
+    fc = (-y * xt1 + y * xt2 + yt2 * xt1 + x * yt1 - x * yt2 - xt2 * yt1) / (
+                -y * xt1 + y * xt2 + y * c7 * k * yt1 - y * c7 * k * yt2) * 100
+    yr = y * (1 - fc)
+    xr = x - y * c7 * k * fc
+    zr = z - y * c8 * u * fc
+    fl = (yt1 - yr) / (yt1 - yt2)
+    return age, fc, xr, yr, zr, fl  # corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
+
+
+def eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
     xt1 = calc_ratio(t1)[1]
     yt1 = calc_ratio(t1)[0]
     zt1 = calc_ratio(t1)[4]
-    eq7 = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
+    zero = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
             xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
-                  z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
-                  zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
-    return eq7
+                   z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
+                   zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
+    zero = fabs(zero)
+    return zero, xt1, yt1, zt1
 
 
 def sumproduct(*lists):
@@ -1081,4 +1108,7 @@ def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
                 peak_weight[peak] = peak_weight[peak] + 1
             else:
                 pass
+    weight_sum = sum(peak_weight.values())
+    for peak in peak_weight:
+        peak_weight[peak] = round(peak_weight[peak] / weight_sum, 2)
     return peak_weight
