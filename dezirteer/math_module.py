@@ -1,3 +1,4 @@
+#test
 from bisect import *
 from const import *
 import operator
@@ -130,31 +131,6 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
-<<<<<<< HEAD
-        c7 = 15.628 / 18.7
-        c8 = 38.63 / 18.7
-        x = zir.pb207_u235
-        y = zir.pb206_u238
-        z = zir.pb208_th232
-        u = zir.u238_pb204 / zir.th232_pb204
-        k = U238_U235
-        corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)
-
-        # sigma errors
-        for i in range(100):
-            mkx = random.normalvariate(0, 1)
-            mky = mkx * 0.91422 + sqrt(1 - 0.91422 ** 2) * random.normalvariate(0, 1)
-            mkz = random.normalvariate(0, 1)
-            mkx = mkx * 0.0191 + 1.6152
-            mky = mky * 0.0014 + 0.1295
-            mkz = mkz * 0.0015 + 0.1155
-            t1 = log(mkx + 1) / (9.8485 * (10 ** -10)) / (10 ** 6)
-            mkages.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[0])
-            mkfc.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[1])
-        ageer = np.std(mkages)
-        fcer = np.std(mkfc)
-        corr_age[1] = ageer
-=======
         c7=15.628/18.7
         c8=38.63/18.7
         x=zir.pb207_u235[0]
@@ -167,7 +143,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         mkfc=[]
         #sigma errors
         for i in range(100):
-            mkx=random.normalvariate(0,1) 
+            mkx=random.normalvariate(0,1)
             mky=mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0,1)
             mkz=random.normalvariate(0,1)
             mkx=mkx*zir.pb207_u235[1]+x
@@ -180,7 +156,6 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         fcer=np.std(mkfc)
         corr_age[1]=ageer
 
->>>>>>> master
     else:
         corr_age = [-1, -1]
     return corr_age
