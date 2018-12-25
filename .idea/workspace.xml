@@ -5,7 +5,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/dezirteer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dezirteer.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/dezirteer/main_gui.py.cloud" beforeDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/dezirteer/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/dezirteer/main_gui.py" afterDir="false" />
+>>>>>>> master
       <change beforePath="$PROJECT_DIR$/venv/Include/Python-ast.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Include/Python.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Include/abstract.h" beforeDir="false" />
@@ -1763,8 +1767,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dezirteer/main_gui.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="204">
               <caret line="13" column="23" lean-forward="true" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+=======
+            <state relative-caret-position="221">
+              <caret line="13" selection-start-line="13" selection-end-line="13" />
+>>>>>>> master
               <folding>
                 <element signature="e#72#81#0" expanded="true" />
               </folding>
@@ -1852,6 +1861,11 @@
       </list>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="staging" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -1859,8 +1873,9 @@
         <option value="$PROJECT_DIR$/dezirteer/__init__.py" />
         <option value="$PROJECT_DIR$/dezirteer/const.py" />
         <option value="$PROJECT_DIR$/dezirteer/gui_support.py" />
-        <option value="$PROJECT_DIR$/dezirteer/main_gui.py" />
         <option value="$PROJECT_DIR$/dezirteer/math_module.py" />
+        <option value="$PROJECT_DIR$/dezirteer/main_gui.py" />
+        <option value="$PROJECT_DIR$/venv/Lib/encodings/__init__.py" />
       </list>
     </option>
   </component>
@@ -1934,6 +1949,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main_gui" />
         <item itemvalue="Python.main_gui" />
       </list>
     </recent_temporary>
@@ -2080,7 +2096,11 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
+<<<<<<< HEAD
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28277355" />
+=======
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28169015" />
+>>>>>>> master
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39401495" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -2109,12 +2129,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dezirteer/main_gui.py</url>
-          <line>1022</line>
+          <line>1017</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dezirteer/main_gui.py</url>
-          <line>1009</line>
+          <line>1004</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
@@ -2202,6 +2222,7 @@
     <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-1120166012/builtins.py" />
     <entry file="file://$PROJECT_DIR$/dezirteer/math_module (conflict).py" />
     <entry file="file://$PROJECT_DIR$/dezirteer/math_module" />
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/venv/Lib/encodings/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2125">
@@ -2222,10 +2243,7 @@
           <caret line="13" column="23" lean-forward="true" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
           <folding>
             <element signature="e#72#81#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+=======
     <entry file="file://$PROJECT_DIR$/dezirteer/math_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2465">
@@ -2246,6 +2264,40 @@
           <caret line="367" column="31" selection-start-line="367" selection-start-column="31" selection-end-line="367" selection-end-column="31" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
+>>>>>>> master
+          </folding>
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/dezirteer/math_module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2465">
+          <caret line="152" column="32" selection-start-line="152" selection-start-column="32" selection-end-line="152" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dezirteer/const.py">
+=======
+    <entry file="file://$PROJECT_DIR$/venv/Lib/encodings/__init__.py">
+>>>>>>> master
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="28" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dezirteer/main_gui.py">
+      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="6205">
+          <caret line="367" column="31" selection-start-line="367" selection-start-column="31" selection-end-line="367" selection-end-column="31" />
+=======
+        <state relative-caret-position="221">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+>>>>>>> master
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
