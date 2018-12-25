@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-#test5
-=======
-#test4
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
