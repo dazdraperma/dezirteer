@@ -1520,27 +1520,26 @@ def main():
     g_ckde = []
     g_prev_cum = []
     g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
-    g_list_col_names = ['208Pb/232Th', '208/232±1σ(Int)', '208/232±1σ(Prop)',
-                        '207Pb/206Pb', '207/206±1σ(Int)', '207/206±1σ(Prop)',
-                        '207Pb/235U', '207/235±1σ(Int)', '207/235±1σ(Prop)',
-                        '206Pb/238U', '206/238±1σ(Int)', '206/238±1σ(Prop)',
+    g_list_col_names = ['208Pb/232Th', '208/232±1s(Int)', '208/232±1s(Prop)',
+                        '207Pb/206Pb', '207/206±1s(Int)', '207/206±1s(Prop)',
+                        '207Pb/235U', '207/235±1s(Int)', '207/235±1s(Prop)',
+                        '206Pb/238U', '206/238±1s(Int)', '206/238±1s(Prop)',
                         'corr. coef.75_68', 'corr. coef.86_76',
-                        'Uconc (approx. ppm)', 'Uconc±1σ(Int)', 'Uconc±1σ(Prop)',
-                        'pbc (approx. ppm)', 'pbc±1σ(Int)', 'pbc±1σ(Prop)',
-                        '206Pb/204Pb', '206/204±1σ(Int)', '206/204±1σ(Prop)',
-                        '207Pb/204Pb', '207/204±1σ(Int)', '207/204±1σ(Prop)',
-                        '208Pb/204Pb', '208/204±1σ(Int)', '208/204±1σ(Prop)',
+                        'Uconc (approx. ppm)', 'Uconc±1s(Int)', 'Uconc±1s(Prop)',
+                        'pbc (approx. ppm)', 'pbc±1s(Int)', 'pbc±1s(Prop)',
+                        '206Pb/204Pb', '206/204±1s(Int)', '206/204±1s(Prop)',
+                        '207Pb/204Pb', '207/204±1s(Int)', '207/204±1s(Prop)',
+                        '208Pb/204Pb', '208/204±1s(Int)', '208/204±1s(Prop)',
+                        '232Th/204Pb', '232/204±1s(Int)', '232/204±1s(Prop)',
+                        '238U/204Pb', '238/204±1s(Int)', '238/204±1s(Prop)',
 
-                        '232Th/204Pb', '232/204±1σ(Int)', '232/204±1σ(Prop)',
-                        '238U/204Pb', '238/204±1σ(Int)', '238/204±1σ(Prop)',
-
-                        'Age 208Pb/232Th', 'Age208/232±1σ(Int)', 'Age208/232±1σ(Prop)',
-                        'Age 207Pb/206Pb',  'Age207/206±1σ(Int)', 'Age207/206±1σ(Prop)',
-                        'Age 207Pb/235U', 'Age207/235±1σ(Int)', 'Age207/235±1σ(Prop)',
-                        'Age 206Pb/238U', 'Age206/238±1σ(Int)', 'Age206/238±1σ(Prop)',
+                        'Age 208Pb/232Th', 'Age208/232±1s(Int)', 'Age208/232±1s(Prop)',
+                        'Age 207Pb/206Pb',  'Age207/206±1s(Int)', 'Age207/206±1s(Prop)',
+                        'Age 207Pb/235U', 'Age207/235±1s(Int)', 'Age207/235±1s(Prop)',
+                        'Age 206Pb/238U', 'Age206/238±1s(Int)', 'Age206/238±1s(Prop)',
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',
-                        'best age', 'best age±1σ']
+                        'best age', 'best age±1s']
     fill_pbpb_table()
     fill_concordia_table()
     g_filters = Filters()

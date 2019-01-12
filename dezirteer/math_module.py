@@ -1,4 +1,4 @@
-#test
+# -*- coding: utf-8 -*-
 from bisect import *
 from const import *
 import operator
