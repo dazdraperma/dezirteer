@@ -49,9 +49,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     corr_age = [-1, -1]
     if corr_type == 0:  # 204
         # parts of common lead in measured
-        f6 = compb(zir.calc_age(0), 0) / zir.pb206_pb204[0]
-        f7 = compb(zir.calc_age(0), 1) / zir.pb207_pb204[0]
-        f8 = compb(zir.calc_age(0), 2) / zir.pb208_pb204[0]
+        f6 = compb(zir.calc_age(0, 'Internal'), 0) / zir.pb206_pb204[0]
+        f7 = compb(zir.calc_age(0, 'Internal'), 1) / zir.pb207_pb204[0]
+        f8 = compb(zir.calc_age(0, 'Internal'), 2) / zir.pb208_pb204[0]
 
         # 204pb corrected ratios
         r68 = zir.pb206_u238[0] * (1 - f6)
@@ -84,9 +84,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while delta > 0.001:
-            f = U238_U235 * compb(zir.calc_age(0), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
+            f = U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
                 calc_ratio(t)[1]
-            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (
+            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * LAMBDA_238 * (
                         calc_ratio(t)[0] + 1)
             delta = -f / deriv
             t = t + delta
@@ -94,10 +94,10 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # error
         r75var = U238_U235 ** 2 * (
                     (zir.pb206_u238[0] * zir.pb207_pb206[1]) ** 2 + (zir.pb207_pb206[0] * zir.pb206_u238[1]) ** 2)
-        denom = (U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
+        denom = (U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
                     calc_ratio(t)[1] + 1)) ** 2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
-        n2 = U238_U235 ** 2 * compb(zir.calc_age(0), 3) * (compb(zir.calc_age(0), 3) - 2 * zir.pb207_pb206[0]) * \
+        n2 = U238_U235 ** 2 * compb(zir.calc_age(0, 'Internal'), 3) * (compb(zir.calc_age(0, 'Internal'), 3) - 2 * zir.pb207_pb206[0]) * \
              zir.pb206_u238[1] ** 2
         n = n1 + n2 + r75var
         corr_age[1] = sqrt(n / denom)
@@ -107,9 +107,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # age
         while delta > 0.001:
             f = zir.pb206_u238[0] - (calc_ratio(t)[0] + 1) + 1 - zir.th232_pb204[0] / zir.u238_pb204[0] * compb(
-                zir.calc_age(0), 0) / \
-                compb(zir.calc_age(0), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
-            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0),
+                zir.calc_age(0, 'Internal'), 0) / \
+                compb(zir.calc_age(0, 'Internal'), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
+            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0, 'Internal'), 0) / compb(zir.calc_age(0, 'Internal'),
                                                                                                2) * LAMBDA_232 * \
                     (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)
             delta = -f / deriv
@@ -117,7 +117,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         corr_age[0] = t
         # error
         c1 = 0
-        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0), 2)
+        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0, 'Internal'), 0) / compb(zir.calc_age(0, 'Internal'), 2)
         n1 = 0
         n2 = c2 * zir.pb208_th232[1] * zir.pb206_u238[1] ** 2
         n = n1 + n2
@@ -149,7 +149,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             mkx=mkx*zir.pb207_u235[1]+x
             mky=mky*zir.pb206_u238[1]+y
             mkz=mkz*zir.pb208_th232[1]+z
-            t1=calc_age(mkx)[0]
+            t1=calc_age(mkx, 'Internal')[0]
             mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
             mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
         ageer=np.std(mkages)
@@ -241,7 +241,7 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__neg_disc_filter = neg_disc_filter
         self.__disc_type = disc_type
         self.__sample_name_filter = sample_name_filter
-        self.__unc_type = unc_type
+        self.__unc_type = unc_type #0 for internal, 1 for propagated
 
     @property
     def filter_by_uconc(self):
@@ -358,14 +358,22 @@ def header_pos(imported_list):
         l_list.append(file_header.index('Duration(s)'))
 
         if 'Final206_238' in file_header:
-            l_list.append([file_header.index('Final206_238'), file_header.index('Final206_238_Int2SE')])
+            if 'Final206_238_Prop2SE' in file_header:
+                prop = file_header.index('Final206_238_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final206_238'), file_header.index('Final206_238_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final207_235' in file_header:
-            l_list.append([file_header.index('Final207_235'), file_header.index('Final207_235_Int2SE')])
+            if 'Final207_235_Prop2SE' in file_header:
+                prop = file_header.index('Final207_235_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_235'), file_header.index('Final207_235_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'ErrorCorrelation_6_38vs7_35' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_6_38vs7_35'))
@@ -373,24 +381,40 @@ def header_pos(imported_list):
             l_list.append(0.99)
 
         if 'Final208_232' in file_header:
-            l_list.append([file_header.index('Final208_232'), file_header.index('Final208_232_Int2SE')])
+            if 'Final208_232_Prop2SE' in file_header:
+                prop = file_header.index('Final208_232_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final208_232'), file_header.index('Final208_232_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final207_206' in file_header:
-            l_list.append([file_header.index('Final207_206'), file_header.index('Final207_206_Int2SE')])
+            if 'Final207_206_Prop2SE' in file_header:
+                prop = file_header.index('Final207_206_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_206'), file_header.index('Final207_206_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Approx_U_PPM' in file_header:
-            l_list.append([file_header.index('Approx_U_PPM'), file_header.index('Approx_U_PPM_Int2SE')])
+            if 'Approx_U_PPM_Prop2SE' in file_header:
+                prop = file_header.index('Approx_U_PPM_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Approx_U_PPM'), file_header.index('Approx_U_PPM_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Pb204' in file_header:
-            l_list.append([file_header.index('Pb204'), file_header.index('Pb204_Int2SE')])
+            if 'Pb204_Prop2SE' in file_header:
+                prop = file_header.index('Pb204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Pb204'), file_header.index('Pb204_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'ErrorCorrelation_38_6vs7_6' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_38_6vs7_6'))
@@ -398,29 +422,49 @@ def header_pos(imported_list):
             l_list.append(0.99)
 
         if 'Final206_204' in file_header:
-            l_list.append([file_header.index('Final206_204'), file_header.index('Final206_204_Int2SE')])
+            if 'Final206_204_Prop2SE' in file_header:
+                prop = file_header.index('Final206_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final206_204'), file_header.index('Final206_204_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final207_204' in file_header:
-            l_list.append([file_header.index('Final207_204'), file_header.index('Final207_204_Int2SE')])
+            if 'Final207_204_Prop2SE' in file_header:
+                prop = file_header.index('Final207_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_204'), file_header.index('Final207_204_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final208_204' in file_header:
-            l_list.append([file_header.index('Final208_204'), file_header.index('Final208_204_Int2SE')])
+            if 'Final208_204_Prop2SE' in file_header:
+                prop = file_header.index('Final208_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final208_204'), file_header.index('Final208_204_Int2SE'), -1])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final232_204' in file_header:
-            l_list.append([file_header.index('Final232_204'), file_header.index('Final232_204_Int2SE')])
+            if 'Final232_204_Prop2SE' in file_header:
+                prop = file_header.index('Final232_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final232_204'), file_header.index('Final232_204_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
         if 'Final238_204' in file_header:
-            l_list.append([file_header.index('Final238_204'), file_header.index('Final238_204_Int2SE')])
+            if 'Final238_204_Prop2SE' in file_header:
+                prop = file_header.index('Final238_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final238_204'), file_header.index('Final238_204_Int2SE'), prop])
         else:
-            l_list.append([-1, -1])
+            l_list.append([-1, -1, -1])
 
     elif imported_list[1] == "glitter":
         pass
@@ -435,9 +479,11 @@ def file_to_analysis(imp_file, index):
     full_data = imp_file[0]
 
     if imp_file[1] == 'iolite':  # iolite routine
+        #replacing Iolite NaNs and no values
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
         str_temp = str_temp.replace("NAN", "-1")
+
         an = str_temp.split()  # necessary analysis, split
         an.pop(4)
         an.pop(3)
@@ -449,10 +495,18 @@ def file_to_analysis(imp_file, index):
         pb206_u238 = []
         pb206_u238.append(float(an[header[2][0]]))
         pb206_u238.append(float(an[header[2][1]]) / sigma_level)
+        if header[2][2] != -1:
+            pb206_u238.append(float(an[header[2][2]]) / sigma_level)
+        else:
+            pb206_u238.append(float(an[header[2][1]]) / sigma_level)
 
         pb207_u235 = []
         pb207_u235.append(float(an[header[3][0]]))
         pb207_u235.append(float(an[header[3][1]]) / sigma_level)
+        if header[3][2] != -1:
+            pb207_u235.append(float(an[header[3][2]]) / sigma_level)
+        else:
+            pb207_u235.append(float(an[header[3][1]]) / sigma_level)
 
         if header[4] != -1:
             corr_coef_75_68 = float(an[header[4]])
@@ -467,16 +521,29 @@ def file_to_analysis(imp_file, index):
         pb208_th232 = []
         pb208_th232.append(float(an[header[5][0]]))
         pb208_th232.append(float(an[header[5][1]]) / sigma_level)
+        if header[5][2] != -1:
+            pb208_th232.append(float(an[header[5][2]]) / sigma_level)
+        else:
+            pb208_th232.append(float(an[header[5][1]]) / sigma_level)
 
         pb207_pb206 = []
         pb207_pb206.append(float(an[header[6][0]]))
         pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
+        if header[6][2] != -1:
+            pb207_pb206.append(float(an[header[6][2]]) / sigma_level)
+        else:
+            pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
 
         u_conc = []
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
             u_conc.append(float(an[header[7][1]]) / sigma_level)
+            if header[7][2] != -1:
+                u_conc.append(float(an[header[7][2]]) / sigma_level)
+            else:
+                u_conc.append(float(an[header[7][1]]) / sigma_level)
         else:
+            u_conc.append(-1)
             u_conc.append(-1)
             u_conc.append(-1)
 
@@ -484,7 +551,12 @@ def file_to_analysis(imp_file, index):
         if header[8][0] != -1:
             pbc.append(float(an[header[8][0]]))
             pbc.append(float(an[header[8][1]]) / sigma_level)
+            if header[8][2] != -1:
+                pbc.append(float(an[header[8][2]]) / sigma_level)
+            else:
+                pbc.append(float(an[header[8][1]]) / sigma_level)
         else:
+            pbc.append(-1)
             pbc.append(-1)
             pbc.append(-1)
 
@@ -492,7 +564,12 @@ def file_to_analysis(imp_file, index):
         if header[10][0] != -1:
             pb206_pb204.append(float(an[header[10][0]]))
             pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
+            if header[10][2] != -1:
+                pb206_pb204.append(float(an[header[10][2]]) / sigma_level)
+            else:
+                pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
         else:
+            pb206_pb204.append(-1)
             pb206_pb204.append(-1)
             pb206_pb204.append(-1)
 
@@ -500,7 +577,12 @@ def file_to_analysis(imp_file, index):
         if header[11][0] != -1:
             pb207_pb204.append(float(an[header[11][0]]))
             pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
+            if header[11][2] != -1:
+                pb207_pb204.append(float(an[header[11][2]]) / sigma_level)
+            else:
+                pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
         else:
+            pb207_pb204.append(-1)
             pb207_pb204.append(-1)
             pb207_pb204.append(-1)
 
@@ -508,7 +590,12 @@ def file_to_analysis(imp_file, index):
         if header[12][0] != -1:
             pb208_pb204.append(float(an[header[12][0]]))
             pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
+            if header[12][2] != -1:
+                pb208_pb204.append(float(an[header[12][2]]) / sigma_level)
+            else:
+                pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
         else:
+            pb208_pb204.append(-1)
             pb208_pb204.append(-1)
             pb208_pb204.append(-1)
 
@@ -516,7 +603,12 @@ def file_to_analysis(imp_file, index):
         if header[13][0] != -1:
             th232_pb204.append(float(an[header[13][0]]))
             th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+            if header[13][2] != -1:
+                th232_pb204.append(float(an[header[13][2]]) / sigma_level)
+            else:
+                th232_pb204.append(float(an[header[13][1]]) / sigma_level)
         else:
+            th232_pb204.append(-1)
             th232_pb204.append(-1)
             th232_pb204.append(-1)
 
@@ -524,7 +616,12 @@ def file_to_analysis(imp_file, index):
         if header[14][0] != -1:
             u238_pb204.append(float(an[header[14][0]]))
             u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+            if header[14][2] != -1:
+                u238_pb204.append(float(an[header[14][2]]) / sigma_level)
+            else:
+                u238_pb204.append(float(an[header[14][1]]) / sigma_level)
         else:
+            u238_pb204.append(-1)
             u238_pb204.append(-1)
             u238_pb204.append(-1)
 
@@ -545,24 +642,28 @@ def file_to_analysis(imp_file, index):
         pb207_pb206 = []
         pb207_pb206.append(float(an[1]))
         pb207_pb206.append(float(an_err[1]) / sigma_level)
+        pb207_pb206.append(float(an_err[1]) / sigma_level)
 
         pb206_u238 = []
         pb206_u238.append(float(an[2]))
+        pb206_u238.append(float(an_err[2]) / sigma_level)
         pb206_u238.append(float(an_err[2]) / sigma_level)
 
         pb207_u235 = []
         pb207_u235.append(float(an[3]))
         pb207_u235.append(float(an_err[3]) / sigma_level)
+        pb207_u235.append(float(an_err[3]) / sigma_level)
 
         pb208_th232 = []
         pb208_th232.append(float(an[4]))
         pb208_th232.append(float(an_err[4]) / sigma_level)
+        pb208_th232.append(float(an_err[4]) / sigma_level)
 
-        pb206_pb204 = [-1, -1]
-        pb207_pb204 = [-1, -1]
-        pb208_pb204 = [-1, -1]
-        th232_pb204 = [-1, -1]
-        u238_pb204 = [-1, -1]
+        pb206_pb204 = [-1, -1, -1]
+        pb207_pb204 = [-1, -1, -1]
+        pb208_pb204 = [-1, -1, -1]
+        th232_pb204 = [-1, -1, -1]
+        u238_pb204 = [-1, -1, -1]
 
         corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
         corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
@@ -575,9 +676,10 @@ def file_to_analysis(imp_file, index):
 
 class Analysis(object):
     def __init__(self, analysis_name="", exposure_time="",
-                 pb206_u238=(0, 0), pb207_u235=(0, 0), corr_coef_75_68=0, corr_coef_86_76=0, pb208_th232=(0, 0),
-                 pb207_pb206=(0, 0), u_conc=(0, 0), pbc=(0, 0), pb206_pb204=(0, 0), pb207_pb204=(0, 0),
-                 pb208_pb204=(0, 0), th232_pb204=(0, 0), u238_pb204=(0, 0), sigma_level=0):
+                 pb206_u238=(0, 0, 0), pb207_u235=(0, 0, 0), corr_coef_75_68=0, corr_coef_86_76=0,
+                 pb208_th232=(0, 0, 0), pb207_pb206=(0, 0, 0), u_conc=(0, 0, 0), pbc=(0, 0, 0), pb206_pb204=(0, 0, 0),
+                 pb207_pb204=(0, 0, 0), pb208_pb204=(0, 0, 0), th232_pb204=(0, 0, 0), u238_pb204=(0, 0, 0),
+                 sigma_level=0):
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
         self.__pb206_u238 = pb206_u238
@@ -731,20 +833,25 @@ class Analysis(object):
         return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0])]
 
     # calculates age ± error from isotopic value and uncertainty
-    def calc_age(self, isotopic_system):
+    def calc_age(self, isotopic_system, err_int_prop):
         age_err = -1
+        int_prop = 0
+        if err_int_prop == 'Internal':
+            int_prop = 1
+        else: #if Propagated
+            int_prop = 2
         try:
             if isotopic_system == 0 and self.pb206_u238[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
+                age_err = (1 / lambdas[isotopic_system]) * self.pb206_u238[int_prop] / 1000000
 
             elif isotopic_system == 1 and self.pb207_u235[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
+                age_err = (1 / lambdas[isotopic_system]) * self.pb207_u235[int_prop] / 1000000
 
             elif isotopic_system == 2 and self.pb208_th232[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
+                age_err = (1 / lambdas[isotopic_system]) * self.pb208_th232[int_prop] / 1000000
 
             elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
                 # .04605 corresponds to age67 ~ 0
@@ -766,14 +873,14 @@ class Analysis(object):
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
     def calc_discordance(self, between_68_57):
         if between_68_57:
-            return self.calc_age(1)[0] / self.calc_age(0)[0] - 1
+            return self.calc_age(1, 'Internal')[0] / self.calc_age(0, 'Internal')[0] - 1
 
         else:
-            return 1 - self.calc_age(0)[0] / self.calc_age(3)[0]
+            return 1 - self.calc_age(0, 'Internal')[0] / self.calc_age(3, 'Internal')[0]
 
     # true if should use U238/Pb206, false if should use Pb206/Pb207
     def use_206_238(self, age_cutoff):
-        return self.calc_age(0)[0] < age_cutoff
+        return self.calc_age(0, 'Internal')[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
     def is_grain_good(self, pFilter: Filters):
@@ -810,10 +917,10 @@ class Analysis(object):
                 is_grain_in_chosen_sample = False
 
         # decide on the default age system
-        if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
+        if (which_age == 1 and self.calc_age(0, 'Internal')[0] > age_fixed_limit) or which_age == 2:
             age_68_67 = 1
             this_age = 3
-        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
+        elif (which_age == 1 and self.calc_age(0, 'Internal')[0] < age_fixed_limit) or which_age == 3:
             age_68_67 = 0
             this_age = 0
         else:
@@ -821,15 +928,18 @@ class Analysis(object):
 
         # filter by measurement error
         if do_err:
-            age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
-            err = self.calc_age(age_68_67 * 3)[1]  # calculates correspondent error
+            age = self.calc_age(age_68_67 * 3, 'Internal')[0]  # calculates either 68 or 67 age
+            err = self.calc_age(age_68_67 * 3, 'Internal')[1]  # calculates correspondent error
+            #Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
+
             if err / age < err_cutoff:  # checks whether error is within limit
                 is_err_good = True
             else:
                 is_err_good = False
             if do_207235_err == 1:
-                age207235 = self.calc_age(1)[0]
-                age207235err = self.calc_age(1)[1]
+                age207235 = self.calc_age(1, 'Internal')[0]
+                age207235err = self.calc_age(1, 'Internal')[1]
+                # Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
                 if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
                 else:
@@ -922,7 +1032,7 @@ class AnalysesSet(object):
             zircon = self.analyses_list[index]
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
-                z_age = zircon.calc_age(l_is_grain_good[1])
+                z_age = zircon.calc_age(l_is_grain_good[1], 'Internal')
                 if z_age[0] > max_age:
                     max_age = int(z_age[0])
                 if z_age[0] < min_age:

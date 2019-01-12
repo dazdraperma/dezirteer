@@ -283,42 +283,61 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             file.write('\n' + str(an_list[j]) + ',' +
                        str(an_list[j].pb208_th232[0]) + ',' +
                        str(an_list[j].pb208_th232[1]) + ',' +
+                       str(an_list[j].pb208_th232[2]) + ',' +
                        str(an_list[j].pb207_pb206[0]) + ',' +
                        str(an_list[j].pb207_pb206[1]) + ',' +
+                       str(an_list[j].pb207_pb206[2]) + ',' +
                        str(an_list[j].pb207_u235[0]) + ',' +
                        str(an_list[j].pb207_u235[1]) + ',' +
+                       str(an_list[j].pb207_u235[2]) + ',' +
                        str(an_list[j].pb206_u238[0]) + ',' +
                        str(an_list[j].pb206_u238[1]) + ',' +
+                       str(an_list[j].pb206_u238[2]) + ',' +
                        str(an_list[j].corr_coef_75_68) + ',' +
                        str(an_list[j].corr_coef_86_76) + ',' +
                        str(an_list[j].u_conc[0]) + ',' +
                        str(an_list[j].u_conc[1]) + ',' +
+                       str(an_list[j].u_conc[2]) + ',' +
                        str(an_list[j].pbc[0]) + ',' +
                        str(an_list[j].pbc[1]) + ',' +
+                       str(an_list[j].pbc[2]) + ',' +
                        str(an_list[j].pb206_pb204[0]) + ',' +
                        str(an_list[j].pb206_pb204[1]) + ',' +
+                       str(an_list[j].pb206_pb204[2]) + ',' +
                        str(an_list[j].pb207_pb204[0]) + ',' +
                        str(an_list[j].pb207_pb204[1]) + ',' +
+                       str(an_list[j].pb207_pb204[2]) + ',' +
                        str(an_list[j].pb208_pb204[0]) + ',' +
                        str(an_list[j].pb208_pb204[1]) + ',' +
+                       str(an_list[j].pb208_pb204[2]) + ',' +
                        str(an_list[j].th232_pb204[0]) + ',' +
                        str(an_list[j].th232_pb204[1]) + ',' +
+                       str(an_list[j].th232_pb204[2]) + ',' +
                        str(an_list[j].u238_pb204[0]) + ',' +
                        str(an_list[j].u238_pb204[1]) + ',' +
-                       str(an_list[j].calc_age(2)[0]) + ',' +
-                       str(an_list[j].calc_age(2)[1]) + ',' +
-                       str(an_list[j].calc_age(3)[0]) + ',' +
-                       str(an_list[j].calc_age(3)[1]) + ',' +
-                       str(an_list[j].calc_age(1)[0]) + ',' +
-                       str(an_list[j].calc_age(1)[1]) + ',' +
-                       str(an_list[j].calc_age(0)[0]) + ',' +
-                       str(an_list[j].calc_age(0)[1]) + ',' +
+                       str(an_list[j].u238_pb204[2]) + ',' +
+                       str(an_list[j].calc_age(2, 'Internal')[0]) + ',' +
+                       str(an_list[j].calc_age(2, 'Internal')[1]) + ',' +
+                       str(an_list[j].calc_age(2, 'Propagated')[2]) + ',' +
+
+                       str(an_list[j].calc_age(3, 'Internal')[0]) + ',' +
+                       str(an_list[j].calc_age(3, 'Internal')[1]) + ',' +
+                       str(an_list[j].calc_age(3, 'Propagated')[2]) + ',' +
+
+                       str(an_list[j].calc_age(1, 'Internal')[0]) + ',' +
+                       str(an_list[j].calc_age(1, 'Internal')[1]) + ',' +
+                       str(an_list[j].calc_age(1, 'Propagated')[2]) + ',' +
+
+                       str(an_list[j].calc_age(0, 'Internal')[0]) + ',' +
+                       str(an_list[j].calc_age(0, 'Internal')[1]) + ',' +
+                       str(an_list[j].calc_age(0, 'Propagated')[2]) + ',' +
+
                        str(an_list[j].calc_discordance(False)) + ',' +
                        str(an_list[j].calc_discordance(True)) + ',' +
                        str(an_list[j].is_grain_good(p_filters)[0]) + ',' +
                        str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[0]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[1]))
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[0], 'Internal') + ',' +
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], 'Internal')[1]))
             j += 1
         file.write("\n" * 2)
 
@@ -358,6 +377,10 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
         p_table.delete(ch)
     i = 0
     j = 0
+    if int(p_filters.unc_type) == 0:
+        int_prop = 'Internal'
+    else:
+        int_prop = 'Propagated'
     an_list = p_grainset.analyses_list
     good_grains = p_grainset.good_bad_sets(p_filters)
     '''pdp = [] 
@@ -377,51 +400,75 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
             p_table.insert('', 'end', text=(an_list[j]), values=(
                     round(an_list[j].pb208_th232[0], 4),
                     round(an_list[j].pb208_th232[1], 4),
+                    round(an_list[j].pb208_th232[2], 4),
+
                     round(an_list[j].pb207_pb206[0], 4),
                     round(an_list[j].pb207_pb206[1], 4),
+                    round(an_list[j].pb207_pb206[2], 4),
+
                     round(an_list[j].pb207_u235[0], 4),
                     round(an_list[j].pb207_u235[1], 4),
+                    round(an_list[j].pb207_u235[2], 4),
+
                     round(an_list[j].pb206_u238[0], 4),
                     round(an_list[j].pb206_u238[1], 4),
+                    round(an_list[j].pb206_u238[2], 4),
+
                     round(an_list[j].corr_coef_75_68, 2),
                     round(an_list[j].corr_coef_86_76, 2),
+
                     round(an_list[j].u_conc[0], 4),
                     round(an_list[j].u_conc[1], 4),
+                    round(an_list[j].u_conc[2], 4),
+
                     round(an_list[j].pbc[0], 4),
                     round(an_list[j].pbc[1], 4),
+                    round(an_list[j].pbc[2], 4),
 
                     round(an_list[j].pb206_pb204[0], 1),
                     round(an_list[j].pb206_pb204[1], 1),
+                    round(an_list[j].pb206_pb204[2], 1),
 
                     round(an_list[j].pb207_pb204[0], 1),
                     round(an_list[j].pb207_pb204[1], 1),
+                    round(an_list[j].pb207_pb204[2], 1),
 
                     round(an_list[j].pb208_pb204[0], 1),
                     round(an_list[j].pb208_pb204[1], 1),
+                    round(an_list[j].pb208_pb204[2], 1),
 
                     round(an_list[j].th232_pb204[0], 1),
                     round(an_list[j].th232_pb204[1], 1),
+                    round(an_list[j].th232_pb204[2], 1),
 
                     round(an_list[j].u238_pb204[0], 1),
                     round(an_list[j].u238_pb204[1], 1),
+                    round(an_list[j].u238_pb204[2], 1),
 
+                    int(an_list[j].calc_age(2, 'Internal')[0]),
+                    int(an_list[j].calc_age(2, 'Internal')[1]),
+                    int(an_list[j].calc_age(2, 'Propagated')[1]),
 
-                    int(an_list[j].calc_age(2)[0]),
-                    int(an_list[j].calc_age(2)[1]),
-                    int(an_list[j].calc_age(3)[0]),
-                    int(an_list[j].calc_age(3)[1]),
-                    int(an_list[j].calc_age(1)[0]),
-                    int(an_list[j].calc_age(1)[1]),
-                    int(an_list[j].calc_age(0)[0]),
-                    int(an_list[j].calc_age(0)[1]),
+                    int(an_list[j].calc_age(3, 'Internal')[0]),
+                    int(an_list[j].calc_age(3, 'Internal')[1]),
+                    int(an_list[j].calc_age(3, 'Propagated')[1]),
+
+                    int(an_list[j].calc_age(1, 'Internal')[0]),
+                    int(an_list[j].calc_age(1, 'Internal')[1]),
+                    int(an_list[j].calc_age(1, 'Propagated')[1]),
+
+                    int(an_list[j].calc_age(0, 'Internal')[0]),
+                    int(an_list[j].calc_age(0, 'Internal')[1]),
+                    int(an_list[j].calc_age(0, 'Propagated')[1]),
+
                     int(100*an_list[j].calc_discordance(False)),
                     int(100*an_list[j].calc_discordance(True)),
                     str(an_list[j].is_grain_good(filters)[0]),
                     str(an_list[j].is_grain_good(filters)[1]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[0]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[1])
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], 'Internal')[0]),
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], int_prop)[1])
                     ),
-                    tags = str(an_list[j].is_grain_good(filters)[0]))
+                    tags=str(an_list[j].is_grain_good(filters)[0]))
 
             j += 1
         i += 1

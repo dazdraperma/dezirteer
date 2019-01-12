@@ -193,31 +193,48 @@ class OperationWindow(Frame):
         self.apply_style(self.lbUncType)
         self.lbUncType.configure(text='''Iolite uncertainty:''')
 
-        self.cbUncType = ttk.Combobox(self.frImport)
+        self.rbInternal = Radiobutton(self.frImport)
+        self.rbInternal.grid(row=4, column=1, sticky='w')
+        self.apply_style(self.rbInternal)
+        self.rbInternal.configure(font="TkTextFont")
+        self.rbInternal.configure(text="Int.")
+        self.rbInternal.select()
+        self.rbInternal.configure(variable=gui_support.varUncType, value=0)
+        self.rbInternal.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+
+        self.rbPropagated = Radiobutton(self.frImport)
+        self.rbPropagated.grid(row=5, column=1, sticky='sw')
+        self.apply_style(self.rbPropagated)
+        self.rbPropagated.configure(text="Prop.")
+        self.rbPropagated.configure(variable=gui_support.varUncType, value=1)
+        self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+
+
+        '''self.cbUncType = ttk.Combobox(self.frImport)
         self.cbUncType.grid(row=4, column=1, sticky='w')
         self.cbUncType.configure(textvariable=gui_support.varUncType)
         self.cbUncType.configure(width=10)
         self.cbUncType.configure(values=['Internal', 'Propagated'], state='readonly')
         self.cbUncType.current(0)
         #self.cbUncType.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange, ))
-
+        '''
         self.lbChooseSample = Label(self.frImport)
-        self.lbChooseSample.grid(row=5, columnspan=3, sticky="ew", pady=15)
+        self.lbChooseSample.grid(row=6, columnspan=3, sticky="ew", pady=15)
         self.apply_style(self.lbChooseSample)
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
 
         self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0)
-        self.lboxSamples.grid(row=6, columnspan=3, sticky="ew", padx=5)
+        self.lboxSamples.grid(row=7, columnspan=3, sticky="ew", padx=5)
 
         self.lbUConcFilter = Label(self.frImport)
-        self.lbUConcFilter.grid(row=7, columnspan=3, pady=4, sticky='ew')
+        self.lbUConcFilter.grid(row=8, columnspan=3, pady=4, sticky='ew')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="3. Filter by Uconc?")
 
         self.rbNoUconc = Radiobutton(self.frImport)
-        self.rbNoUconc.grid(row=8, column=0, sticky='w')
+        self.rbNoUconc.grid(row=9, column=0, sticky='w')
         self.apply_style(self.rbNoUconc)
         self.rbNoUconc.configure(font="TkTextFont")
         self.rbNoUconc.configure(text="Don't filter")
@@ -226,14 +243,14 @@ class OperationWindow(Frame):
         self.rbNoUconc.configure(command=lambda: gui_support.onChange(2, False, pars_onChange, self.scUconcCutoff))
 
         self.rbUseUconc = Radiobutton(self.frImport)
-        self.rbUseUconc.grid(row=9, column=0, sticky='sw')
+        self.rbUseUconc.grid(row=10, column=0, sticky='sw')
         self.apply_style(self.rbUseUconc)
         self.rbUseUconc.configure(text="Cutoff at")
         self.rbUseUconc.configure(variable=gui_support.varUConc, value=True)
         self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
 
         self.scUconcCutoff = Scale(self.frImport)
-        self.scUconcCutoff.grid(row=9, column=1)
+        self.scUconcCutoff.grid(row=10, column=1)
         self.scUconcCutoff.configure(activebackground="#d9d9d9")
         self.scUconcCutoff.configure(sliderlength=20)
         self.scUconcCutoff.configure(background="#d9d9d9")
@@ -252,7 +269,7 @@ class OperationWindow(Frame):
         self.scUconcCutoff.configure(command=lambda x: gui_support.onChange(18, self.scUconcCutoff.get(), pars_onChange))
 
         self.lblPPM = Label(self.frImport)
-        self.lblPPM.grid(row=9, column=2, sticky='se', pady=4)
+        self.lblPPM.grid(row=10, column=2, sticky='se', pady=4)
         self.apply_style(self.lblPPM)
         self.lblPPM.configure(text="ppm")
 
@@ -1503,26 +1520,27 @@ def main():
     g_ckde = []
     g_prev_cum = []
     g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
-    g_list_col_names = ['208Pb/232Th', '208/232±1s',
-                        '207Pb/206Pb', '207/206±1s',
-                        '207Pb/235U', '207/235±1s',
-                        '206Pb/238U', '206/238±1s',
+    g_list_col_names = ['208Pb/232Th', '208/232±1σ(Int)', '208/232±1σ(Prop)',
+                        '207Pb/206Pb', '207/206±1σ(Int)', '207/206±1σ(Prop)',
+                        '207Pb/235U', '207/235±1σ(Int)', '207/235±1σ(Prop)',
+                        '206Pb/238U', '206/238±1σ(Int)', '206/238±1σ(Prop)',
                         'corr. coef.75_68', 'corr. coef.86_76',
-                        'Uconc (approx. ppm)', 'Uconc±1s',
-                        'pbc (approx. ppm)', 'pbc±1s',
-                        '206Pb/204Pb', '206/204±1s',
-                        '207Pb/204Pb', '207/204±1s',
-                        '208Pb/204Pb', '208/204±1s',
+                        'Uconc (approx. ppm)', 'Uconc±1σ(Int)', 'Uconc±1σ(Prop)',
+                        'pbc (approx. ppm)', 'pbc±1σ(Int)', 'pbc±1σ(Prop)',
+                        '206Pb/204Pb', '206/204±1σ(Int)', '206/204±1σ(Prop)',
+                        '207Pb/204Pb', '207/204±1σ(Int)', '207/204±1σ(Prop)',
+                        '208Pb/204Pb', '208/204±1σ(Int)', '208/204±1σ(Prop)',
 
-                        '232Th/204Pb', '232/204±1s',
-                        '238U/204Pb', '238/204±1s',
+                        '232Th/204Pb', '232/204±1σ(Int)', '232/204±1σ(Prop)',
+                        '238U/204Pb', '238/204±1σ(Int)', '238/204±1σ(Prop)',
 
-                        'Age 208Pb/232Th', 'Age208/232±1s',
-                        'Age 207Pb/206Pb', 'Age207/206±1s',
-                        'Age 207Pb/235U', 'Age207/235±1s',
-                        'Age 206Pb/238U', 'Age206/238±1s',
+                        'Age 208Pb/232Th', 'Age208/232±1σ(Int)', 'Age208/232±1σ(Prop)',
+                        'Age 207Pb/206Pb',  'Age207/206±1σ(Int)', 'Age207/206±1σ(Prop)',
+                        'Age 207Pb/235U', 'Age207/235±1σ(Int)', 'Age207/235±1σ(Prop)',
+                        'Age 206Pb/238U', 'Age206/238±1σ(Int)', 'Age206/238±1σ(Prop)',
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
-                        'is grain good?', 'best age system', 'best age', 'best age±1s']
+                        'is grain good?', 'best age system',
+                        'best age', 'best age±1σ']
     fill_pbpb_table()
     fill_concordia_table()
     g_filters = Filters()

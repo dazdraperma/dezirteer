@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="54c41e14-d28e-4053-9efc-ea9c3b514e23" name="Default Changelist" comment="" />
-=======
     <list default="true" id="54c41e14-d28e-4053-9efc-ea9c3b514e23" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,14 +18,8 @@
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.5" value="2" />
           <entry key="project.open.time.6" value="1" />
-<<<<<<< HEAD
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="6" />
-=======
           <entry key="project.open.time.8" value="1" />
           <entry key="project.opened" value="5" />
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -54,30 +44,10 @@
           <entry key="Python" value="28" />
         </counts>
       </usages-collector>
-<<<<<<< HEAD
-      <usages-collector id="statistics.vcs.git.usages">
-        <counts>
-          <entry key="git.branch.checkout.local" value="1" />
-        </counts>
-      </usages-collector>
-=======
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-<<<<<<< HEAD
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main_gui.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/math_module.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
-=======
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main_gui.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -92,7 +62,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="748">
               <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -129,22 +98,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-<<<<<<< HEAD
-    <favorite-branches>
-      <branch-storage>
-        <map>
-          <entry type="LOCAL">
-            <value>
-              <list>
-                <branch-info repo="$PROJECT_DIR$/.." source="staging" />
-              </list>
-            </value>
-          </entry>
-        </map>
-      </branch-storage>
-    </favorite-branches>
-=======
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -247,10 +200,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-<<<<<<< HEAD
-=======
     <editor active="true" />
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.086406745" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -283,11 +233,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main_gui.py</url>
-<<<<<<< HEAD
-          <line>1301</line>
-=======
           <line>1300</line>
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -308,8 +254,6 @@
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
-=======
     <entry file="file://$PROJECT_DIR$/main_gui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -327,7 +271,6 @@
         </state>
       </provider>
     </entry>
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
     <entry file="file://$PROJECT_DIR$/gui_support.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -344,21 +287,5 @@
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/main_gui.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/math_module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-=======
->>>>>>> 64f73884b759a54ecb1820bc974ea0552914f821
   </component>
 </project>
