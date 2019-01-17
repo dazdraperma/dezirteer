@@ -49,9 +49,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     corr_age = [-1, -1]
     if corr_type == 0:  # 204
         # parts of common lead in measured
-        f6 = compb(zir.calc_age(0, 'Internal'), 0) / zir.pb206_pb204[0]
-        f7 = compb(zir.calc_age(0, 'Internal'), 1) / zir.pb207_pb204[0]
-        f8 = compb(zir.calc_age(0, 'Internal'), 2) / zir.pb208_pb204[0]
+        f6 = compb(zir.calc_age(0), 0) / zir.pb206_pb204[0]
+        f7 = compb(zir.calc_age(0), 1) / zir.pb207_pb204[0]
+        f8 = compb(zir.calc_age(0), 2) / zir.pb208_pb204[0]
 
         # 204pb corrected ratios
         r68 = zir.pb206_u238[0] * (1 - f6)
@@ -84,9 +84,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while delta > 0.001:
-            f = U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
+            f = U238_U235 * compb(zir.calc_age(0), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
                 calc_ratio(t)[1]
-            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * LAMBDA_238 * (
+            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (
                         calc_ratio(t)[0] + 1)
             delta = -f / deriv
             t = t + delta
@@ -94,10 +94,10 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # error
         r75var = U238_U235 ** 2 * (
                     (zir.pb206_u238[0] * zir.pb207_pb206[1]) ** 2 + (zir.pb207_pb206[0] * zir.pb206_u238[1]) ** 2)
-        denom = (U238_U235 * compb(zir.calc_age(0, 'Internal'), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
+        denom = (U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
                     calc_ratio(t)[1] + 1)) ** 2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
-        n2 = U238_U235 ** 2 * compb(zir.calc_age(0, 'Internal'), 3) * (compb(zir.calc_age(0, 'Internal'), 3) - 2 * zir.pb207_pb206[0]) * \
+        n2 = U238_U235 ** 2 * compb(zir.calc_age(0), 3) * (compb(zir.calc_age(0), 3) - 2 * zir.pb207_pb206[0]) * \
              zir.pb206_u238[1] ** 2
         n = n1 + n2 + r75var
         corr_age[1] = sqrt(n / denom)
@@ -107,9 +107,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # age
         while delta > 0.001:
             f = zir.pb206_u238[0] - (calc_ratio(t)[0] + 1) + 1 - zir.th232_pb204[0] / zir.u238_pb204[0] * compb(
-                zir.calc_age(0, 'Internal'), 0) / \
-                compb(zir.calc_age(0, 'Internal'), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
-            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0, 'Internal'), 0) / compb(zir.calc_age(0, 'Internal'),
+                zir.calc_age(0), 0) / \
+                compb(zir.calc_age(0), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
+            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0),
                                                                                                2) * LAMBDA_232 * \
                     (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)
             delta = -f / deriv
@@ -117,7 +117,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         corr_age[0] = t
         # error
         c1 = 0
-        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0, 'Internal'), 0) / compb(zir.calc_age(0, 'Internal'), 2)
+        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0), 2)
         n1 = 0
         n2 = c2 * zir.pb208_th232[1] * zir.pb206_u238[1] ** 2
         n = n1 + n2
@@ -149,7 +149,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             mkx=mkx*zir.pb207_u235[1]+x
             mky=mky*zir.pb206_u238[1]+y
             mkz=mkz*zir.pb208_th232[1]+z
-            t1=calc_age(mkx, 'Internal')[0]
+            t1=calc_age(mkx)[0]
             mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
             mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
         ageer=np.std(mkages)
@@ -231,7 +231,7 @@ class Filters(object):  # describes filters that should be applied to data in An
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=1,
-                 sample_name_filter=[], unc_type='0'):
+                 sample_name_filter=[], unc_type='1'):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -241,7 +241,7 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__neg_disc_filter = neg_disc_filter
         self.__disc_type = disc_type
         self.__sample_name_filter = sample_name_filter
-        self.__unc_type = unc_type #0 for internal, 1 for propagated
+        self.__unc_type = unc_type #1 for internal, 2 for propagated
 
     @property
     def filter_by_uconc(self):
@@ -833,25 +833,29 @@ class Analysis(object):
         return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0])]
 
     # calculates age ± error from isotopic value and uncertainty
-    def calc_age(self, isotopic_system, err_int_prop):
-        age_err = -1
-        int_prop = 0
-        if err_int_prop == 'Internal':
-            int_prop = 1
-        else: #if Propagated
-            int_prop = 2
+    def calc_age(self, isotopic_system):
+        age_err_int = -1
+        age_err_prop = -1
+        #int_prop = 0
+        #if err_int_prop == 'Internal':
+        #    int_prop = 1
+        #else: #if Propagated
+        #    int_prop = 2
         try:
             if isotopic_system == 0 and self.pb206_u238[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb206_u238[int_prop] / 1000000
+                age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
+                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
 
             elif isotopic_system == 1 and self.pb207_u235[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb207_u235[int_prop] / 1000000
+                age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
+                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
 
             elif isotopic_system == 2 and self.pb208_th232[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
-                age_err = (1 / lambdas[isotopic_system]) * self.pb208_th232[int_prop] / 1000000
+                age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
+                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
 
             elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
                 # .04605 corresponds to age67 ~ 0
@@ -862,25 +866,25 @@ class Analysis(object):
                 df = self.pb207_pb206[1]
                 dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
                              (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                age_err = abs(df / dfdt / 1000000)
+                age_err_int = age_err_prop = abs(df / dfdt / 1000000)
                 age = age / 1000000
             else:
                 age = -1
-            return [age, age_err]
+            return [age, age_err_int, age_err_prop]
         except ValueError:
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
     def calc_discordance(self, between_68_57):
         if between_68_57:
-            return self.calc_age(1, 'Internal')[0] / self.calc_age(0, 'Internal')[0] - 1
+            return self.calc_age(1)[0] / self.calc_age(0)[0] - 1
 
         else:
-            return 1 - self.calc_age(0, 'Internal')[0] / self.calc_age(3, 'Internal')[0]
+            return 1 - self.calc_age(0)[0] / self.calc_age(3)[0]
 
     # true if should use U238/Pb206, false if should use Pb206/Pb207
     def use_206_238(self, age_cutoff):
-        return self.calc_age(0, 'Internal')[0] < age_cutoff
+        return self.calc_age(0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
     def is_grain_good(self, pFilter: Filters):
@@ -917,10 +921,10 @@ class Analysis(object):
                 is_grain_in_chosen_sample = False
 
         # decide on the default age system
-        if (which_age == 1 and self.calc_age(0, 'Internal')[0] > age_fixed_limit) or which_age == 2:
+        if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
             age_68_67 = 1
             this_age = 3
-        elif (which_age == 1 and self.calc_age(0, 'Internal')[0] < age_fixed_limit) or which_age == 3:
+        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
             age_68_67 = 0
             this_age = 0
         else:
@@ -928,8 +932,8 @@ class Analysis(object):
 
         # filter by measurement error
         if do_err:
-            age = self.calc_age(age_68_67 * 3, 'Internal')[0]  # calculates either 68 or 67 age
-            err = self.calc_age(age_68_67 * 3, 'Internal')[1]  # calculates correspondent error
+            age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
+            err = self.calc_age(age_68_67 * 3)[1]  # calculates correspondent error
             #Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
 
             if err / age < err_cutoff:  # checks whether error is within limit
@@ -937,8 +941,8 @@ class Analysis(object):
             else:
                 is_err_good = False
             if do_207235_err == 1:
-                age207235 = self.calc_age(1, 'Internal')[0]
-                age207235err = self.calc_age(1, 'Internal')[1]
+                age207235 = self.calc_age(1)[0]
+                age207235err = self.calc_age(1)[1]
                 # Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
                 if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
@@ -1032,7 +1036,7 @@ class AnalysesSet(object):
             zircon = self.analyses_list[index]
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
-                z_age = zircon.calc_age(l_is_grain_good[1], 'Internal')
+                z_age = zircon.calc_age(l_is_grain_good[1])#ACHTUNG!!! Internal errors only! Need to add propagated!
                 if z_age[0] > max_age:
                     max_age = int(z_age[0])
                 if z_age[0] < min_age:
@@ -1062,11 +1066,11 @@ class AnalysesSet(object):
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
 
     # calculates probability density function for a given age
-    def pdp_calc(self, p_age_needed):
+    def pdp_calc(self, p_age_needed, unc_type):
         if bool(self.good_set):
             sum_gauss = 0
             for key, value in self.good_set.items():
-                error = 2 * value[1]
+                error = 2 * value[unc_type]
                 age = value[0]
                 sum_gauss = sum_gauss + (1 / (error * sqrt2pi)) * exp((-(p_age_needed - age) ** 2) / (2 * error ** 2))
             return 1 / len(self.good_set) * sum_gauss
@@ -1082,13 +1086,13 @@ class AnalysesSet(object):
             return 1 / (p_bandwidth * len(self.good_set)) * sum_gauss
 
     # fills and returns a list of pdp's for ages from 0 to EarthAge
-    def pdp(self):
+    def pdp(self, unc_type):
         index = 0
         list_pdp = []
         list_peaks = []
         if bool(self.good_set):
             while index < EarthAge:
-                list_pdp.append(self.pdp_calc(index))
+                list_pdp.append(self.pdp_calc(index, unc_type))
                 if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[
                     index - 1]:  # peak recognizing
                     list_peaks.append(index - 1)
@@ -1116,9 +1120,9 @@ class AnalysesSet(object):
             return [list_kde, list_peaks]
 
     # fills and returns a list of cumulative pdp's for ages from 0 to EarthAge
-    def cpdp(self):
+    def cpdp(self, unc_type):
         if bool(self.good_set):
-            pdp = self.pdp()[0]
+            pdp = self.pdp(unc_type)[0]
             list_pdp = []
             list_pdp.append(pdp[0])
             for index in range(1, len(pdp)):

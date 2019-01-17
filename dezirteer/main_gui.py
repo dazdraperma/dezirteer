@@ -39,7 +39,7 @@ def set_pval_dval():
         if g_graph_settings.pdp_kde_hist == 0:
             curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
         elif g_graph_settings.pdp_kde_hist == 1:
-            curr_cum = g_grainset.cpdp()
+            curr_cum = g_grainset.cpdp(gui_support.varUncType.get())
         else:
             curr_cum = []
         dval = d_value(curr_cum, g_prev_cum)
@@ -51,7 +51,7 @@ def peaks():
     if g_graph_settings.pdp_kde_hist == 0:
         return g_grainset.kde(g_graph_settings.bandwidth)[1]
     else:
-        return g_grainset.pdp()[1]
+        return g_grainset.pdp(gui_support.varUncType.get())[1]
 
 
 def show_calc_frame(container):
@@ -198,15 +198,15 @@ class OperationWindow(Frame):
         self.apply_style(self.rbInternal)
         self.rbInternal.configure(font="TkTextFont")
         self.rbInternal.configure(text="Int.")
-        self.rbInternal.select()
-        self.rbInternal.configure(variable=gui_support.varUncType, value=0)
+        self.rbInternal.configure(variable=gui_support.varUncType, value=1)
         self.rbInternal.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+        self.rbInternal.select()
 
         self.rbPropagated = Radiobutton(self.frImport)
         self.rbPropagated.grid(row=5, column=1, sticky='sw')
         self.apply_style(self.rbPropagated)
         self.rbPropagated.configure(text="Prop.")
-        self.rbPropagated.configure(variable=gui_support.varUncType, value=1)
+        self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
         self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
 
 
@@ -877,7 +877,7 @@ class OperationWindow(Frame):
                 graph_to_draw = g_grainset.kde(g_graph_settings.bandwidth)
 
             elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.pdp()[0]
+                graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
         except NameError:
             pass
 
@@ -921,7 +921,7 @@ class OperationWindow(Frame):
                 graph_to_draw = g_grainset.ckde(g_graph_settings.bandwidth)
 
             elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.cpdp()
+                graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
         except NameError:
             pass
 
@@ -1165,7 +1165,6 @@ class OperationWindow(Frame):
                     peaks()
                 )
 
-
         else:
             if g_plot_txt != "":
                 g_plot_txt.remove()
@@ -1216,8 +1215,8 @@ class OperationWindow(Frame):
             prob_title = "Kernel Density Estimates (KDE)"
             cum_title = "Cumulative KDE"
         elif g_graph_settings.pdp_kde_hist == 1:
-            prob_graph_to_draw = g_grainset.pdp()[0]
-            cum_graph_to_draw = g_grainset.cpdp()
+            prob_graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
+            cum_graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
             prob_title = "Probability Density Plot (PDP)"
             cum_title = "Cumulative PDP"
         else:
@@ -1233,7 +1232,7 @@ class OperationWindow(Frame):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
-            self.ax_conc.plot(x,y,'ko')
+            self.ax_conc.plot(x, y, 'ko')
             self.ax_conc.text(x, y, str(t), style='italic', )
             # self.ax_conc.annotate(str(t), xy=(x, y), xytext=(x-0.4*x, y+0.4*y),
             #            arrowprops=dict(facecolor='black', shrink=0.05))
@@ -1248,16 +1247,16 @@ class OperationWindow(Frame):
                 corr_coef = zir.corr_coef_75_68
                 x_conc = zir.pb207_u235[0]  # x-center of the oval
                 y_conc = zir.pb206_u238[0]  # y-center of the oval
-                x_err = zir.pb207_u235[1]
-                y_err = zir.pb206_u238[1]
+                x_err = zir.pb207_u235[gui_support.varUncType.get()] #asdf
+                y_err = zir.pb206_u238[gui_support.varUncType.get()]
             # Tera-Wasserburg concordia
             else:
                 corr_coef = zir.corr_coef_86_76
                 j = zir.u238_pb206()
                 x_conc = j[0]
-                x_err = j[1]
+                x_err = j[gui_support.varUncType.get()]
                 y_conc = zir.pb207_pb206[0]
-                y_err = zir.pb207_pb206[1]
+                y_err = zir.pb207_pb206[gui_support.varUncType.get()]
 
             a1 = x_err * corr_coef * sqrt(2) * sigma_level
             a2 = y_err * corr_coef * sqrt(2) * sigma_level
@@ -1321,10 +1320,10 @@ class OperationWindow(Frame):
             if g_graph_settings.pdp_kde_hist == 0:
                 list_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
             elif g_graph_settings.pdp_kde_hist == 1:
-                list_peaks = g_grainset.pdp()[1]
+                list_peaks = g_grainset.pdp(gui_support.varUncType.get())[1]
             else:
                 list_peaks = []
-            while i<len(list_peaks):
+            while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], color='black')
                 i += 1
         else:
@@ -1361,11 +1360,12 @@ class OperationWindow(Frame):
         if g_graph_settings.pdp_kde_hist == 0:
             g_prev_cum = g_grainset.ckde(g_graph_settings.bandwidth)
         else:
-            g_prev_cum = g_grainset.cpdp()
+            g_prev_cum = g_grainset.cpdp(gui_support.varUncType.get())
+
 
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
-    def  clear_and_plot(self, *args):
+    def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
 
