@@ -1039,7 +1039,7 @@ class AnalysesSet(object):
             zircon = self.analyses_list[index]
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
-                z_age = zircon.calc_age(l_is_grain_good[1])#ACHTUNG!!! Internal errors only! Need to add propagated!
+                z_age = zircon.calc_age(l_is_grain_good[1])
                 if z_age[0] > max_age:
                     max_age = int(z_age[0])
                 if z_age[0] < min_age:

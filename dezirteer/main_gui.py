@@ -1222,7 +1222,7 @@ class OperationWindow(Frame):
         else:
             tuple_list = sorted(list(g_grainset.good_set.values()), key=lambda x: x[0])
             prob_graph_to_draw = [x[0] for x in tuple_list]
-            cum_graph_to_draw=[]
+            cum_graph_to_draw = []
             prob_title = "Histogram"
             cum_title = "Cumulative Histogram"
         return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
