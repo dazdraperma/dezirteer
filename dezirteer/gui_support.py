@@ -544,6 +544,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     p_table.tag_configure("False", background="red")
     return good_grains
 
+
 def verifyNumberOnly(pObject):
     if not pObject.get().isdigit:
         pObject.delete(0, END)

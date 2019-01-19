@@ -323,7 +323,8 @@ class Filters(object):  # describes filters that should be applied to data in An
     def unc_type(self, value):
         self.__unc_type = value
 
-
+#this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
+#deletes empty lines if present, returns non-empty lines and their number.
 def imported_file(p_file_name):
     file_type = ""
     length = 0
@@ -349,6 +350,7 @@ def imported_file(p_file_name):
     return [lines, file_type, length]
 
 
+#this routine
 def header_pos(imported_list):
     if imported_list[1] == "iolite":
         l_list = []
@@ -830,7 +832,8 @@ class Analysis(object):
 
     def u238_pb206(self):
         rat238206 = 1 / self.pb206_u238[0]
-        return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0])]
+        return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0]),
+                rat238206 * (self.pb206_u238[2] / self.pb206_u238[0])]
 
     # calculates age ± error from isotopic value and uncertainty
     def calc_age(self, isotopic_system):
