@@ -1171,7 +1171,7 @@ class OperationWindow(Frame):
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.40, text_to_show, transform=self.ax_cum.transAxes)
-        self.plot_peaks()
+        if g_graph_settings.pdp_kde_hist != 2: self.plot_peaks()
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
