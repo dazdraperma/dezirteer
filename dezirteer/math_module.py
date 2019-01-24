@@ -638,8 +638,8 @@ def file_to_analysis(imp_file, index):
         analysis_name = an[0]
         exposure_time = 0
 
-        u_conc = [-1, -1]
-        pbc = [-1, -1]
+        u_conc = [-1, -1, -1]
+        pbc = [-1, -1, -1]
 
         pb207_pb206 = []
         pb207_pb206.append(float(an[1]))

@@ -192,6 +192,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
 #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
 
+
 def onGraphChange(p_graph_settings, p_number_in_list, p_value, *args, **kwargs):
     if p_number_in_list == 0:
         p_graph_settings.conc_type = p_value
@@ -260,6 +261,7 @@ def init(pTop, pGui, *args, **kwargs):
     w = pGui
     top_level = pTop
     root = pTop
+
 
 def destroy_window():
     # Function which closes the window.
@@ -451,13 +453,6 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     unc_type = int(p_filters.unc_type)
     an_list = p_grainset.analyses_list
     good_grains = p_grainset.good_bad_sets(p_filters)
-    '''pdp = [] 
-    cpdp = []
-    kde = []
-    ckde = []
-    pdp = p_grainset.pdp()
-    cpdp = p_grainset.cpdp()'''
-
     grainset = p_grainset
     filters = p_filters
     p_table.heading("#0", text="Analysis name", anchor='c')

@@ -382,6 +382,8 @@ class OperationWindow(Frame):
         self.cbTypePbc.configure(width=15)
         self.cbTypePbc.configure(takefocus="")
         self.cbTypePbc.configure(state=DISABLED)
+        self.cbTypePbc.configure(state="readonly", values=('204-corr', '207-corr', '208-corr', 'Andersen'))
+        self.cbTypePbc.current(0)
 
         self.lbFilterByError = Label(self.frFilter)
         self.lbFilterByError.grid(row=9, columnspan=3, pady=15, sticky='ew')
@@ -1089,19 +1091,21 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        unfinished_features = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.rbUseCorr,
-                               self.cbTypePbc, self.rbDiscUbased, self.rbUBased,
-                               self.chbInclude207235Err, self.scErrFilter, self.scUconcCutoff]
+        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
+                               self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
+                               self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
+                               self.rbDisc75_68, self.cbSeparatorType, self.cbTypePbc]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
-                    if child not in unfinished_features:
+                    if child not in features_custom_state:
                         child.configure(state=NORMAL)
             self.rbDiscUbased.configure(state=DISABLED)
             self.rbDiscAgeFixedLim.configure(state=DISABLED)
             self.rbDisc67_68.configure(state=DISABLED)
             self.rbDisc75_68.configure(state=DISABLED)
             self.cbSeparatorType.configure(state="readonly")
+            self.cbTypePbc.configure(state="readonly")
             self.rbAgeFixedLim.select()
             self.chbDiscLinked2Age.select()
             self.rbDiscAgeFixedLim.select()
@@ -1171,11 +1175,10 @@ class OperationWindow(Frame):
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.40, text_to_show, transform=self.ax_cum.transAxes)
-        if g_graph_settings.pdp_kde_hist != 2: self.plot_peaks()
+        if g_graph_settings.pdp_kde_hist != 2: #if not histogram
+            self.plot_peaks()
         self.canvas_cum.draw()
         self.canvas_prob.draw()
-
-
 
     def min_max_ages(self):
         # choosing age interval based on user's input
@@ -1226,7 +1229,6 @@ class OperationWindow(Frame):
             prob_title = "Histogram"
             cum_title = "Cumulative Histogram"
         return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
-
 
     def draw_concordia_ticks(self, xconc, yconc):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
@@ -1361,7 +1363,6 @@ class OperationWindow(Frame):
             g_prev_cum = g_grainset.ckde(g_graph_settings.bandwidth)
         else:
             g_prev_cum = g_grainset.cpdp(gui_support.varUncType.get())
-
 
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
@@ -1537,6 +1538,18 @@ def main():
                         'Age 207Pb/206Pb',  'Age207/206±1s(Int)', 'Age207/206±1s(Prop)',
                         'Age 207Pb/235U', 'Age207/235±1s(Int)', 'Age207/235±1s(Prop)',
                         'Age 206Pb/238U', 'Age206/238±1s(Int)', 'Age206/238±1s(Prop)',
+
+                        #'204-corr. age 208Pb/232Th', '204-corr. age 208Pb/232Th±1s(Int)', '204-corr. age 208Pb/232Th±1s(Prop)',
+                        #'204-corr. age 207Pb/206Pb', '204-corr. age 207Pb/206Pb±1s(Int)', '204-corr. age 207Pb/206Pb±1s(Prop)',
+                        #'204-corr. age 207Pb/235U', '204-corr. age 207Pb/235U±1s(Int)', '204-corr. age 207Pb/235U±1s(Prop)',
+                        #'204-corr. age 206Pb/238U', '204-corr. age 206Pb/238U±1s(Int)', '204-corr. age 206Pb/238U±1s(Prop)',
+
+                        #'207-corr. age', '207-corr. age±1s(Int)', '207-corr. age±1s(Prop)',
+                        #'208-corr. age', '208-corr. age±1s(Int)', '208-corr. age±1s(Prop)',
+
+                        # 'And-corr. age', 'And-corr. age±1s(Int)', 'And-corr. age±1s(Prop)',
+
+
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',
                         'best age', 'best age±1s']
