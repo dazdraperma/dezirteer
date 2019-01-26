@@ -342,6 +342,11 @@ def imported_file(p_file_name):
             temp_list = lines[0: pos_errors_line * 2]
             lines = temp_list
             length = int(len(lines) / 2) - 1
+
+        elif any("Dezirteer_template" in s for s in lines):
+            file_type = "template"
+            length = len(lines)
+
         else:
             for str in range(len(lines)):
                 lines[str] = lines[str].replace(" ", "")
@@ -478,8 +483,20 @@ def find_in_glitter(lst, predicate):
     return next((i for i, j in enumerate(lst) if predicate(j)), -1)
 
 
+#returns an object of Analysis class from a given row in file
 def file_to_analysis(imp_file, index):
     full_data = imp_file[0]
+    pb206_u238 = []
+    pb207_u235 = []
+    pb208_th232 = []
+    pb207_pb206 = []
+    u_conc = []
+    pbc = []
+    pb206_pb204 = []
+    pb207_pb204 = []
+    pb208_pb204 = []
+    th232_pb204 = []
+    u238_pb204 = []
 
     if imp_file[1] == 'iolite':  # iolite routine
         #replacing Iolite NaNs and no values
@@ -495,7 +512,6 @@ def file_to_analysis(imp_file, index):
         exposure_time = float(an[header[1]])
         sigma_level = 2
 
-        pb206_u238 = []
         pb206_u238.append(float(an[header[2][0]]))
         pb206_u238.append(float(an[header[2][1]]) / sigma_level)
         if header[2][2] != -1:
@@ -503,7 +519,6 @@ def file_to_analysis(imp_file, index):
         else:
             pb206_u238.append(float(an[header[2][1]]) / sigma_level)
 
-        pb207_u235 = []
         pb207_u235.append(float(an[header[3][0]]))
         pb207_u235.append(float(an[header[3][1]]) / sigma_level)
         if header[3][2] != -1:
@@ -521,7 +536,6 @@ def file_to_analysis(imp_file, index):
         else:
             corr_coef_86_76 = 0.99
 
-        pb208_th232 = []
         pb208_th232.append(float(an[header[5][0]]))
         pb208_th232.append(float(an[header[5][1]]) / sigma_level)
         if header[5][2] != -1:
@@ -529,7 +543,6 @@ def file_to_analysis(imp_file, index):
         else:
             pb208_th232.append(float(an[header[5][1]]) / sigma_level)
 
-        pb207_pb206 = []
         pb207_pb206.append(float(an[header[6][0]]))
         pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
         if header[6][2] != -1:
@@ -537,7 +550,6 @@ def file_to_analysis(imp_file, index):
         else:
             pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
 
-        u_conc = []
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
             u_conc.append(float(an[header[7][1]]) / sigma_level)
@@ -550,7 +562,6 @@ def file_to_analysis(imp_file, index):
             u_conc.append(-1)
             u_conc.append(-1)
 
-        pbc = []
         if header[8][0] != -1:
             pbc.append(float(an[header[8][0]]))
             pbc.append(float(an[header[8][1]]) / sigma_level)
@@ -563,7 +574,6 @@ def file_to_analysis(imp_file, index):
             pbc.append(-1)
             pbc.append(-1)
 
-        pb206_pb204 = []
         if header[10][0] != -1:
             pb206_pb204.append(float(an[header[10][0]]))
             pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
@@ -576,7 +586,6 @@ def file_to_analysis(imp_file, index):
             pb206_pb204.append(-1)
             pb206_pb204.append(-1)
 
-        pb207_pb204 = []
         if header[11][0] != -1:
             pb207_pb204.append(float(an[header[11][0]]))
             pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
@@ -589,7 +598,6 @@ def file_to_analysis(imp_file, index):
             pb207_pb204.append(-1)
             pb207_pb204.append(-1)
 
-        pb208_pb204 = []
         if header[12][0] != -1:
             pb208_pb204.append(float(an[header[12][0]]))
             pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
@@ -602,7 +610,6 @@ def file_to_analysis(imp_file, index):
             pb208_pb204.append(-1)
             pb208_pb204.append(-1)
 
-        th232_pb204 = []
         if header[13][0] != -1:
             th232_pb204.append(float(an[header[13][0]]))
             th232_pb204.append(float(an[header[13][1]]) / sigma_level)
@@ -615,7 +622,6 @@ def file_to_analysis(imp_file, index):
             th232_pb204.append(-1)
             th232_pb204.append(-1)
 
-        u238_pb204 = []
         if header[14][0] != -1:
             u238_pb204.append(float(an[header[14][0]]))
             u238_pb204.append(float(an[header[14][1]]) / sigma_level)
@@ -628,7 +634,7 @@ def file_to_analysis(imp_file, index):
             u238_pb204.append(-1)
             u238_pb204.append(-1)
 
-    else:  # glitter routine
+    elif imp_file[1] == 'glitter':  # glitter routine
         file_len = imp_file[2]
         sigma_level = 1.0  # check if all glitter files have this by default
         pos_isotopic_ratios_line = find_in_glitter(full_data, lambda x: '_Isotopic_ratios.' in x)
@@ -642,22 +648,18 @@ def file_to_analysis(imp_file, index):
         u_conc = [-1, -1, -1]
         pbc = [-1, -1, -1]
 
-        pb207_pb206 = []
         pb207_pb206.append(float(an[1]))
         pb207_pb206.append(float(an_err[1]) / sigma_level)
         pb207_pb206.append(float(an_err[1]) / sigma_level)
 
-        pb206_u238 = []
         pb206_u238.append(float(an[2]))
         pb206_u238.append(float(an_err[2]) / sigma_level)
         pb206_u238.append(float(an_err[2]) / sigma_level)
 
-        pb207_u235 = []
         pb207_u235.append(float(an[3]))
         pb207_u235.append(float(an_err[3]) / sigma_level)
         pb207_u235.append(float(an_err[3]) / sigma_level)
 
-        pb208_th232 = []
         pb208_th232.append(float(an[4]))
         pb208_th232.append(float(an_err[4]) / sigma_level)
         pb208_th232.append(float(an_err[4]) / sigma_level)
@@ -670,6 +672,62 @@ def file_to_analysis(imp_file, index):
 
         corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
         corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+
+    else: #template
+        sigma_level = 1
+        an = full_data[index].split(",")
+        analysis_name = an[0]
+        exposure_time = 0
+
+        pb208_th232.append(float(an[1]))
+        pb208_th232.append(float(an[2]) / sigma_level)
+        pb208_th232.append(float(an[2]) / sigma_level)
+
+        pb206_u238.append(float(an[3]))
+        pb206_u238.append(float(an[4]) / sigma_level)
+        pb206_u238.append(float(an[4]) / sigma_level)
+
+        pb207_u235.append(float(an[5]))
+        pb207_u235.append(float(an[6]) / sigma_level)
+        pb207_u235.append(float(an[6]) / sigma_level)
+
+        corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
+
+        pb207_pb206.append(float(an[7]))
+        pb207_pb206.append(float(an[8]) / sigma_level)
+        pb207_pb206.append(float(an[8]) / sigma_level)
+
+        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+
+        u_conc.append(float(an[9]))
+        u_conc.append(float(an[10]) / sigma_level)
+        u_conc.append(float(an[10]) / sigma_level)
+
+        pbc.append(float(an[11]))
+        pbc.append(float(an[12]) / sigma_level)
+        pbc.append(float(an[12]) / sigma_level)
+
+        pb206_pb204.append(float(an[13]))
+        pb206_pb204.append(float(an[14]) / sigma_level)
+        pb206_pb204.append(float(an[14]) / sigma_level)
+
+        pb207_pb204.append(float(an[15]))
+        pb207_pb204.append(float(an[16]) / sigma_level)
+        pb207_pb204.append(float(an[16]) / sigma_level)
+
+        pb208_pb204.append(float(an[17]))
+        pb208_pb204.append(float(an[18]) / sigma_level)
+        pb208_pb204.append(float(an[18]) / sigma_level)
+
+        th232_pb204.append(float(an[19]))
+        th232_pb204.append(float(an[20]) / sigma_level)
+        th232_pb204.append(float(an[20]) / sigma_level)
+
+        u238_pb204.append(float(an[21]))
+        u238_pb204.append(float(an[22]) / sigma_level)
+        u238_pb204.append(float(an[22]) / sigma_level)
+
+
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
                           pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
@@ -891,7 +949,7 @@ class Analysis(object):
         return self.calc_age(0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
-    def is_grain_good(self, pFilter: Filters):
+    def is_grain_good(self, pFilter: Filters, p_divider):
         do_uconc = pFilter.filter_by_uconc[0]
         uconc_ppm_cutoff = pFilter.filter_by_uconc[1]
         which_age = pFilter.which_age[0]
@@ -919,7 +977,7 @@ class Analysis(object):
 
         # filter by sample name
         if sample_name_filter != []:
-            if str(self.analysis_name).rpartition('_')[0] in sample_name_filter:
+            if str(self.analysis_name).rpartition(p_divider)[0] in sample_name_filter:
                 is_grain_in_chosen_sample = True
             else:
                 is_grain_in_chosen_sample = False
@@ -1020,7 +1078,7 @@ class AnalysesSet(object):
 
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
     # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages
-    def good_bad_sets(self, p_filter: Filters):
+    def good_bad_sets(self, p_filter: Filters, p_separator):
         index = 0
         max_age = 0
         min_age = 5000
@@ -1038,7 +1096,7 @@ class AnalysesSet(object):
         self.bad_set.clear()
         while index <= len(self.analyses_list) - 1:
             zircon = self.analyses_list[index]
-            l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
+            l_is_grain_good = Analysis.is_grain_good(zircon, p_filter, p_separator)
             if l_is_grain_good[0]:
                 z_age = zircon.calc_age(l_is_grain_good[1])
                 if z_age[0] > max_age:

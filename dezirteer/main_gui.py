@@ -160,16 +160,55 @@ class OperationWindow(Frame):
         self.lbImport.configure(text="1. Import data")
 
         self.lbSeparatorType = Label(self.frImport)
-        self.lbSeparatorType.grid(row=1, column=0, pady=5, sticky='w')
+        self.lbSeparatorType.grid(row=1, column=0, columnspan=2, pady=5, sticky='e')
         self.apply_style(self.lbSeparatorType)
         self.lbSeparatorType.configure(text='Analysis # separator:')
 
-        self.cbSeparatorType = ttk.Combobox(self.frImport)
-        self.cbSeparatorType.grid(row=1, column=1, sticky='w')
-        self.cbSeparatorType.configure(textvariable=gui_support.varSeparatorType)
-        self.cbSeparatorType.configure(width=3)
-        self.cbSeparatorType.configure(values=['_', '-', '.', ','], state='readonly')
-        self.cbSeparatorType.current(0)
+        self.rbUnderscore = Radiobutton(self.frImport)
+        self.rbUnderscore.grid(row=1, column=2, sticky='w')
+        self.apply_style(self.rbUnderscore)
+        self.rbUnderscore.configure(font="TkTextFont")
+        self.rbUnderscore.configure(text="_")
+        self.rbUnderscore.configure(variable=gui_support.varSeparatorType, value="_")
+        self.rbUnderscore.configure(command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+        self.rbUnderscore.select()
+
+        self.rbDash = Radiobutton(self.frImport)
+        self.rbDash.grid(row=1, column=3, sticky='w')
+        self.apply_style(self.rbDash)
+        self.rbDash.configure(font="TkTextFont")
+        self.rbDash.configure(text="-")
+        self.rbDash.configure(variable=gui_support.varSeparatorType, value="-")
+        self.rbDash.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+
+        self.rbComma = Radiobutton(self.frImport)
+        self.rbComma.grid(row=1, column=4, sticky='w')
+        self.apply_style(self.rbComma)
+        self.rbComma.configure(font="TkTextFont")
+        self.rbComma.configure(text=",")
+        self.rbComma.configure(variable=gui_support.varSeparatorType, value=",")
+        self.rbComma.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+
+        self.rbDot = Radiobutton(self.frImport)
+        self.rbDot.grid(row=1, column=5, sticky='w')
+        self.apply_style(self.rbDot)
+        self.rbDot.configure(font="TkTextFont")
+        self.rbDot.configure(text=".")
+        self.rbDot.configure(variable=gui_support.varSeparatorType, value=".")
+        self.rbDot.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+
+
+
+        #self.cbSeparatorType = ttk.Combobox(self.frImport)
+        #self.cbSeparatorType.grid(row=1, column=1, sticky='w')
+        #self.cbSeparatorType.configure(textvariable=gui_support.varSeparatorType)
+        #self.cbSeparatorType.configure(width=3)
+        #self.cbSeparatorType.configure(values=['_', '-', '.', ','], state='readonly')
+        #self.cbSeparatorType.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(25, self.cbSeparatorType.get(), pars_onChange))
+        #self.cbSeparatorType.current(0)
 
         self.btnImport = Button(self.frImport, width=14, height=2)
         self.btnImport.grid(row=2, columnspan=3, pady=10)
@@ -1094,7 +1133,7 @@ class OperationWindow(Frame):
                         an_set = an_set + g_grainset.analyses_list
 
                     g_grainset = AnalysesSet(an_set, 'set#1')
-                    g_grainset.good_bad_sets(g_filters)
+                    g_grainset.good_bad_sets(g_filters, gui_support.varSeparatorType.get())
 
                     pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
@@ -1102,7 +1141,7 @@ class OperationWindow(Frame):
                     g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                                           g_list_col_names)
 
-                    g_list_of_samples = same_sample_set(g_grainset, str(self.cbSeparatorType.get()))
+                    g_list_of_samples = same_sample_set(g_grainset, str(gui_support.varSeparatorType.get()))
                     self.reset_controls(True)
                     self.clear_prev_or_remove_text()
                 else:
@@ -1146,8 +1185,7 @@ class OperationWindow(Frame):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
                                self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
                                self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
-                               self.rbDisc75_68, self.cbSeparatorType, self.cbTypePbc, self.scCommPbCutoff,
-                                 self.rbNoCommPb, self.rbUseCommPb]
+                               self.rbDisc75_68,  self.cbTypePbc, self.scCommPbCutoff, self.rbNoCommPb, self.rbUseCommPb]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
@@ -1157,7 +1195,7 @@ class OperationWindow(Frame):
             self.rbDiscAgeFixedLim.configure(state=DISABLED)
             self.rbDisc67_68.configure(state=DISABLED)
             self.rbDisc75_68.configure(state=DISABLED)
-            self.cbSeparatorType.configure(state="readonly")
+            #self.cbSeparatorType.configure(state="readonly")
             self.cbTypePbc.configure(state="readonly")
             self.rbAgeFixedLim.select()
             self.chbDiscLinked2Age.select()
@@ -1181,7 +1219,11 @@ class OperationWindow(Frame):
             self.btnImport.configure(state='normal')
             self.btnCalcWindow.configure(state='normal')
             self.lbSeparatorType.configure(state='normal')
-            self.cbSeparatorType.configure(state='readonly')
+            #self.cbSeparatorType.configure(state='readonly')
+            self.rbUnderscore.configure(state='normal')
+            self.rbDash.configure(state='normal')
+            self.rbComma.configure(state='normal')
+            self.rbDot.configure(state='normal')
             self.lbImport.configure(state='normal')
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
@@ -1477,10 +1519,12 @@ class OperationWindow(Frame):
             self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
         except ValueError:
-            pass
+            self.lbShowStatus.configure(text="value error", fg="red")
+            print ("value error")
 
         except TypeError:
-            pass
+            self.lbShowStatus.configure(text="type error", fg="red")
+            print("type error")
 
         finally:
             self.plot_conc_text_peaks()
