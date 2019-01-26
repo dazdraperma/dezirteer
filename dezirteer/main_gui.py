@@ -413,17 +413,6 @@ class OperationWindow(Frame):
         self.rbUseErrFilter.configure(command=lambda: gui_support.onChange(5, True, pars_onChange,
                                                                            self.chbInclude207235Err, self.scErrFilter))
 
-        self.chbInclude207235Err = Checkbutton(self.frFilter)
-        self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbInclude207235Err)
-        self.chbInclude207235Err.configure(text="include error in 207/235?")
-        self.chbInclude207235Err.configure(justify=LEFT)
-        self.chbInclude207235Err.configure(state=DISABLED)
-        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
-        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
-                                                                                gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange,))
-
         self.scErrFilter = Scale(self.frFilter)
         self.scErrFilter.grid(row=11, column=1, sticky='ew')
         self.scErrFilter.configure(activebackground="#d9d9d9")
@@ -445,6 +434,67 @@ class OperationWindow(Frame):
         self.scErrFilter.configure(
             command=lambda x: gui_support.onChange(20, self.scErrFilter.get(), pars_onChange, g_list_col_names))
 
+        self.chbInclude207235Err = Checkbutton(self.frFilter)
+        self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbInclude207235Err)
+        self.chbInclude207235Err.configure(text="include error in 207/235?")
+        self.chbInclude207235Err.configure(justify=LEFT)
+        self.chbInclude207235Err.configure(state=DISABLED)
+        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
+        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
+                                                                                gui_support.varInclude207235Err.get(),
+                                                                                pars_onChange,))
+
+
+        self.lbFiltCommPb = Label(self.frFilter)
+        self.lbFiltCommPb.grid(row=13, columnspan=3, pady=15, sticky='ew')
+        self.apply_style(self.lbFiltCommPb)
+        self.lbFiltCommPb.configure(font=font9)
+        self.lbFiltCommPb.configure(text='''7. Filter by the fraction of common-Pb''')
+
+        self.rbNoCommPb = Radiobutton(self.frFilter)
+        self.rbNoCommPb.grid(row=14, column=0, sticky='w')
+        self.apply_style(self.rbNoCommPb)
+        self.rbNoCommPb.configure(font="TkTextFont")
+        self.rbNoCommPb.configure(text="Don't filter")
+        self.rbNoCommPb.select()
+        self.rbNoCommPb.configure(variable=gui_support.varCommPb, value=False)
+        self.rbNoCommPb.configure(command=lambda: gui_support.onChange(24, False, pars_onChange, self.scCommPbCutoff))
+
+        self.rbUseCommPb = Radiobutton(self.frFilter)
+        self.rbUseCommPb.grid(row=15, column=0, sticky='sw')
+        self.apply_style(self.rbUseCommPb)
+        self.rbUseCommPb.configure(text="Cutoff at fraction:")
+        self.rbUseCommPb.configure(variable=gui_support.varCommPb, value=True)
+        self.rbUseCommPb.configure(command=lambda: gui_support.onChange(24, True, pars_onChange, self.scCommPbCutoff))
+
+        self.scCommPbCutoff = Scale(self.frFilter)
+        self.scCommPbCutoff.grid(row=15, column=1)
+        self.scCommPbCutoff.configure(activebackground="#d9d9d9")
+        self.scCommPbCutoff.configure(sliderlength=20)
+        self.scCommPbCutoff.configure(background="#d9d9d9")
+        self.scCommPbCutoff.configure(font="TkTextFont")
+        self.scCommPbCutoff.configure(foreground="#000000")
+        self.scCommPbCutoff.configure(highlightbackground="#d9d9d9")
+        self.scCommPbCutoff.configure(highlightcolor="black")
+        self.scCommPbCutoff.configure(length="100")
+        self.scCommPbCutoff.configure(orient="horizontal")
+        self.scCommPbCutoff.configure(resolution="0.1")
+        self.scCommPbCutoff.configure(from_="0")
+        self.scCommPbCutoff.configure(to="1")
+        self.scCommPbCutoff.configure(bd=2)
+        self.scCommPbCutoff.set(0.1)
+        self.scCommPbCutoff.configure(troughcolor="#d9d9d9")
+        self.scCommPbCutoff.configure(
+            command=lambda x: gui_support.onChange(18, self.scCommPbCutoff.get(), pars_onChange))
+
+        '''self.scErrFilter.configure(from_="1")
+        self.scErrFilter.configure(to="50")
+        self.scErrFilter.configure(bd=2)
+        self.scErrFilter.set(10)'''
+
+
+
         # _______________frDisc__________________________________________________________________________________________
         self.frDisc = Frame(self.frOper)
         self.frDisc.grid(row=0, column=2, sticky='ns')
@@ -455,20 +505,22 @@ class OperationWindow(Frame):
         self.frDisc.configure(highlightbackground="#d9d9d9")
         self.frDisc.configure(highlightcolor="black")
 
+
+
         self.lbDiscFilt = Label(self.frDisc)
-        self.lbDiscFilt.grid(row=0, columnspan=2, sticky='ew')
+        self.lbDiscFilt.grid(row=3, columnspan=2, sticky='ew')
         self.apply_style(self.lbDiscFilt)
         self.lbDiscFilt.configure(font=font9)
-        self.lbDiscFilt.configure(text='''7. Discord. filters (%)''')
+        self.lbDiscFilt.configure(text='''8. Discord. filters (%)''')
 
         self.lbPosDiscFilt = Label(self.frDisc)
-        self.lbPosDiscFilt.grid(row=1, columnspan=2, sticky='ew')
+        self.lbPosDiscFilt.grid(row=4, columnspan=2, sticky='ew')
         self.apply_style(self.lbPosDiscFilt)
         self.lbPosDiscFilt.configure(anchor='w')
         self.lbPosDiscFilt.configure(text='''Positive:''')
 
         self.scPosDisc = Scale(self.frDisc)
-        self.scPosDisc.grid(row=2, columnspan=2, sticky='ew')
+        self.scPosDisc.grid(row=5, columnspan=2, sticky='ew')
         self.scPosDisc.configure(variable=gui_support.varPosDiscFilter)
         self.scPosDisc.configure(activebackground="#d9d9d9")
         self.scPosDisc.configure(background="#d9d9d9")
@@ -486,14 +538,14 @@ class OperationWindow(Frame):
         self.scPosDisc.configure(command=lambda x: gui_support.onChange(6, self.scPosDisc.get(), pars_onChange))
 
         self.lbNegDiscFilt = Label(self.frDisc)
-        self.lbNegDiscFilt.grid(row=3, columnspan=2, sticky='ew')
+        self.lbNegDiscFilt.grid(row=6, columnspan=2, sticky='ew')
         self.apply_style(self.lbNegDiscFilt)
         self.lbNegDiscFilt.configure(anchor='w')
         self.lbNegDiscFilt.configure(state=DISABLED)
         self.lbNegDiscFilt.configure(text='''Negative:''')
 
         self.scNegDisc = Scale(self.frDisc)
-        self.scNegDisc.grid(row=4, columnspan=2, sticky='ew')
+        self.scNegDisc.grid(row=7, columnspan=2, sticky='ew')
         self.scNegDisc.configure(variable=gui_support.varNegDiscFilter)
         self.scNegDisc.configure(activebackground="#d9d9d9")
         self.scNegDisc.configure(background="#d9d9d9")
@@ -512,14 +564,14 @@ class OperationWindow(Frame):
         self.scNegDisc.configure(command=lambda x: gui_support.onChange(7, self.scNegDisc.get(), pars_onChange))
 
         self.lbCalcDisc = Label(self.frDisc)
-        self.lbCalcDisc.grid(row=5, columnspan=2, sticky='ew', pady=5)
+        self.lbCalcDisc.grid(row=8, columnspan=2, sticky='ew', pady=15)
         self.apply_style(self.lbCalcDisc)
         self.lbCalcDisc.configure(font=font9)
         self.scNegDisc.configure(state=DISABLED)
-        self.lbCalcDisc.configure(text='''8. Discord. type''')
+        self.lbCalcDisc.configure(text='''9. Discord. type''')
 
         self.chbDiscLinked2Age = Checkbutton(self.frDisc)
-        self.chbDiscLinked2Age.grid(row=6, columnspan=2, sticky='w', pady=5)
+        self.chbDiscLinked2Age.grid(row=9, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbDiscLinked2Age)
         self.chbDiscLinked2Age.configure(text="Linked to the choice in #4")
         self.chbDiscLinked2Age.configure(justify=LEFT)
@@ -536,7 +588,7 @@ class OperationWindow(Frame):
 
         self.rbDiscUbased = Radiobutton(self.frDisc)
         self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
-        self.rbDiscUbased.grid(row=7, sticky='w', pady=5)
+        self.rbDiscUbased.grid(row=10, sticky='w', pady=5)
         self.apply_style(self.rbDiscUbased)
         self.rbDiscUbased.configure(justify=LEFT)
         self.rbDiscUbased.configure(text='''Based on U-conc''')
@@ -545,7 +597,7 @@ class OperationWindow(Frame):
 
         self.rbDiscAgeFixedLim = Radiobutton(self.frDisc)
         self.rbDiscAgeFixedLim.configure(variable=gui_support.varDiscType, value=1)
-        self.rbDiscAgeFixedLim.grid(row=8, column=0, sticky='ws', pady=5)
+        self.rbDiscAgeFixedLim.grid(row=11, column=0, sticky='ws', pady=5)
         self.apply_style(self.rbDiscAgeFixedLim)
         self.rbDiscAgeFixedLim.configure(justify=LEFT)
         self.rbDiscAgeFixedLim.configure(text='''Fixed limit (Ma):''')
@@ -554,7 +606,7 @@ class OperationWindow(Frame):
         self.rbDiscAgeFixedLim.select()
 
         self.scDiscAgeFixedLim = Scale(self.frDisc)
-        self.scDiscAgeFixedLim.grid(row=8, column=1, sticky='w')
+        self.scDiscAgeFixedLim.grid(row=11, column=1, sticky='w')
         self.scDiscAgeFixedLim.configure(activebackground="#d9d9d9")
         self.scDiscAgeFixedLim.configure(sliderlength=20)
         self.scDiscAgeFixedLim.configure(background="#d9d9d9")
@@ -575,7 +627,7 @@ class OperationWindow(Frame):
 
         self.rbDisc67_68 = Radiobutton(self.frDisc)
         self.rbDisc67_68.configure(variable=gui_support.varDiscType, value=2)
-        self.rbDisc67_68.grid(row=9, sticky='w', pady=5)
+        self.rbDisc67_68.grid(row=12, sticky='w', pady=5)
         self.apply_style(self.rbDisc67_68)
         self.rbDisc67_68.configure(justify=LEFT)
         self.rbDisc67_68.configure(text='''206/207-238/206''')
@@ -584,7 +636,7 @@ class OperationWindow(Frame):
 
         self.rbDisc75_68 = Radiobutton(self.frDisc)
         self.rbDisc75_68.configure(variable=gui_support.varDiscType, value=3)
-        self.rbDisc75_68.grid(row=10, sticky='sw', pady=5)
+        self.rbDisc75_68.grid(row=13, sticky='sw', pady=5)
         self.apply_style(self.rbDisc75_68)
         self.rbDisc75_68.configure(justify=LEFT)
         self.rbDisc75_68.configure(text='''235/207-238/206''')
@@ -605,7 +657,7 @@ class OperationWindow(Frame):
         self.lbConc.grid(row=0, columnspan=4, sticky='ew')
         self.apply_style(self.lbConc)
         self.lbConc.configure(font=font9)
-        self.lbConc.configure(text='''9. Concordia''')
+        self.lbConc.configure(text='''10. Concordia''')
 
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
@@ -680,7 +732,7 @@ class OperationWindow(Frame):
         self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
         self.apply_style(self.lbKdePdpHist)
         self.lbKdePdpHist.configure(font=font9)
-        self.lbKdePdpHist.configure(text='''10. KDE/PDP/Hist''')
+        self.lbKdePdpHist.configure(text='''11. KDE/PDP/Hist''')
 
         self.rbDrawKDE = Radiobutton(self.frGraphSettings)
         self.rbDrawKDE.configure(variable=gui_support.var_pdp_kde_hist, value=0)
@@ -1094,7 +1146,8 @@ class OperationWindow(Frame):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
                                self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
                                self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
-                               self.rbDisc75_68, self.cbSeparatorType, self.cbTypePbc]
+                               self.rbDisc75_68, self.cbSeparatorType, self.cbTypePbc, self.scCommPbCutoff,
+                                 self.rbNoCommPb, self.rbUseCommPb]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():

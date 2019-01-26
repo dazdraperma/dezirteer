@@ -187,6 +187,8 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].include207235Err = p_value
     elif p_number_in_list == 23:
         pars[0].unc_type = p_value
+    elif p_number_in_list == 24:
+        pars[0].filter_by_commPb = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
@@ -224,6 +226,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varSeparatorType, varUncType
+    global varCommPb
     varUConc = IntVar()
     varDiscType = IntVar()
     varConcType = IntVar()
@@ -254,6 +257,7 @@ def set_Tk_var():
     varLimitAgeSpectrum = IntVar()
     varSeparatorType = IntVar()
     varUncType = IntVar()
+    varCommPb = IntVar()
 
 
 def init(pTop, pGui, *args, **kwargs):

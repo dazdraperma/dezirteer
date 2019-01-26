@@ -66,6 +66,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         a76 = find_age(r76)
 
         # age errors
+        #Achtung! Need to use propagated uncertainties!
         tmp64 = (zir.pb206_pb204[1] / zir.pb206_pb204[0]) ** 2
         tmp74 = (zir.pb207_pb204[1] / zir.pb207_pb204[0]) ** 2
         tmp84 = (zir.pb208_pb204[1] / zir.pb208_pb204[0]) ** 2
@@ -231,7 +232,7 @@ class Filters(object):  # describes filters that should be applied to data in An
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=1,
-                 sample_name_filter=[], unc_type='1'):
+                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
