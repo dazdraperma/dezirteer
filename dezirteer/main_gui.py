@@ -4,7 +4,6 @@
 import os
 import gui_support
 import matplotlib
-import logging
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
@@ -904,9 +903,6 @@ class OperationWindow(Frame):
         self.btnCalcWindow.configure(width=20)
         self.btnCalcWindow.configure(command=lambda: self.show_frame())
 
-        self.progressBar = ttk.Progressbar(self, orient=HORIZONTAL,length=100,  mode='indeterminate')
-        self.progressBar.grid(column=7, row=0, sticky='e', padx=5, pady=6)
-
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
         self.frGraph.configure(relief=GROOVE)
@@ -1175,8 +1171,6 @@ class OperationWindow(Frame):
         self.canvas_prob.draw()
         self.btnClear.configure(state=DISABLED)
         g_plot_txt = ""
-        if self.lbShowStatus.cget("fg") == "red":
-            self.lbShowStatus.configure(text="OK", fg="green")
 
     def export_dialog(self):
         file_main = filedialog.asksaveasfile(mode='w', defaultextension=".csv", initialdir=g_directory,
@@ -1343,59 +1337,50 @@ class OperationWindow(Frame):
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
         for zir in g_grainset.good_set:
-            try:
-                sigma_level = g_graph_settings.eclipses_at
+            sigma_level = g_graph_settings.eclipses_at
 
-                # conventional concordia
-                if g_graph_settings.conc_type == 0:
-                    corr_coef = zir.corr_coef_75_68
-                    x_conc = zir.pb207_u235[0]  # x-center of the oval
-                    y_conc = zir.pb206_u238[0]  # y-center of the oval
-                    x_err = zir.pb207_u235[gui_support.varUncType.get()] #asdf
-                    y_err = zir.pb206_u238[gui_support.varUncType.get()]
-                # Tera-Wasserburg concordia
-                else:
-                    corr_coef = zir.corr_coef_86_76
-                    j = zir.u238_pb206()
-                    x_conc = j[0]
-                    x_err = j[gui_support.varUncType.get()]
-                    y_conc = zir.pb207_pb206[0]
-                    y_err = zir.pb207_pb206[gui_support.varUncType.get()]
+            # conventional concordia
+            if g_graph_settings.conc_type == 0:
+                corr_coef = zir.corr_coef_75_68
+                x_conc = zir.pb207_u235[0]  # x-center of the oval
+                y_conc = zir.pb206_u238[0]  # y-center of the oval
+                x_err = zir.pb207_u235[gui_support.varUncType.get()] #asdf
+                y_err = zir.pb206_u238[gui_support.varUncType.get()]
+            # Tera-Wasserburg concordia
+            else:
+                corr_coef = zir.corr_coef_86_76
+                j = zir.u238_pb206()
+                x_conc = j[0]
+                x_err = j[gui_support.varUncType.get()]
+                y_conc = zir.pb207_pb206[0]
+                y_err = zir.pb207_pb206[gui_support.varUncType.get()]
 
-                a1 = x_err * corr_coef * sqrt(2) * sigma_level
-                a2 = y_err * corr_coef * sqrt(2) * sigma_level
-                ang = atan(tan(2 * (atan(a2 / a1))) * corr_coef) / 2
-                chi_sq_fact = stats.chi2.ppf(conf_lim(sigma_level), 2)
-                c1 = 2 * (1 - corr_coef ** 2) * chi_sq_fact
-                c2 = 1 / cos(2 * ang)
-                vx = x_err ** 2
-                vy = y_err ** 2
-                test_major_axis = c1 / ((1 + c2) / vx + (1 - c2) / vy)
-                a = sqrt(test_major_axis)
-                test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
-                b = sqrt(test_minor_axis)
+            a1 = x_err * corr_coef * sqrt(2) * sigma_level
+            a2 = y_err * corr_coef * sqrt(2) * sigma_level
+            ang = atan(tan(2 * (atan(a2 / a1))) * corr_coef) / 2
+            chi_sq_fact = stats.chi2.ppf(conf_lim(sigma_level), 2)
+            c1 = 2 * (1 - corr_coef ** 2) * chi_sq_fact
+            c2 = 1 / cos(2 * ang)
+            vx = x_err ** 2
+            vy = y_err ** 2
+            test_major_axis = c1 / ((1 + c2) / vx + (1 - c2) / vy)
+            a = sqrt(test_major_axis)
+            test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
+            b = sqrt(test_minor_axis)
 
-                if args != "":
-                    if zir.analysis_name == args[0]:
-                        oval_color = 'blue'
-                        oval_fill = True
-                    else:
-                        oval_color = 'red'
-                        oval_fill = False
+            if args != "":
+                if zir.analysis_name == args[0]:
+                    oval_color = 'blue'
+                    oval_fill = True
                 else:
                     oval_color = 'red'
                     oval_fill = False
-                el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
-                             fill=oval_fill)
-                self.ax_conc.add_patch(el)
-
-            except ValueError:
-                self.lbShowStatus.configure(text="value error in analysis#"+str(zir), fg="red")
-                print("value error")
-
-            except TypeError:
-                self.lbShowStatus.configure(text="type error in analysis"+str(zir), fg="red")
-                print("type error")
+            else:
+                oval_color = 'red'
+                oval_fill = False
+            el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
+                         fill=oval_fill)
+            self.ax_conc.add_patch(el)
 
     def plot_hist(self, min_age, max_age, prob_graph_to_draw):
         bin_sequence = []
@@ -1526,23 +1511,23 @@ class OperationWindow(Frame):
             user_selected_analysis = args
         else:
             user_selected_analysis = ""
+        try:
+            #plots ellipses on concordia-discordia diagram
+            self.plot_conc_ellipses(user_selected_analysis)
 
-        #plots ellipses on concordia-discordia diagram
-        self.plot_conc_ellipses(user_selected_analysis)
+            # plotting KDE/CKDE, PDP/CPDP or histogram
+            self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
-        # plotting KDE/CKDE, PDP/CPDP or histogram
-        self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
-
-        '''except ValueError:
-            #self.lbShowStatus.configure(text="value error", fg="red")
-            print("value error")
+        except ValueError:
+            self.lbShowStatus.configure(text="value error", fg="red")
+            print ("value error")
 
         except TypeError:
-            #self.lbShowStatus.configure(text="type error", fg="red")
-            print("type error")'''
+            self.lbShowStatus.configure(text="type error", fg="red")
+            print("type error")
 
-        #finally:
-        self.plot_conc_text_peaks()
+        finally:
+            self.plot_conc_text_peaks()
 
 
 # The following code is added to facilitate the Scrolled widgets
