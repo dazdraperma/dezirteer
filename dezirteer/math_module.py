@@ -333,7 +333,7 @@ def imported_file(p_file_name):
         lines = list(line for line in (l.strip() for l in f_in) if line)  # deleting empty lines
 
         if any("GLITTER" in s for s in lines):
-            file_type = "glitter"
+            # file_type = "glitter"
             lines.pop(2)
             lines.pop(1)
             lines.pop(0)
@@ -949,7 +949,7 @@ class Analysis(object):
         return self.calc_age(0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
-    def is_grain_good(self, pFilter: Filters, p_divider):
+    def is_grain_good(self, pFilter: Filters):
         do_uconc = pFilter.filter_by_uconc[0]
         uconc_ppm_cutoff = pFilter.filter_by_uconc[1]
         which_age = pFilter.which_age[0]
@@ -977,7 +977,7 @@ class Analysis(object):
 
         # filter by sample name
         if sample_name_filter != []:
-            if str(self.analysis_name).rpartition(p_divider)[0] in sample_name_filter:
+            if parse_sample_analysis(self.analysis_name)[0] in sample_name_filter:#str(self.analysis_name).rpartition(p_divider)[0] in sample_name_filter:
                 is_grain_in_chosen_sample = True
             else:
                 is_grain_in_chosen_sample = False
@@ -1078,7 +1078,7 @@ class AnalysesSet(object):
 
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
     # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages
-    def good_bad_sets(self, p_filter: Filters, p_separator):
+    def good_bad_sets(self, p_filter: Filters):
         index = 0
         max_age = 0
         min_age = 5000
@@ -1096,7 +1096,11 @@ class AnalysesSet(object):
         self.bad_set.clear()
         while index <= len(self.analyses_list) - 1:
             zircon = self.analyses_list[index]
-            l_is_grain_good = Analysis.is_grain_good(zircon, p_filter, p_separator)
+
+            #TEMP
+
+            #parsed_analysis = parse_sample_analysis(str(zircon))
+            l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
                 z_age = zircon.calc_age(l_is_grain_good[1])
                 if z_age[0] > max_age:
@@ -1235,7 +1239,7 @@ def p_value(d_val, n1, n2):
 
 
 # goes through the analyses names in AnalysesSet, returns list of samples
-def same_sample_set(p_set: AnalysesSet, p_str):
+def same_sample_set(p_set: AnalysesSet):
     prev_str = ""
     lset = []
     list_of_analyses_set = []
@@ -1243,7 +1247,7 @@ def same_sample_set(p_set: AnalysesSet, p_str):
     p_set.analyses_list.sort(key=lambda x: x.analysis_name, reverse=False)
     while i < len(p_set):
         an = p_set.analyses_list[i]
-        temp_str = str(an).rpartition(p_str)[0]
+        temp_str = parse_sample_analysis(str(an))[0]#str(an).rpartition(p_str)[0]
         if (temp_str != prev_str) and (prev_str == ""):
             lset.append(an)
             prev_str = temp_str
@@ -1275,6 +1279,15 @@ def conf_lim(sigma_level):
     else:
         return -1
 
+def parse_sample_analysis(full_name):
+    last_underscore = full_name.rfind('_')
+    last_dash = full_name.rfind('-')
+    last_comma = full_name.rfind(',')
+    last_dot = full_name.rfind('.')
+    pos = max(last_comma, last_dash, last_dot, last_underscore)
+    sample_number = full_name[:pos]
+    analysis_number = full_name[pos+1:]
+    return sample_number, analysis_number
 
 def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
     peak_weight = dict.fromkeys(peaks, 0)

@@ -117,7 +117,6 @@ class GraphSettings(object):
 
 def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
-    global varSeparatorType
     if p_number_in_list == 1:
         pars[0].show_multiple = p_value
     elif p_number_in_list == 2:
@@ -190,8 +189,6 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].unc_type = p_value
     elif p_number_in_list == 24:
         pars[0].filter_by_commPb = p_value
-    elif p_number_in_list == 25:
-        varSeparatorType = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
@@ -228,7 +225,7 @@ def set_Tk_var():
     global varUConc, varAgebased, varUncorrOrPbc, varErrFilter, varDiscType, varConcType, varEclipseSigma
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
-    global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varSeparatorType, varUncType
+    global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb
     varUConc = IntVar()
     varDiscType = IntVar()
@@ -258,7 +255,6 @@ def set_Tk_var():
     varShowCalc = IntVar()
     varInclude207235Err = IntVar()
     varLimitAgeSpectrum = IntVar()
-    varSeparatorType = StringVar()
     varUncType = IntVar()
     varCommPb = IntVar()
 
@@ -412,11 +408,11 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_discordance(False)) + ',' +
                        str(an_list[j].calc_discordance(True)) + ',' +
 
-                       str(an_list[j].is_grain_good(p_filters, varSeparatorType.get())[0]) + ',' +
-                       str(an_list[j].is_grain_good(p_filters, varSeparatorType.get())[1]) + ',' +
+                       str(an_list[j].is_grain_good(p_filters)[0]) + ',' +
+                       str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
 
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters, varSeparatorType.get())[1])[0]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters, varSeparatorType.get())[1])[unc_type]))
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[0]) + ',' +
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[unc_type]))
             file.write(l_str)
             j += 1
         file.write("\n" * 2)
@@ -459,7 +455,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     j = 0
     unc_type = int(p_filters.unc_type)
     an_list = p_grainset.analyses_list
-    good_grains = p_grainset.good_bad_sets(p_filters, varSeparatorType.get())
+    good_grains = p_grainset.good_bad_sets(p_filters)
     grainset = p_grainset
     filters = p_filters
     p_table.heading("#0", text="Analysis name", anchor='c')
@@ -533,12 +529,12 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 
                     int(100*an_list[j].calc_discordance(False)),
                     int(100*an_list[j].calc_discordance(True)),
-                    str(an_list[j].is_grain_good(filters, varSeparatorType.get())[0]),
-                    str(an_list[j].is_grain_good(filters, varSeparatorType.get())[1]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters, varSeparatorType.get())[1])[0]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters, varSeparatorType.get())[1])[unc_type])
+                    str(an_list[j].is_grain_good(filters)[0]),
+                    str(an_list[j].is_grain_good(filters)[1]),
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[0]),
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[unc_type])
                     ),
-                    tags=str(an_list[j].is_grain_good(filters, varSeparatorType.get())[0]))
+                    tags=str(an_list[j].is_grain_good(filters)[0]))
 
             j += 1
         i += 1

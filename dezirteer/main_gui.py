@@ -159,8 +159,8 @@ class OperationWindow(Frame):
         self.apply_style(self.lbImport)
         self.lbImport.configure(text="1. Import data")
 
-        self.lbSeparatorType = Label(self.frImport)
-        self.lbSeparatorType.grid(row=1, column=0, columnspan=2, pady=5, sticky='e')
+        '''self.lbSeparatorType = Label(self.frImport)
+        self.lbSeparatorType.grid(row=1, column=0, columnspan=1, pady=5, sticky='e')
         self.apply_style(self.lbSeparatorType)
         self.lbSeparatorType.configure(text='Analysis # separator:')
 
@@ -198,7 +198,7 @@ class OperationWindow(Frame):
         self.rbDot.configure(text=".")
         self.rbDot.configure(variable=gui_support.varSeparatorType, value=".")
         self.rbDot.configure(
-            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))'''
 
 
 
@@ -1133,7 +1133,7 @@ class OperationWindow(Frame):
                         an_set = an_set + g_grainset.analyses_list
 
                     g_grainset = AnalysesSet(an_set, 'set#1')
-                    g_grainset.good_bad_sets(g_filters, gui_support.varSeparatorType.get())
+                    g_grainset.good_bad_sets(g_filters)
 
                     pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
@@ -1141,7 +1141,7 @@ class OperationWindow(Frame):
                     g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                                           g_list_col_names)
 
-                    g_list_of_samples = same_sample_set(g_grainset, str(gui_support.varSeparatorType.get()))
+                    g_list_of_samples = same_sample_set(g_grainset)
                     self.reset_controls(True)
                     self.clear_prev_or_remove_text()
                 else:
@@ -1218,12 +1218,12 @@ class OperationWindow(Frame):
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
             self.btnCalcWindow.configure(state='normal')
-            self.lbSeparatorType.configure(state='normal')
+            #self.lbSeparatorType.configure(state='normal')
             #self.cbSeparatorType.configure(state='readonly')
-            self.rbUnderscore.configure(state='normal')
-            self.rbDash.configure(state='normal')
-            self.rbComma.configure(state='normal')
-            self.rbDot.configure(state='normal')
+            #self.rbUnderscore.configure(state='normal')
+            #self.rbDash.configure(state='normal')
+            #self.rbComma.configure(state='normal')
+            #self.rbDot.configure(state='normal')
             self.lbImport.configure(state='normal')
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
