@@ -333,7 +333,7 @@ def imported_file(p_file_name):
         lines = list(line for line in (l.strip() for l in f_in) if line)  # deleting empty lines
 
         if any("GLITTER" in s for s in lines):
-            # file_type = "glitter"
+            file_type = "glitter"
             lines.pop(2)
             lines.pop(1)
             lines.pop(0)
