@@ -434,6 +434,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
         kde_list = p_grainset.kde(bandwidth)
         cpdp_list = p_grainset.cpdp(int(p_filters.unc_type))
         ckde_list = p_grainset.ckde(bandwidth)
+
         probcum_file.write("Age" + ',' + "PDP" + ',' + "CPDP" + ',' + "KDE" + ',' + "CKDE" + ',' +
                            'bandwidth=' + str(bandwidth))
         while age < EarthAge:
