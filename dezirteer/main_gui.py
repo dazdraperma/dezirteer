@@ -39,7 +39,7 @@ def set_pval_dval():
         if g_graph_settings.pdp_kde_hist == 0:
             curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
         elif g_graph_settings.pdp_kde_hist == 1:
-            curr_cum = g_grainset.cpdp()
+            curr_cum = g_grainset.cpdp(gui_support.varUncType.get())
         else:
             curr_cum = []
         dval = d_value(curr_cum, g_prev_cum)
@@ -51,7 +51,7 @@ def peaks():
     if g_graph_settings.pdp_kde_hist == 0:
         return g_grainset.kde(g_graph_settings.bandwidth)[1]
     else:
-        return g_grainset.pdp()[1]
+        return g_grainset.pdp(gui_support.varUncType.get())[1]
 
 
 def show_calc_frame(container):
@@ -159,17 +159,56 @@ class OperationWindow(Frame):
         self.apply_style(self.lbImport)
         self.lbImport.configure(text="1. Import data")
 
-        self.lbSeparatorType = Label(self.frImport)
-        self.lbSeparatorType.grid(row=1, column=0, pady=5, sticky='w')
+        '''self.lbSeparatorType = Label(self.frImport)
+        self.lbSeparatorType.grid(row=1, column=0, columnspan=1, pady=5, sticky='e')
         self.apply_style(self.lbSeparatorType)
         self.lbSeparatorType.configure(text='Analysis # separator:')
 
-        self.cbSeparatorType = ttk.Combobox(self.frImport)
-        self.cbSeparatorType.grid(row=1, column=1, sticky='w')
-        self.cbSeparatorType.configure(textvariable=gui_support.varSeparatorType)
-        self.cbSeparatorType.configure(width=3)
-        self.cbSeparatorType.configure(values=['_', '-', '.', ','], state='readonly')
-        self.cbSeparatorType.current(0)
+        self.rbUnderscore = Radiobutton(self.frImport)
+        self.rbUnderscore.grid(row=1, column=2, sticky='w')
+        self.apply_style(self.rbUnderscore)
+        self.rbUnderscore.configure(font="TkTextFont")
+        self.rbUnderscore.configure(text="_")
+        self.rbUnderscore.configure(variable=gui_support.varSeparatorType, value="_")
+        self.rbUnderscore.configure(command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+        self.rbUnderscore.select()
+
+        self.rbDash = Radiobutton(self.frImport)
+        self.rbDash.grid(row=1, column=3, sticky='w')
+        self.apply_style(self.rbDash)
+        self.rbDash.configure(font="TkTextFont")
+        self.rbDash.configure(text="-")
+        self.rbDash.configure(variable=gui_support.varSeparatorType, value="-")
+        self.rbDash.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+
+        self.rbComma = Radiobutton(self.frImport)
+        self.rbComma.grid(row=1, column=4, sticky='w')
+        self.apply_style(self.rbComma)
+        self.rbComma.configure(font="TkTextFont")
+        self.rbComma.configure(text=",")
+        self.rbComma.configure(variable=gui_support.varSeparatorType, value=",")
+        self.rbComma.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
+
+        self.rbDot = Radiobutton(self.frImport)
+        self.rbDot.grid(row=1, column=5, sticky='w')
+        self.apply_style(self.rbDot)
+        self.rbDot.configure(font="TkTextFont")
+        self.rbDot.configure(text=".")
+        self.rbDot.configure(variable=gui_support.varSeparatorType, value=".")
+        self.rbDot.configure(
+            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))'''
+
+
+
+        #self.cbSeparatorType = ttk.Combobox(self.frImport)
+        #self.cbSeparatorType.grid(row=1, column=1, sticky='w')
+        #self.cbSeparatorType.configure(textvariable=gui_support.varSeparatorType)
+        #self.cbSeparatorType.configure(width=3)
+        #self.cbSeparatorType.configure(values=['_', '-', '.', ','], state='readonly')
+        #self.cbSeparatorType.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(25, self.cbSeparatorType.get(), pars_onChange))
+        #self.cbSeparatorType.current(0)
 
         self.btnImport = Button(self.frImport, width=14, height=2)
         self.btnImport.grid(row=2, columnspan=3, pady=10)
@@ -193,31 +232,48 @@ class OperationWindow(Frame):
         self.apply_style(self.lbUncType)
         self.lbUncType.configure(text='''Iolite uncertainty:''')
 
-        self.cbUncType = ttk.Combobox(self.frImport)
+        self.rbInternal = Radiobutton(self.frImport)
+        self.rbInternal.grid(row=4, column=1, sticky='w')
+        self.apply_style(self.rbInternal)
+        self.rbInternal.configure(font="TkTextFont")
+        self.rbInternal.configure(text="Int.")
+        self.rbInternal.configure(variable=gui_support.varUncType, value=1)
+        self.rbInternal.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+        self.rbInternal.select()
+
+        self.rbPropagated = Radiobutton(self.frImport)
+        self.rbPropagated.grid(row=5, column=1, sticky='sw')
+        self.apply_style(self.rbPropagated)
+        self.rbPropagated.configure(text="Prop.")
+        self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
+        self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+
+
+        '''self.cbUncType = ttk.Combobox(self.frImport)
         self.cbUncType.grid(row=4, column=1, sticky='w')
         self.cbUncType.configure(textvariable=gui_support.varUncType)
         self.cbUncType.configure(width=10)
         self.cbUncType.configure(values=['Internal', 'Propagated'], state='readonly')
         self.cbUncType.current(0)
         #self.cbUncType.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange, ))
-
+        '''
         self.lbChooseSample = Label(self.frImport)
-        self.lbChooseSample.grid(row=5, columnspan=3, sticky="ew", pady=15)
+        self.lbChooseSample.grid(row=6, columnspan=3, sticky="ew", pady=15)
         self.apply_style(self.lbChooseSample)
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
 
-        self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0)
-        self.lboxSamples.grid(row=6, columnspan=3, sticky="ew", padx=5)
+        self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0, height=5)
+        self.lboxSamples.grid(row=7, columnspan=3, sticky="ew", padx=5)
 
         self.lbUConcFilter = Label(self.frImport)
-        self.lbUConcFilter.grid(row=7, columnspan=3, pady=4, sticky='ew')
+        self.lbUConcFilter.grid(row=8, columnspan=3, pady=4, sticky='ew')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="3. Filter by Uconc?")
 
         self.rbNoUconc = Radiobutton(self.frImport)
-        self.rbNoUconc.grid(row=8, column=0, sticky='w')
+        self.rbNoUconc.grid(row=9, column=0, sticky='w')
         self.apply_style(self.rbNoUconc)
         self.rbNoUconc.configure(font="TkTextFont")
         self.rbNoUconc.configure(text="Don't filter")
@@ -226,14 +282,14 @@ class OperationWindow(Frame):
         self.rbNoUconc.configure(command=lambda: gui_support.onChange(2, False, pars_onChange, self.scUconcCutoff))
 
         self.rbUseUconc = Radiobutton(self.frImport)
-        self.rbUseUconc.grid(row=9, column=0, sticky='sw')
+        self.rbUseUconc.grid(row=10, column=0, sticky='sw')
         self.apply_style(self.rbUseUconc)
         self.rbUseUconc.configure(text="Cutoff at")
         self.rbUseUconc.configure(variable=gui_support.varUConc, value=True)
         self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
 
         self.scUconcCutoff = Scale(self.frImport)
-        self.scUconcCutoff.grid(row=9, column=1)
+        self.scUconcCutoff.grid(row=10, column=1)
         self.scUconcCutoff.configure(activebackground="#d9d9d9")
         self.scUconcCutoff.configure(sliderlength=20)
         self.scUconcCutoff.configure(background="#d9d9d9")
@@ -252,7 +308,7 @@ class OperationWindow(Frame):
         self.scUconcCutoff.configure(command=lambda x: gui_support.onChange(18, self.scUconcCutoff.get(), pars_onChange))
 
         self.lblPPM = Label(self.frImport)
-        self.lblPPM.grid(row=9, column=2, sticky='se', pady=4)
+        self.lblPPM.grid(row=10, column=2, sticky='se', pady=4)
         self.apply_style(self.lblPPM)
         self.lblPPM.configure(text="ppm")
 
@@ -334,7 +390,7 @@ class OperationWindow(Frame):
         self.scAgeCutoff.configure(troughcolor="#d9d9d9")
 
         self.lbPbc = Label(self.frFilter)
-        self.lbPbc.grid(row=5, sticky='ew', pady=15, columnspan=3)
+        self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
         self.apply_style(self.lbPbc)
         self.lbPbc.configure(font=font9)
         self.lbPbc.configure(state=DISABLED)
@@ -365,9 +421,11 @@ class OperationWindow(Frame):
         self.cbTypePbc.configure(width=15)
         self.cbTypePbc.configure(takefocus="")
         self.cbTypePbc.configure(state=DISABLED)
+        self.cbTypePbc.configure(state="readonly", values=('204-corr', '207-corr', '208-corr', 'Andersen'))
+        self.cbTypePbc.current(0)
 
         self.lbFilterByError = Label(self.frFilter)
-        self.lbFilterByError.grid(row=9, columnspan=3, pady=15, sticky='ew')
+        self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
         self.apply_style(self.lbFilterByError)
         self.lbFilterByError.configure(font=font9)
         self.lbFilterByError.configure(state=DISABLED)
@@ -394,17 +452,6 @@ class OperationWindow(Frame):
         self.rbUseErrFilter.configure(command=lambda: gui_support.onChange(5, True, pars_onChange,
                                                                            self.chbInclude207235Err, self.scErrFilter))
 
-        self.chbInclude207235Err = Checkbutton(self.frFilter)
-        self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbInclude207235Err)
-        self.chbInclude207235Err.configure(text="include error in 207/235?")
-        self.chbInclude207235Err.configure(justify=LEFT)
-        self.chbInclude207235Err.configure(state=DISABLED)
-        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
-        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
-                                                                                gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange,))
-
         self.scErrFilter = Scale(self.frFilter)
         self.scErrFilter.grid(row=11, column=1, sticky='ew')
         self.scErrFilter.configure(activebackground="#d9d9d9")
@@ -426,6 +473,63 @@ class OperationWindow(Frame):
         self.scErrFilter.configure(
             command=lambda x: gui_support.onChange(20, self.scErrFilter.get(), pars_onChange, g_list_col_names))
 
+        self.chbInclude207235Err = Checkbutton(self.frFilter)
+        self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbInclude207235Err)
+        self.chbInclude207235Err.configure(text="include error in 207/235?")
+        self.chbInclude207235Err.configure(justify=LEFT)
+        self.chbInclude207235Err.configure(state=DISABLED)
+        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
+        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
+                                                                                gui_support.varInclude207235Err.get(),
+                                                                                pars_onChange,))
+
+
+        '''self.lbFiltCommPb = Label(self.frFilter)
+        self.lbFiltCommPb.grid(row=13, columnspan=3, pady=15, sticky='ew')
+        self.apply_style(self.lbFiltCommPb)
+        self.lbFiltCommPb.configure(font=font9)
+        self.lbFiltCommPb.configure(text='7. Filter by the fraction of common-Pb')
+
+        self.rbNoCommPb = Radiobutton(self.frFilter)
+        self.rbNoCommPb.grid(row=14, column=0, sticky='w')
+        self.apply_style(self.rbNoCommPb)
+        self.rbNoCommPb.configure(font="TkTextFont")
+        self.rbNoCommPb.configure(text="Don't filter")
+        self.rbNoCommPb.select()
+        self.rbNoCommPb.configure(variable=gui_support.varCommPb, value=False)
+        self.rbNoCommPb.configure(command=lambda: gui_support.onChange(24, False, pars_onChange, self.scCommPbCutoff))
+
+        self.rbUseCommPb = Radiobutton(self.frFilter)
+        self.rbUseCommPb.grid(row=15, column=0, sticky='sw')
+        self.apply_style(self.rbUseCommPb)
+        self.rbUseCommPb.configure(text="Cutoff at fraction:")
+        self.rbUseCommPb.configure(variable=gui_support.varCommPb, value=True)
+        self.rbUseCommPb.configure(command=lambda: gui_support.onChange(24, True, pars_onChange, self.scCommPbCutoff))
+
+        self.scCommPbCutoff = Scale(self.frFilter)
+        self.scCommPbCutoff.grid(row=15, column=1)
+        self.scCommPbCutoff.configure(activebackground="#d9d9d9")
+        self.scCommPbCutoff.configure(sliderlength=20)
+        self.scCommPbCutoff.configure(background="#d9d9d9")
+        self.scCommPbCutoff.configure(font="TkTextFont")
+        self.scCommPbCutoff.configure(foreground="#000000")
+        self.scCommPbCutoff.configure(highlightbackground="#d9d9d9")
+        self.scCommPbCutoff.configure(highlightcolor="black")
+        self.scCommPbCutoff.configure(length="100")
+        self.scCommPbCutoff.configure(orient="horizontal")
+        self.scCommPbCutoff.configure(resolution="0.1")
+        self.scCommPbCutoff.configure(from_="0")
+        self.scCommPbCutoff.configure(to="1")
+        self.scCommPbCutoff.configure(bd=2)
+        self.scCommPbCutoff.set(0.1)
+        self.scCommPbCutoff.configure(troughcolor="#d9d9d9")
+        self.scCommPbCutoff.configure(
+            command=lambda x: gui_support.onChange(18, self.scCommPbCutoff.get(), pars_onChange))'''
+
+
+
+
         # _______________frDisc__________________________________________________________________________________________
         self.frDisc = Frame(self.frOper)
         self.frDisc.grid(row=0, column=2, sticky='ns')
@@ -436,20 +540,22 @@ class OperationWindow(Frame):
         self.frDisc.configure(highlightbackground="#d9d9d9")
         self.frDisc.configure(highlightcolor="black")
 
+
+
         self.lbDiscFilt = Label(self.frDisc)
-        self.lbDiscFilt.grid(row=0, columnspan=2, sticky='ew')
+        self.lbDiscFilt.grid(row=3, columnspan=2, sticky='ew')
         self.apply_style(self.lbDiscFilt)
         self.lbDiscFilt.configure(font=font9)
         self.lbDiscFilt.configure(text='''7. Discord. filters (%)''')
 
         self.lbPosDiscFilt = Label(self.frDisc)
-        self.lbPosDiscFilt.grid(row=1, columnspan=2, sticky='ew')
+        self.lbPosDiscFilt.grid(row=4, columnspan=2, sticky='ew')
         self.apply_style(self.lbPosDiscFilt)
         self.lbPosDiscFilt.configure(anchor='w')
         self.lbPosDiscFilt.configure(text='''Positive:''')
 
         self.scPosDisc = Scale(self.frDisc)
-        self.scPosDisc.grid(row=2, columnspan=2, sticky='ew')
+        self.scPosDisc.grid(row=5, columnspan=2, sticky='ew')
         self.scPosDisc.configure(variable=gui_support.varPosDiscFilter)
         self.scPosDisc.configure(activebackground="#d9d9d9")
         self.scPosDisc.configure(background="#d9d9d9")
@@ -467,14 +573,14 @@ class OperationWindow(Frame):
         self.scPosDisc.configure(command=lambda x: gui_support.onChange(6, self.scPosDisc.get(), pars_onChange))
 
         self.lbNegDiscFilt = Label(self.frDisc)
-        self.lbNegDiscFilt.grid(row=3, columnspan=2, sticky='ew')
+        self.lbNegDiscFilt.grid(row=6, columnspan=2, sticky='ew')
         self.apply_style(self.lbNegDiscFilt)
         self.lbNegDiscFilt.configure(anchor='w')
         self.lbNegDiscFilt.configure(state=DISABLED)
         self.lbNegDiscFilt.configure(text='''Negative:''')
 
         self.scNegDisc = Scale(self.frDisc)
-        self.scNegDisc.grid(row=4, columnspan=2, sticky='ew')
+        self.scNegDisc.grid(row=7, columnspan=2, sticky='ew')
         self.scNegDisc.configure(variable=gui_support.varNegDiscFilter)
         self.scNegDisc.configure(activebackground="#d9d9d9")
         self.scNegDisc.configure(background="#d9d9d9")
@@ -493,14 +599,14 @@ class OperationWindow(Frame):
         self.scNegDisc.configure(command=lambda x: gui_support.onChange(7, self.scNegDisc.get(), pars_onChange))
 
         self.lbCalcDisc = Label(self.frDisc)
-        self.lbCalcDisc.grid(row=5, columnspan=2, sticky='ew', pady=5)
+        self.lbCalcDisc.grid(row=8, columnspan=2, sticky='ew', pady=15)
         self.apply_style(self.lbCalcDisc)
         self.lbCalcDisc.configure(font=font9)
         self.scNegDisc.configure(state=DISABLED)
-        self.lbCalcDisc.configure(text='''8. Discord. type''')
+        self.lbCalcDisc.configure(text='8. Discord. type')
 
         self.chbDiscLinked2Age = Checkbutton(self.frDisc)
-        self.chbDiscLinked2Age.grid(row=6, columnspan=2, sticky='w', pady=5)
+        self.chbDiscLinked2Age.grid(row=9, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbDiscLinked2Age)
         self.chbDiscLinked2Age.configure(text="Linked to the choice in #4")
         self.chbDiscLinked2Age.configure(justify=LEFT)
@@ -517,7 +623,7 @@ class OperationWindow(Frame):
 
         self.rbDiscUbased = Radiobutton(self.frDisc)
         self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
-        self.rbDiscUbased.grid(row=7, sticky='w', pady=5)
+        self.rbDiscUbased.grid(row=10, sticky='w', pady=5)
         self.apply_style(self.rbDiscUbased)
         self.rbDiscUbased.configure(justify=LEFT)
         self.rbDiscUbased.configure(text='''Based on U-conc''')
@@ -526,7 +632,7 @@ class OperationWindow(Frame):
 
         self.rbDiscAgeFixedLim = Radiobutton(self.frDisc)
         self.rbDiscAgeFixedLim.configure(variable=gui_support.varDiscType, value=1)
-        self.rbDiscAgeFixedLim.grid(row=8, column=0, sticky='ws', pady=5)
+        self.rbDiscAgeFixedLim.grid(row=11, column=0, sticky='ws', pady=5)
         self.apply_style(self.rbDiscAgeFixedLim)
         self.rbDiscAgeFixedLim.configure(justify=LEFT)
         self.rbDiscAgeFixedLim.configure(text='''Fixed limit (Ma):''')
@@ -535,7 +641,7 @@ class OperationWindow(Frame):
         self.rbDiscAgeFixedLim.select()
 
         self.scDiscAgeFixedLim = Scale(self.frDisc)
-        self.scDiscAgeFixedLim.grid(row=8, column=1, sticky='w')
+        self.scDiscAgeFixedLim.grid(row=11, column=1, sticky='w')
         self.scDiscAgeFixedLim.configure(activebackground="#d9d9d9")
         self.scDiscAgeFixedLim.configure(sliderlength=20)
         self.scDiscAgeFixedLim.configure(background="#d9d9d9")
@@ -556,7 +662,7 @@ class OperationWindow(Frame):
 
         self.rbDisc67_68 = Radiobutton(self.frDisc)
         self.rbDisc67_68.configure(variable=gui_support.varDiscType, value=2)
-        self.rbDisc67_68.grid(row=9, sticky='w', pady=5)
+        self.rbDisc67_68.grid(row=12, sticky='w', pady=5)
         self.apply_style(self.rbDisc67_68)
         self.rbDisc67_68.configure(justify=LEFT)
         self.rbDisc67_68.configure(text='''206/207-238/206''')
@@ -565,7 +671,7 @@ class OperationWindow(Frame):
 
         self.rbDisc75_68 = Radiobutton(self.frDisc)
         self.rbDisc75_68.configure(variable=gui_support.varDiscType, value=3)
-        self.rbDisc75_68.grid(row=10, sticky='sw', pady=5)
+        self.rbDisc75_68.grid(row=13, sticky='sw', pady=5)
         self.apply_style(self.rbDisc75_68)
         self.rbDisc75_68.configure(justify=LEFT)
         self.rbDisc75_68.configure(text='''235/207-238/206''')
@@ -586,19 +692,19 @@ class OperationWindow(Frame):
         self.lbConc.grid(row=0, columnspan=4, sticky='ew')
         self.apply_style(self.lbConc)
         self.lbConc.configure(font=font9)
-        self.lbConc.configure(text='''9. Concordia''')
+        self.lbConc.configure(text='9. Concordia')
 
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
         self.apply_style(self.lbConcType)
-        self.lbConcType.configure(text='''Conc.type:''')
+        self.lbConcType.configure(text='Conc.type:')
 
         self.rbStdConc = Radiobutton(self.frGraphSettings)
         self.rbStdConc.configure(variable=gui_support.varConcType, value=0)
         self.rbStdConc.grid(row=1, column=1, pady=5, sticky='w')
         self.apply_style(self.rbStdConc)
         self.rbStdConc.configure(justify=LEFT)
-        self.rbStdConc.configure(text='''Standard''')
+        self.rbStdConc.configure(text='Standard')
         self.rbStdConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 0))
         self.rbStdConc.select()
 
@@ -607,20 +713,20 @@ class OperationWindow(Frame):
         self.rbTerWassConc.grid(row=1, column=2, pady=5, sticky='w')
         self.apply_style(self.rbTerWassConc)
         self.rbTerWassConc.configure(justify=LEFT)
-        self.rbTerWassConc.configure(text='''Ter-Wass.''')
+        self.rbTerWassConc.configure(text='Ter-Wass.')
         self.rbTerWassConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 1))
 
         self.lbEclipsesAt = Label(self.frGraphSettings)
         self.lbEclipsesAt.grid(row=3, column=0, pady=5, sticky='w')
         self.apply_style(self.lbEclipsesAt)
-        self.lbEclipsesAt.configure(text='''Eclipses at:''')
+        self.lbEclipsesAt.configure(text='Eclipses at:')
 
         self.rbEcl1Sigma = Radiobutton(self.frGraphSettings)
         self.rbEcl1Sigma.configure(variable=gui_support.varEclipseSigma, value=1)
         self.rbEcl1Sigma.grid(row=3, column=1, columnspan=4, pady=5, sticky='w')
         self.apply_style(self.rbEcl1Sigma)
         self.rbEcl1Sigma.configure(justify=LEFT)
-        self.rbEcl1Sigma.configure(text='''1σ''')
+        self.rbEcl1Sigma.configure(text='1σ')
         self.rbEcl1Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 1))
         self.rbEcl1Sigma.select()
 
@@ -629,7 +735,7 @@ class OperationWindow(Frame):
         self.rbEcl2Sigma.grid(row=3, column=2, pady=5, sticky='w')
         self.apply_style(self.rbEcl2Sigma)
         self.rbEcl2Sigma.configure(justify=LEFT)
-        self.rbEcl2Sigma.configure(text='''2σ''')
+        self.rbEcl2Sigma.configure(text='2σ')
         self.rbEcl2Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 2))
 
         self.chbFitDiscordia = Checkbutton(self.frGraphSettings)
@@ -661,13 +767,13 @@ class OperationWindow(Frame):
         self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
         self.apply_style(self.lbKdePdpHist)
         self.lbKdePdpHist.configure(font=font9)
-        self.lbKdePdpHist.configure(text='''10. KDE/PDP/Hist''')
+        self.lbKdePdpHist.configure(text='10. KDE/PDP/Hist')
 
         self.rbDrawKDE = Radiobutton(self.frGraphSettings)
         self.rbDrawKDE.configure(variable=gui_support.var_pdp_kde_hist, value=0)
         self.rbDrawKDE.grid(row=8, column=0, pady=5, sticky='e')
         self.apply_style(self.rbDrawKDE)
-        self.rbDrawKDE.configure(text='''KDE''')
+        self.rbDrawKDE.configure(text='KDE')
         self.rbDrawKDE.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 7, 0))
         self.rbDrawKDE.select()
 
@@ -675,14 +781,14 @@ class OperationWindow(Frame):
         self.rbDrawPdp.configure(variable=gui_support.var_pdp_kde_hist, value=1)
         self.rbDrawPdp.grid(row=8, column=1, pady=5, sticky='ew')
         self.apply_style(self.rbDrawPdp)
-        self.rbDrawPdp.configure(text='''PDP''')
+        self.rbDrawPdp.configure(text='PDP')
         self.rbDrawPdp.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 8, 1))
 
         self.rbDrawHist = Radiobutton(self.frGraphSettings)
         self.rbDrawHist.configure(variable=gui_support.var_pdp_kde_hist, value=2)
         self.rbDrawHist.grid(row=8, column=2, pady=5, sticky='w')
         self.apply_style(self.rbDrawHist)
-        self.rbDrawHist.configure(text='''Hist.''')
+        self.rbDrawHist.configure(text='Hist.')
         self.rbDrawHist.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 8, 2))
 
         self.scBandwidth = Scale(self.frGraphSettings)
@@ -860,7 +966,7 @@ class OperationWindow(Frame):
                 graph_to_draw = g_grainset.kde(g_graph_settings.bandwidth)
 
             elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.pdp()[0]
+                graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
         except NameError:
             pass
 
@@ -904,7 +1010,7 @@ class OperationWindow(Frame):
                 graph_to_draw = g_grainset.ckde(g_graph_settings.bandwidth)
 
             elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.cpdp()
+                graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
         except NameError:
             pass
 
@@ -1031,7 +1137,7 @@ class OperationWindow(Frame):
                     g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                                           g_list_col_names)
 
-                    g_list_of_samples = same_sample_set(g_grainset, str(self.cbSeparatorType.get()))
+                    g_list_of_samples = same_sample_set(g_grainset)
                     self.reset_controls(True)
                     self.clear_prev_or_remove_text()
                 else:
@@ -1072,19 +1178,20 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        unfinished_features = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.rbUseCorr,
-                               self.cbTypePbc, self.rbDiscUbased, self.rbUBased,
-                               self.chbInclude207235Err, self.scErrFilter, self.scUconcCutoff]
+        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
+                               self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
+                               self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
+                               self.rbDisc75_68,  self.cbTypePbc] #self.scCommPbCutoff,  self.rbNoCommPb, self.rbUseCommPb
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
-                    if child not in unfinished_features:
+                    if child not in features_custom_state:
                         child.configure(state=NORMAL)
             self.rbDiscUbased.configure(state=DISABLED)
             self.rbDiscAgeFixedLim.configure(state=DISABLED)
             self.rbDisc67_68.configure(state=DISABLED)
             self.rbDisc75_68.configure(state=DISABLED)
-            self.cbSeparatorType.configure(state="readonly")
+            self.cbTypePbc.configure(state="readonly")
             self.rbAgeFixedLim.select()
             self.chbDiscLinked2Age.select()
             self.rbDiscAgeFixedLim.select()
@@ -1106,8 +1213,12 @@ class OperationWindow(Frame):
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
             self.btnCalcWindow.configure(state='normal')
-            self.lbSeparatorType.configure(state='normal')
-            self.cbSeparatorType.configure(state='readonly')
+            #self.lbSeparatorType.configure(state='normal')
+            #self.cbSeparatorType.configure(state='readonly')
+            #self.rbUnderscore.configure(state='normal')
+            #self.rbDash.configure(state='normal')
+            #self.rbComma.configure(state='normal')
+            #self.rbDot.configure(state='normal')
             self.lbImport.configure(state='normal')
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
@@ -1148,18 +1259,16 @@ class OperationWindow(Frame):
                     peaks()
                 )
 
-
         else:
             if g_plot_txt != "":
                 g_plot_txt.remove()
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.40, text_to_show, transform=self.ax_cum.transAxes)
-        self.plot_peaks()
+        if g_graph_settings.pdp_kde_hist != 2: #if not histogram
+            self.plot_peaks()
         self.canvas_cum.draw()
         self.canvas_prob.draw()
-
-
 
     def min_max_ages(self):
         # choosing age interval based on user's input
@@ -1199,24 +1308,23 @@ class OperationWindow(Frame):
             prob_title = "Kernel Density Estimates (KDE)"
             cum_title = "Cumulative KDE"
         elif g_graph_settings.pdp_kde_hist == 1:
-            prob_graph_to_draw = g_grainset.pdp()[0]
-            cum_graph_to_draw = g_grainset.cpdp()
+            prob_graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
+            cum_graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
             prob_title = "Probability Density Plot (PDP)"
             cum_title = "Cumulative PDP"
         else:
             tuple_list = sorted(list(g_grainset.good_set.values()), key=lambda x: x[0])
             prob_graph_to_draw = [x[0] for x in tuple_list]
-            cum_graph_to_draw=[]
+            cum_graph_to_draw = []
             prob_title = "Histogram"
             cum_title = "Cumulative Histogram"
         return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
-
 
     def draw_concordia_ticks(self, xconc, yconc):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
-            self.ax_conc.plot(x,y,'ko')
+            self.ax_conc.plot(x, y, 'ko')
             self.ax_conc.text(x, y, str(t), style='italic', )
             # self.ax_conc.annotate(str(t), xy=(x, y), xytext=(x-0.4*x, y+0.4*y),
             #            arrowprops=dict(facecolor='black', shrink=0.05))
@@ -1231,16 +1339,16 @@ class OperationWindow(Frame):
                 corr_coef = zir.corr_coef_75_68
                 x_conc = zir.pb207_u235[0]  # x-center of the oval
                 y_conc = zir.pb206_u238[0]  # y-center of the oval
-                x_err = zir.pb207_u235[1]
-                y_err = zir.pb206_u238[1]
+                x_err = zir.pb207_u235[gui_support.varUncType.get()] #asdf
+                y_err = zir.pb206_u238[gui_support.varUncType.get()]
             # Tera-Wasserburg concordia
             else:
                 corr_coef = zir.corr_coef_86_76
                 j = zir.u238_pb206()
                 x_conc = j[0]
-                x_err = j[1]
+                x_err = j[gui_support.varUncType.get()]
                 y_conc = zir.pb207_pb206[0]
-                y_err = zir.pb207_pb206[1]
+                y_err = zir.pb207_pb206[gui_support.varUncType.get()]
 
             a1 = x_err * corr_coef * sqrt(2) * sigma_level
             a2 = y_err * corr_coef * sqrt(2) * sigma_level
@@ -1304,10 +1412,10 @@ class OperationWindow(Frame):
             if g_graph_settings.pdp_kde_hist == 0:
                 list_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
             elif g_graph_settings.pdp_kde_hist == 1:
-                list_peaks = g_grainset.pdp()[1]
+                list_peaks = g_grainset.pdp(gui_support.varUncType.get())[1]
             else:
                 list_peaks = []
-            while i<len(list_peaks):
+            while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], color='black')
                 i += 1
         else:
@@ -1344,11 +1452,11 @@ class OperationWindow(Frame):
         if g_graph_settings.pdp_kde_hist == 0:
             g_prev_cum = g_grainset.ckde(g_graph_settings.bandwidth)
         else:
-            g_prev_cum = g_grainset.cpdp()
+            g_prev_cum = g_grainset.cpdp(gui_support.varUncType.get())
 
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
-    def  clear_and_plot(self, *args):
+    def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
 
@@ -1406,10 +1514,12 @@ class OperationWindow(Frame):
             self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
         except ValueError:
-            pass
+            self.lbShowStatus.configure(text="value error", fg="red")
+            print ("value error")
 
         except TypeError:
-            pass
+            self.lbShowStatus.configure(text="type error", fg="red")
+            print("type error")
 
         finally:
             self.plot_conc_text_peaks()
@@ -1503,26 +1613,38 @@ def main():
     g_ckde = []
     g_prev_cum = []
     g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
-    g_list_col_names = ['208Pb/232Th', '208/232±1s',
-                        '207Pb/206Pb', '207/206±1s',
-                        '207Pb/235U', '207/235±1s',
-                        '206Pb/238U', '206/238±1s',
+    g_list_col_names = ['208Pb/232Th', '208/232±1s(Int)', '208/232±1s(Prop)',
+                        '207Pb/206Pb', '207/206±1s(Int)', '207/206±1s(Prop)',
+                        '207Pb/235U', '207/235±1s(Int)', '207/235±1s(Prop)',
+                        '206Pb/238U', '206/238±1s(Int)', '206/238±1s(Prop)',
                         'corr. coef.75_68', 'corr. coef.86_76',
-                        'Uconc (approx. ppm)', 'Uconc±1s',
-                        'pbc (approx. ppm)', 'pbc±1s',
-                        '206Pb/204Pb', '206/204±1s',
-                        '207Pb/204Pb', '207/204±1s',
-                        '208Pb/204Pb', '208/204±1s',
+                        'Uconc (approx. ppm)', 'Uconc±1s(Int)', 'Uconc±1s(Prop)',
+                        'pbc (approx. ppm)', 'pbc±1s(Int)', 'pbc±1s(Prop)',
+                        '206Pb/204Pb', '206/204±1s(Int)', '206/204±1s(Prop)',
+                        '207Pb/204Pb', '207/204±1s(Int)', '207/204±1s(Prop)',
+                        '208Pb/204Pb', '208/204±1s(Int)', '208/204±1s(Prop)',
+                        '232Th/204Pb', '232/204±1s(Int)', '232/204±1s(Prop)',
+                        '238U/204Pb', '238/204±1s(Int)', '238/204±1s(Prop)',
 
-                        '232Th/204Pb', '232/204±1s',
-                        '238U/204Pb', '238/204±1s',
+                        'Age 208Pb/232Th', 'Age208/232±1s(Int)', 'Age208/232±1s(Prop)',
+                        'Age 207Pb/206Pb',  'Age207/206±1s(Int)', 'Age207/206±1s(Prop)',
+                        'Age 207Pb/235U', 'Age207/235±1s(Int)', 'Age207/235±1s(Prop)',
+                        'Age 206Pb/238U', 'Age206/238±1s(Int)', 'Age206/238±1s(Prop)',
 
-                        'Age 208Pb/232Th', 'Age208/232±1s',
-                        'Age 207Pb/206Pb', 'Age207/206±1s',
-                        'Age 207Pb/235U', 'Age207/235±1s',
-                        'Age 206Pb/238U', 'Age206/238±1s',
+                        #'204-corr. age 208Pb/232Th', '204-corr. age 208Pb/232Th±1s(Int)', '204-corr. age 208Pb/232Th±1s(Prop)',
+                        #'204-corr. age 207Pb/206Pb', '204-corr. age 207Pb/206Pb±1s(Int)', '204-corr. age 207Pb/206Pb±1s(Prop)',
+                        #'204-corr. age 207Pb/235U', '204-corr. age 207Pb/235U±1s(Int)', '204-corr. age 207Pb/235U±1s(Prop)',
+                        #'204-corr. age 206Pb/238U', '204-corr. age 206Pb/238U±1s(Int)', '204-corr. age 206Pb/238U±1s(Prop)',
+
+                        #'207-corr. age', '207-corr. age±1s(Int)', '207-corr. age±1s(Prop)',
+                        #'208-corr. age', '208-corr. age±1s(Int)', '208-corr. age±1s(Prop)',
+
+                        # 'And-corr. age', 'And-corr. age±1s(Int)', 'And-corr. age±1s(Prop)',
+
+
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
-                        'is grain good?', 'best age system', 'best age', 'best age±1s']
+                        'is grain good?', 'best age system',
+                        'best age', 'best age±1s']
     fill_pbpb_table()
     fill_concordia_table()
     g_filters = Filters()
