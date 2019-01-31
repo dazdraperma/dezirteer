@@ -926,10 +926,12 @@ class Analysis(object):
                 C1 = 1 / U238_U235
                 C2 = LAMBDA_235
                 C3 = LAMBDA_238
-                df = self.pb207_pb206[1]
+                df_int = self.pb207_pb206[1]
+                df_prop = self.pb207_pb206[2]
                 dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
                              (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                age_err_int = age_err_prop = abs(df / dfdt / 1000000)
+                age_err_int = abs(df_int / dfdt / 1000000)
+                age_err_prop = abs(df_prop / dfdt / 1000000)
                 age = age / 1000000
             else:
                 age = -1

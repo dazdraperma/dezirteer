@@ -230,7 +230,7 @@ class OperationWindow(Frame):
         self.lbUncType = Label(self.frImport)
         self.lbUncType.grid(row=4, column=0)
         self.apply_style(self.lbUncType)
-        self.lbUncType.configure(text='''Iolite uncertainty:''')
+        self.lbUncType.configure(text='''Uncertainty type:''')
 
         self.rbInternal = Radiobutton(self.frImport)
         self.rbInternal.grid(row=4, column=1, sticky='w')
