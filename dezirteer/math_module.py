@@ -672,7 +672,11 @@ def file_to_analysis(imp_file, index):
 
         corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
         corr_coef_86_76 = (pb206_u238[1]/pb206_u238[0])*(pb207_pb206[0]/pb207_pb206[1])
-            #((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+        if corr_coef_75_68 > 1:
+            corr_coef_75_68 = 0.99  # Achtung! Temp solution
+        if corr_coef_86_76 > 1:
+            corr_coef_86_76 = 0.99  # Achtung! Temp solution
+
 
     else: #template
         sigma_level = 1
@@ -692,14 +696,20 @@ def file_to_analysis(imp_file, index):
         pb207_u235.append(float(an[6]) / sigma_level)
         pb207_u235.append(float(an[6]) / sigma_level)
 
+        #corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
         corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
+        if corr_coef_75_68 > 1:
+            corr_coef_75_68 = 0.99 #Achtung! Temp solution
+
 
         pb207_pb206.append(float(an[7]))
         pb207_pb206.append(float(an[8]) / sigma_level)
         pb207_pb206.append(float(an[8]) / sigma_level)
 
-        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
-
+        #corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+        corr_coef_86_76 = (pb206_u238[1] / pb206_u238[0]) * (pb207_pb206[0] / pb207_pb206[1])
+        if corr_coef_86_76 > 1:
+            corr_coef_86_76 = 0.99 #Achtung! Temp solution
         u_conc.append(float(an[9]))
         u_conc.append(float(an[10]) / sigma_level)
         u_conc.append(float(an[10]) / sigma_level)
