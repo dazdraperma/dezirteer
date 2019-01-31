@@ -1181,7 +1181,7 @@ class OperationWindow(Frame):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
                                self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
                                self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
-                               self.rbDisc75_68,  self.cbTypePbc] #self.scCommPbCutoff,  self.rbNoCommPb, self.rbUseCommPb
+                               self.rbDisc75_68,  self.cbTypePbc, self.rbUseUncorr, self.rbUseCorr, self.cbTypePbc]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
@@ -1191,7 +1191,7 @@ class OperationWindow(Frame):
             self.rbDiscAgeFixedLim.configure(state=DISABLED)
             self.rbDisc67_68.configure(state=DISABLED)
             self.rbDisc75_68.configure(state=DISABLED)
-            self.cbTypePbc.configure(state="readonly")
+            #self.cbTypePbc.configure(state="readonly")
             self.rbAgeFixedLim.select()
             self.chbDiscLinked2Age.select()
             self.rbDiscAgeFixedLim.select()
@@ -1324,10 +1324,8 @@ class OperationWindow(Frame):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
-            self.ax_conc.plot(x, y, 'ko')
-            self.ax_conc.text(x, y, str(t), style='italic', )
-            # self.ax_conc.annotate(str(t), xy=(x, y), xytext=(x-0.4*x, y+0.4*y),
-            #            arrowprops=dict(facecolor='black', shrink=0.05))
+            self.ax_conc.plot(x, y, 'ks', markersize=3)
+            self.ax_conc.text(x, y, str(t), style='italic')
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
@@ -1513,9 +1511,9 @@ class OperationWindow(Frame):
             # plotting KDE/CKDE, PDP/CPDP or histogram
             self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
-        except ValueError:
-            self.lbShowStatus.configure(text="value error", fg="red")
-            print ("value error")
+        #except ValueError:
+        #    self.lbShowStatus.configure(text="value error", fg="red")
+        #    print ("value error")
 
         except TypeError:
             self.lbShowStatus.configure(text="type error", fg="red")

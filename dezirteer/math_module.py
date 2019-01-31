@@ -671,7 +671,8 @@ def file_to_analysis(imp_file, index):
         u238_pb204 = [-1, -1, -1]
 
         corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+        corr_coef_86_76 = (pb206_u238[1]/pb206_u238[0])*(pb207_pb206[0]/pb207_pb206[1])
+            #((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
 
     else: #template
         sigma_level = 1
