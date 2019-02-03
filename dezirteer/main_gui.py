@@ -289,7 +289,7 @@ class OperationWindow(Frame):
         self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
 
         self.scUconcCutoff = Scale(self.frImport)
-        self.scUconcCutoff.grid(row=10, column=1)
+        self.scUconcCutoff.grid(row=9, column=1, sticky='es', rowspan=2)
         self.scUconcCutoff.configure(activebackground="#d9d9d9")
         self.scUconcCutoff.configure(sliderlength=20)
         self.scUconcCutoff.configure(background="#d9d9d9")
@@ -331,7 +331,7 @@ class OperationWindow(Frame):
 
         self.rbAgeSmallestErr = Radiobutton(self.frFilter)
         self.rbAgeSmallestErr.configure(variable=gui_support.varAgebased, value=0)
-        self.rbAgeSmallestErr.grid(row=1, sticky='w')
+        self.rbAgeSmallestErr.grid(row=1, sticky='w', pady=5)
         self.apply_style(self.rbAgeSmallestErr)
         self.rbAgeSmallestErr.configure(justify=LEFT)
         self.rbAgeSmallestErr.configure(text='From the lesser error')
@@ -341,7 +341,7 @@ class OperationWindow(Frame):
 
         self.rbAgeFixedLim = Radiobutton(self.frFilter)
         self.rbAgeFixedLim.configure(variable=gui_support.varAgebased, value=1)
-        self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=4)
+        self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=5)
         self.apply_style(self.rbAgeFixedLim)
         self.rbAgeFixedLim.configure(justify=LEFT)
         self.rbAgeFixedLim.configure(text='''Fixed limit (Ma):''')
@@ -367,7 +367,7 @@ class OperationWindow(Frame):
         self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))
 
         self.scAgeCutoff = Scale(self.frFilter)
-        self.scAgeCutoff.grid(row=2, column=1, sticky='ew')
+        self.scAgeCutoff.grid(row=1, column=1, sticky='ews', rowspan=2, pady=5)
         self.scAgeCutoff.configure(activebackground="#d9d9d9")
         self.scAgeCutoff.configure(sliderlength=20)
         self.scAgeCutoff.configure(background="#d9d9d9")
@@ -450,7 +450,7 @@ class OperationWindow(Frame):
                                                                            self.chbInclude207235Err, self.scErrFilter))
 
         self.scErrFilter = Scale(self.frFilter)
-        self.scErrFilter.grid(row=11, column=1, sticky='ew')
+        self.scErrFilter.grid(row=10, column=1, sticky='ews', rowspan=2)
         self.scErrFilter.configure(activebackground="#d9d9d9")
         self.scErrFilter.configure(sliderlength=20)
         self.scErrFilter.configure(background="#d9d9d9")
@@ -643,7 +643,7 @@ class OperationWindow(Frame):
                                                                               self.scDiscAgeFixedLim))
 
         self.scDiscAgeFixedLim = Scale(self.frDisc)
-        self.scDiscAgeFixedLim.grid(row=10, column=1, sticky='w')
+        self.scDiscAgeFixedLim.grid(row=9, column=1, sticky='ws', rowspan=2)
         self.scDiscAgeFixedLim.configure(activebackground="#d9d9d9")
         self.scDiscAgeFixedLim.configure(sliderlength=20)
         self.scDiscAgeFixedLim.configure(background="#d9d9d9")
@@ -1202,6 +1202,7 @@ class OperationWindow(Frame):
 
             self.rbDiscSmallest.select()
             self.rbAgeSmallestErr.select()
+            self.scAgeCutoff.configure(state=DISABLED)
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
                 self.lboxSamples.insert(END, item.name)
