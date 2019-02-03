@@ -16,10 +16,10 @@ def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
     corr_coef_75_68 = (rat68err / rat68) / (rat75err / rat75)
     corr_coef_86_76 = (rat68err / rat68) * (rat76 / rat76err)
     if corr_coef_75_68 > 1:
-        corr_coef_75_68 = 0.99
+        corr_coef_75_68 = 1 / corr_coef_75_68
         any_error = True
     if corr_coef_86_76 > 1:
-        corr_coef_86_76 = 0.99
+        corr_coef_86_76 = 1 / corr_coef_86_76
         any_error = True
     return (corr_coef_75_68, corr_coef_86_76, any_error)
 
@@ -243,7 +243,7 @@ def find_age(pLeadRatio):
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
-                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=1,
+                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[1, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
@@ -538,16 +538,6 @@ def file_to_analysis(imp_file, index):
         else:
             pb207_u235.append(float(an[header[3][1]]) / sigma_level)
 
-        '''if header[4] != -1:
-            corr_coef_75_68 = float(an[header[4]])
-        else:
-            corr_coef_75_68 = 0.99
-
-        if header[9] != -1:
-            corr_coef_86_76 = float(an[header[9]])
-        else:
-            corr_coef_86_76 = 0.99'''
-
         pb208_th232.append(float(an[header[5][0]]))
         pb208_th232.append(float(an[header[5][1]]) / sigma_level)
         if header[5][2] != -1:
@@ -563,8 +553,21 @@ def file_to_analysis(imp_file, index):
             pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
 
         rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
-        corr_coef_75_68 = rho[0]
-        corr_coef_86_76 = rho[1]
+        corr_coef_75_68_calculated = rho[0]
+        corr_coef_86_76_calculated = rho[1]
+
+        if header[4] != -1:
+            corr_coef_75_68 = float(an[header[4]])
+        else:
+            corr_coef_75_68 = corr_coef_75_68_calculated
+
+        if header[9] != -1:
+            corr_coef_86_76 = float(an[header[9]])
+        else:
+            corr_coef_86_76 = corr_coef_86_76_calculated
+
+
+
 
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
@@ -975,12 +978,30 @@ class Analysis(object):
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, between_68_57):
-        if between_68_57:
-            return self.calc_age(1)[0] / self.calc_age(0)[0] - 1
+    def calc_discordance(self, disc_type, age_cutoff): #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
+        age_206_238 = self.calc_age(0)[0]
+        age_207_235 = self.calc_age(1)[0]
+        age_207_206 = self.calc_age(3)[0]
+        disc_68_57 = age_207_235/ age_206_238 - 1
+        disc_68_76 = 1 - age_206_238 / age_207_206
 
-        else:
-            return 1 - self.calc_age(0)[0] / self.calc_age(3)[0]
+        if disc_type == 0:
+            return -1
+        if disc_type == 1:
+            if age_206_238 < age_cutoff:
+                return disc_68_57
+            else:
+                return disc_68_76
+        if disc_type == 2:
+            return disc_68_57
+        elif disc_type == 3:
+            return disc_68_76
+
+        else: #if disc_type == 4
+            if abs(disc_68_57) < abs(disc_68_76):
+                return disc_68_57
+            else:
+                return disc_68_76
 
     # true if should use U238/Pb206, false if should use Pb206/Pb207
     def use_206_238(self, age_cutoff):
@@ -1054,15 +1075,18 @@ class Analysis(object):
             is_err_good = True  # if no need to filter by age error
             is_207235err_good = True
 
-        # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86
-        if type_disc == 0:
+        # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
+        disc = self.calc_discordance(type_disc, pFilter.disc_type[1]) #22222
+        '''if type_disc == 0:
             disc = -1  # this is for future implementation of 'based on Uconc' algorithm
         elif type_disc == 1:
-            disc = self.calc_discordance(not age_68_67)
+            disc = self.calc_discordance(1, )
         elif type_disc == 2:
-            disc = self.calc_discordance(True)
+            disc = self.calc_discordance(2)
         elif type_disc == 3:
-            disc = self.calc_discordance(False)  # 12345
+            disc = self.calc_discordance(3)  #11111
+        else: #if 4
+            disc = self.calc_discordance(4)  # 11111'''
 
         if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
             is_disc_good = True
