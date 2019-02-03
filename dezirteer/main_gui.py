@@ -605,7 +605,7 @@ class OperationWindow(Frame):
         self.scNegDisc.configure(state=DISABLED)
         self.lbCalcDisc.configure(text='8. Discord. type')
 
-        self.chbDiscLinked2Age = Checkbutton(self.frDisc)
+        '''self.chbDiscLinked2Age = Checkbutton(self.frDisc)
         self.chbDiscLinked2Age.grid(row=9, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbDiscLinked2Age)
         self.chbDiscLinked2Age.configure(text="Linked to the choice in #4")
@@ -620,14 +620,14 @@ class OperationWindow(Frame):
                                                                               self.rbDisc75_68,
                                                                               self.scDiscAgeFixedLim,
                                                                               self.scAgeCutoff,
-                                                                              self.rbDiscSmallest))
+                                                                              self.rbDiscSmallest))'''
 
         self.rbDiscUbased = Radiobutton(self.frDisc)
         self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
         self.rbDiscUbased.grid(row=10, sticky='w', pady=5)
         self.apply_style(self.rbDiscUbased)
         self.rbDiscUbased.configure(justify=LEFT)
-        self.rbDiscUbased.configure(text='''Based on U-conc''')
+        self.rbDiscUbased.configure(text='Based on U-conc')
         self.rbDiscUbased.configure(state=DISABLED)
         self.rbDiscUbased.configure(command=lambda: gui_support.onChange(8, 0, pars_onChange,
                                                                          self.scDiscAgeFixedLim.get()))
@@ -641,7 +641,7 @@ class OperationWindow(Frame):
         self.rbDiscAgeFixedLim.configure(state=DISABLED)
         self.rbDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(8, 1, pars_onChange,
                                                                               self.scDiscAgeFixedLim.get()))
-        self.rbDiscAgeFixedLim.select()
+        #self.rbDiscAgeFixedLim.select()
 
         self.scDiscAgeFixedLim = Scale(self.frDisc)
         self.scDiscAgeFixedLim.grid(row=11, column=1, sticky='w')
@@ -660,7 +660,7 @@ class OperationWindow(Frame):
         self.scDiscAgeFixedLim.set(1000)
         self.scDiscAgeFixedLim.configure(state=DISABLED)
         self.scDiscAgeFixedLim.configure(command=lambda x: gui_support.onChange(19, self.scDiscAgeFixedLim.get(),
-                                                                                pars_onChange, self.scDiscAgeFixedLim))
+                                                                                pars_onChange, self.scDiscAgeFixedLim[0]))
         self.scDiscAgeFixedLim.configure(troughcolor="#d9d9d9")
 
         self.rbDisc67_68 = Radiobutton(self.frDisc)
@@ -1195,22 +1195,18 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
                                self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
-                               self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
-                               self.rbDisc75_68, self.rbDiscSmallest, self.cbTypePbc, self.rbUseUncorr, self.rbUseCorr, self.cbTypePbc]
+                               self.scUconcCutoff, self.rbDiscUbased, self.rbUseUncorr, self.rbUseCorr, self.cbTypePbc]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
-            self.rbDiscUbased.configure(state=DISABLED)
-            self.rbDiscAgeFixedLim.configure(state=DISABLED)
-            self.rbDisc67_68.configure(state=DISABLED)
-            self.rbDisc75_68.configure(state=DISABLED)
-            self.rbDiscSmallest.configure(state=DISABLED)
+
             #self.cbTypePbc.configure(state="readonly")
             self.rbAgeFixedLim.select()
-            self.chbDiscLinked2Age.select()
-            self.rbDiscAgeFixedLim.select()
+            #self.chbDiscLinked2Age.select()
+            self.rbDisc67_68.select()
+            #self.rbDiscAgeFixedLim.select()
 
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
@@ -1626,7 +1622,7 @@ def main():
     g_kde = []
     g_ckde = []
     g_prev_cum = []
-    g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
+    g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
     g_list_col_names = ['208Pb/232Th', '208/232±1s(Int)', '208/232±1s(Prop)',
                         '207Pb/206Pb', '207/206±1s(Int)', '207/206±1s(Prop)',
                         '207Pb/235U', '207/235±1s(Int)', '207/235±1s(Prop)',

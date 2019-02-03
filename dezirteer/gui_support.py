@@ -147,7 +147,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 7:
         pars[0].neg_disc_filter = p_value/100
     elif p_number_in_list == 8:
-        pars[0].disc_type = [p_value, args]
+        pars[0].disc_type = [p_value, args[0]]
     elif p_number_in_list == 9:
         pars[0].conc_type = p_value
     elif p_number_in_list == 11:
@@ -405,8 +405,8 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_age(0)[1]) + ',' +
                        str(an_list[j].calc_age(0)[2]) + ',' +
 
-                       str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
                        str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
+                       str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
 
                        str(an_list[j].is_grain_good(p_filters)[0]) + ',' +
                        str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
@@ -528,8 +528,8 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(an_list[j].calc_age(0)[1]),
                     int(an_list[j].calc_age(0)[2]),
 
-                    int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
+                    int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),
                     str(an_list[j].is_grain_good(filters)[0]),
                     str(an_list[j].is_grain_good(filters)[1]),
                     int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[0]),

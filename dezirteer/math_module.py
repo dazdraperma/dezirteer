@@ -243,7 +243,7 @@ def find_age(pLeadRatio):
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
-                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[1, 1000],
+                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[2, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
@@ -978,26 +978,29 @@ class Analysis(object):
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, disc_type, age_cutoff): #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
+    def calc_discordance(self, disc_type, age_cutoff): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
         age_206_238 = self.calc_age(0)[0]
         age_207_235 = self.calc_age(1)[0]
         age_207_206 = self.calc_age(3)[0]
-        disc_68_57 = age_207_235/ age_206_238 - 1
+        disc_68_57 = age_207_235 / age_206_238 - 1
         disc_68_76 = 1 - age_206_238 / age_207_206
 
         if disc_type == 0:
             return -1
+
         if disc_type == 1:
             if age_206_238 < age_cutoff:
                 return disc_68_57
             else:
                 return disc_68_76
+
         if disc_type == 2:
-            return disc_68_57
-        elif disc_type == 3:
             return disc_68_76
 
-        else: #if disc_type == 4
+        elif disc_type == 3:
+            return disc_68_57
+
+        else: #if disc_type[0] == 4
             if abs(disc_68_57) < abs(disc_68_76):
                 return disc_68_57
             else:
@@ -1016,7 +1019,7 @@ class Analysis(object):
         do_err = pFilter.filter_by_err[0]
         do_207235_err = pFilter.include207235Err
         err_cutoff = pFilter.filter_by_err[1]
-        type_disc = pFilter.disc_type
+        type_disc = pFilter.disc_type[0]
         pos_disc_cutoff = pFilter.pos_disc_filter
         neg_disc_cutoff = pFilter.neg_disc_filter
         sample_name_filter = pFilter.sample_name_filter
