@@ -689,17 +689,9 @@ def file_to_analysis(imp_file, index):
         th232_pb204 = [-1, -1, -1]
         u238_pb204 = [-1, -1, -1]
 
-
-        '''corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-        corr_coef_86_76 = (pb206_u238[1]/pb206_u238[0])*(pb207_pb206[0]/pb207_pb206[1])
-        if corr_coef_75_68 > 1:
-            corr_coef_75_68 = 0.99  # Achtung! Temp solution
-        if corr_coef_86_76 > 1:
-            corr_coef_86_76 = 0.99  # Achtung! Temp solution'''
         rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
         corr_coef_75_68 = rho[0]
         corr_coef_86_76 = rho[1]
-
 
     else: #template
         sigma_level = 1
@@ -719,24 +711,13 @@ def file_to_analysis(imp_file, index):
         pb207_u235.append(float(an[6]) / sigma_level)
         pb207_u235.append(float(an[6]) / sigma_level)
 
-        #corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-        corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-        if corr_coef_75_68 > 1:
-            corr_coef_86_76 = 0.99 #Achtung! Temp solution
-
-
         pb207_pb206.append(float(an[7]))
         pb207_pb206.append(float(an[8]) / sigma_level)
         pb207_pb206.append(float(an[8]) / sigma_level)
 
-
-        '''corr_coef_86_76 = (pb206_u238[1] / pb206_u238[0]) * (pb207_pb206[0] / pb207_pb206[1])
-        if corr_coef_86_76 > 1:
-            corr_coef_86_76 = 0.99 #Achtung! Temp solution'''
         rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
         corr_coef_75_68 = rho[0]
         corr_coef_86_76 = rho[1]
-
 
         u_conc.append(float(an[9]))
         u_conc.append(float(an[10]) / sigma_level)
@@ -765,8 +746,6 @@ def file_to_analysis(imp_file, index):
         u238_pb204.append(float(an[21]))
         u238_pb204.append(float(an[22]) / sigma_level)
         u238_pb204.append(float(an[22]) / sigma_level)
-
-
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
                           pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
@@ -937,11 +916,7 @@ class Analysis(object):
     def calc_age(self, isotopic_system):
         age_err_int = -1
         age_err_prop = -1
-        #int_prop = 0
-        #if err_int_prop == 'Internal':
-        #    int_prop = 1
-        #else: #if Propagated
-        #    int_prop = 2
+
         try:
             if isotopic_system == 0 and self.pb206_u238[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
@@ -1045,20 +1020,27 @@ class Analysis(object):
                 is_grain_in_chosen_sample = False
 
         # decide on the default age system
-        if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
+        if which_age == 0:
+            if self.calc_age(0)[pFilter.unc_type] > self.calc_age(3)[pFilter.unc_type]:
+                age_68_67 = 1
+                this_age = 3
+            else:
+                age_68_67 = 0
+                this_age = 0
+
+        elif (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
             age_68_67 = 1
             this_age = 3
         elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
             age_68_67 = 0
             this_age = 0
         else:
-            age_68_67 = -1  # this is for future implementation of 'based on Uconc' algorithm
+            age_68_67 = -1
 
         # filter by measurement error
         if do_err:
             age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
-            err = self.calc_age(age_68_67 * 3)[1]  # calculates correspondent error
-            #Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
+            err = self.calc_age(age_68_67 * 3)[int(pFilter.unc_type)]  # calculates correspondent error
 
             if err / age < err_cutoff:  # checks whether error is within limit
                 is_err_good = True
@@ -1066,8 +1048,7 @@ class Analysis(object):
                 is_err_good = False
             if do_207235_err == 1:
                 age207235 = self.calc_age(1)[0]
-                age207235err = self.calc_age(1)[1]
-                # Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
+                age207235err = self.calc_age(1)[int(pFilter.unc_type)]
                 if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
                 else:
