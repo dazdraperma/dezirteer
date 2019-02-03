@@ -241,7 +241,7 @@ def find_age(pLeadRatio):
 
 
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
-    def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
+    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
@@ -1027,17 +1027,17 @@ class Analysis(object):
                 is_grain_in_chosen_sample = False
 
         # decide on the default age system
-        if which_age == 0:
+        if which_age == 0:  # from the lesser error
             if self.calc_age(0)[int(pFilter.unc_type)] > self.calc_age(3)[int(pFilter.unc_type)]:
                 age_68_67 = 1
                 this_age = 3
             else:
                 age_68_67 = 0
                 this_age = 0
-        elif (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
+        elif (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:  # fixed limit, age>limit
             age_68_67 = 1
             this_age = 3
-        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
+        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
             age_68_67 = 0
             this_age = 0
         else:

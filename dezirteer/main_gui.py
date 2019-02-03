@@ -335,6 +335,7 @@ class OperationWindow(Frame):
         self.apply_style(self.rbAgeSmallestErr)
         self.rbAgeSmallestErr.configure(justify=LEFT)
         self.rbAgeSmallestErr.configure(text='From the lesser error')
+        self.rbAgeSmallestErr.select()
         self.rbAgeSmallestErr.configure(state=DISABLED)
         self.rbAgeSmallestErr.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
 
@@ -346,7 +347,6 @@ class OperationWindow(Frame):
         self.rbAgeFixedLim.configure(text='''Fixed limit (Ma):''')
         self.rbAgeFixedLim.configure(state=DISABLED)
         self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.scAgeCutoff))
-        self.rbAgeFixedLim.select()
 
         self.rbAge206_207 = Radiobutton(self.frFilter)
         self.rbAge206_207.configure(variable=gui_support.varAgebased, value=2)
@@ -608,6 +608,7 @@ class OperationWindow(Frame):
         self.apply_style(self.rbDiscSmallest)
         self.rbDiscSmallest.configure(justify=LEFT)
         self.rbDiscSmallest.configure(text='Lesser of 2 (recommended)')
+        self.rbDiscSmallest.select()
         self.rbDiscSmallest.configure(state=DISABLED)
         self.rbDiscSmallest.configure(command=lambda: gui_support.onChange(8, 4, pars_onChange,
                                                                            self.scDiscAgeFixedLim))
@@ -1190,8 +1191,8 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,self.chbInclude207235Err,
-                                 self.scErrFilter, self.scDiscAgeFixedLim,self.scUconcCutoff, self.rbUseUncorr,
+        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
+                                 self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
                                  self.rbUseCorr, self.cbTypePbc]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
@@ -1200,6 +1201,7 @@ class OperationWindow(Frame):
                         child.configure(state=NORMAL)
 
             self.rbDiscSmallest.select()
+            self.rbAgeSmallestErr.select()
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
                 self.lboxSamples.insert(END, item.name)
