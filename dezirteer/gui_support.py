@@ -127,11 +127,10 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
             args[0].configure(state=DISABLED)
     elif p_number_in_list == 3:
         pars[0].which_age[0] = p_value
-        args[0].select()
         if p_value == 1:
-            args[1].configure(state=NORMAL)
+            args[0].configure(state=NORMAL)
         else:
-            args[1].configure(state=DISABLED)
+            args[0].configure(state=DISABLED)
     elif p_number_in_list == 4:
         pars[0].use_pbc = p_value
     elif p_number_in_list == 5:

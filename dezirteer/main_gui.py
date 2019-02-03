@@ -336,7 +336,7 @@ class OperationWindow(Frame):
         self.rbUBased.configure(justify=LEFT)
         self.rbUBased.configure(text='''Based on U-conc.''')
         self.rbUBased.configure(state=DISABLED)
-        self.rbUBased.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.rbDiscUbased, self.scAgeCutoff))
+        self.rbUBased.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
 
         self.rbAgeFixedLim = Radiobutton(self.frFilter)
         self.rbAgeFixedLim.configure(variable=gui_support.varAgebased, value=1)
@@ -345,8 +345,7 @@ class OperationWindow(Frame):
         self.rbAgeFixedLim.configure(justify=LEFT)
         self.rbAgeFixedLim.configure(text='''Fixed limit (Ma):''')
         self.rbAgeFixedLim.configure(state=DISABLED)
-        self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.rbDiscAgeFixedLim,
-                                                                          self.scAgeCutoff))
+        self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.scAgeCutoff))
         self.rbAgeFixedLim.select()
 
         self.rbAge206_207 = Radiobutton(self.frFilter)
@@ -356,8 +355,7 @@ class OperationWindow(Frame):
         self.rbAge206_207.configure(justify=LEFT)
         self.rbAge206_207.configure(text='''206Pb/207Pb''')
         self.rbAge206_207.configure(state=DISABLED)
-        self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.rbDisc67_68,
-                                                                         self.scAgeCutoff))
+        self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.scAgeCutoff))
 
         self.rbAge206_238 = Radiobutton(self.frFilter)
         self.rbAge206_238.configure(variable=gui_support.varAgebased, value=3)
@@ -366,8 +364,7 @@ class OperationWindow(Frame):
         self.rbAge206_238.configure(justify=LEFT)
         self.rbAge206_238.configure(text='''206Pb/238U''')
         self.rbAge206_238.configure(state=DISABLED)
-        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.rbDisc75_68,
-                                                                         self.scAgeCutoff))
+        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))
 
         self.scAgeCutoff = Scale(self.frFilter)
         self.scAgeCutoff.grid(row=2, column=1, sticky='ew')
