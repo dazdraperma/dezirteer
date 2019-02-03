@@ -243,7 +243,7 @@ def find_age(pLeadRatio):
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
-                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[2, 1000],
+                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
@@ -989,7 +989,7 @@ class Analysis(object):
             return -1
 
         if disc_type == 1:
-            if age_206_238 < age_cutoff:
+            if age_206_238 > age_cutoff:
                 return disc_68_57
             else:
                 return disc_68_76

@@ -147,7 +147,11 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 7:
         pars[0].neg_disc_filter = p_value/100
     elif p_number_in_list == 8:
-        pars[0].disc_type = [p_value, args[0]]
+        pars[0].disc_type = [p_value, args[0].get()]
+        if p_value == 1:
+            args[0].configure(state=NORMAL)
+        else:
+            args[0].configure(state=DISABLED)
     elif p_number_in_list == 9:
         pars[0].conc_type = p_value
     elif p_number_in_list == 11:
@@ -167,11 +171,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 18:
         pars[0].filter_by_uconc[1] = p_value
     elif p_number_in_list == 19:
-        pars[0].disc_type[1] = p_value
-        if varDiscLinked2Age.get() == 1:
-            args[0].configure(state=NORMAL)
-            args[0].set(p_value)
-            args[0].configure(state=DISABLED)
+        pars[0].which_age[1] = p_value
     elif p_number_in_list == 20:
         pars[0].filter_by_err[1] = p_value/100
     elif p_number_in_list == 21:
@@ -189,6 +189,8 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].unc_type = p_value
     elif p_number_in_list == 24:
         pars[0].filter_by_commPb = p_value
+    elif p_number_in_list == 25:
+        pars[0].disc_type[1] = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
