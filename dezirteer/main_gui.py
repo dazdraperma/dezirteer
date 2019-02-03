@@ -329,14 +329,14 @@ class OperationWindow(Frame):
         self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
         self.lbWhichAge.configure(state=DISABLED)
 
-        self.rbUBased = Radiobutton(self.frFilter)
-        self.rbUBased.configure(variable=gui_support.varAgebased, value=0)
-        self.rbUBased.grid(row=1, sticky='w')
-        self.apply_style(self.rbUBased)
-        self.rbUBased.configure(justify=LEFT)
-        self.rbUBased.configure(text='''Based on U-conc.''')
-        self.rbUBased.configure(state=DISABLED)
-        self.rbUBased.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
+        self.rbAgeSmallestErr = Radiobutton(self.frFilter)
+        self.rbAgeSmallestErr.configure(variable=gui_support.varAgebased, value=0)
+        self.rbAgeSmallestErr.grid(row=1, sticky='w')
+        self.apply_style(self.rbAgeSmallestErr)
+        self.rbAgeSmallestErr.configure(justify=LEFT)
+        self.rbAgeSmallestErr.configure(text='From the lesser error')
+        self.rbAgeSmallestErr.configure(state=DISABLED)
+        self.rbAgeSmallestErr.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
 
         self.rbAgeFixedLim = Radiobutton(self.frFilter)
         self.rbAgeFixedLim.configure(variable=gui_support.varAgebased, value=1)
@@ -681,7 +681,7 @@ class OperationWindow(Frame):
         self.rbDisc75_68.configure(command=lambda: gui_support.onChange(8, 3, pars_onChange,
                                                                         self.scDiscAgeFixedLim))
 
-        self.rbDiscUbased = Radiobutton(self.frDisc)
+        '''self.rbDiscUbased = Radiobutton(self.frDisc)
         self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
         self.rbDiscUbased.grid(row=13, sticky='w', pady=5)
         self.apply_style(self.rbDiscUbased)
@@ -689,7 +689,7 @@ class OperationWindow(Frame):
         self.rbDiscUbased.configure(text='Based on U-conc')
         self.rbDiscUbased.configure(state=DISABLED)
         self.rbDiscUbased.configure(command=lambda: gui_support.onChange(8, 0, pars_onChange,
-                                                                         self.scDiscAgeFixedLim))
+                                                                         self.scDiscAgeFixedLim))'''
         # _______________frGraphSettings_________________________________________________________________________________
         self.frGraphSettings = Frame(self.frOper)
         self.frGraphSettings.configure(relief=GROOVE)
@@ -1190,9 +1190,9 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
-                               self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter, self.scDiscAgeFixedLim,
-                               self.scUconcCutoff, self.rbDiscUbased, self.rbUseUncorr, self.rbUseCorr, self.cbTypePbc]
+        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,self.chbInclude207235Err,
+                                 self.scErrFilter, self.scDiscAgeFixedLim,self.scUconcCutoff, self.rbUseUncorr,
+                                 self.rbUseCorr, self.cbTypePbc]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
