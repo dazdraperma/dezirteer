@@ -190,16 +190,31 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].filter_by_commPb = p_value
     elif p_number_in_list == 25:
         pars[0].disc_type[1] = p_value
+
     elif p_number_in_list == 26:
         if varMinAgeCrop.get() == 0: #12345
             pars[0].minAgeCrop = 0
+            args[0].configure(state=DISABLED)
         else:
-            pars[0].minAgeCrop = float(p_value)
+            args[0].configure(state=NORMAL)
+            try:
+                pars[0].minAgeCrop = float(p_value)
+            except ValueError:
+                pars[0].minAgeCrop = 0
+                args[0].insert(0, '0')
+
+
     elif p_number_in_list == 27:
         if varMaxAgeCrop.get() == 0:
-            pars[0].maxAgeCrop = 5000
+            pars[0].maxAgeCrop = EarthAge
+            args[0].configure(state=DISABLED)
         else:
-            pars[0].maxAgeCrop = float(p_value)
+            args[0].configure(state=NORMAL)
+            try:
+                pars[0].maxAgeCrop = float(p_value)
+            except ValueError:
+                pars[0].maxAgeCrop = 0
+                args[0].insert(0, EarthAge)
 
 
 
@@ -561,8 +576,4 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     return good_grains
 
 
-def verifyNumberOnly(pObject):
-    if not pObject.get().isdigit:
-        pObject.delete(0, END)
-        pObject.insert(END, '0')
 

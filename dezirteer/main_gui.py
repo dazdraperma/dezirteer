@@ -715,7 +715,8 @@ class OperationWindow(Frame):
         self.chbMinAgeCrop.configure(justify=LEFT)
         self.chbMinAgeCrop.configure(state=DISABLED)
         self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
-        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange))
+        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
+                                                                          self.entAgeMinCrop))
 
         self.entAgeMaxCrop = Entry(self.frDisc)
         self.entAgeMaxCrop.grid(row=15, column=1, pady=5, padx=5, sticky='w')
@@ -733,7 +734,8 @@ class OperationWindow(Frame):
         self.chbMaxAgeCrop.configure(justify=LEFT)
         self.chbMaxAgeCrop.configure(state=DISABLED)
         self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
-        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(27, self.entAgeMaxCrop.get(), pars_onChange))
+        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(27, self.entAgeMaxCrop.get(), pars_onChange,
+                                                                          self.entAgeMaxCrop))
 
 
         # _______________frGraphSettings_________________________________________________________________________________
@@ -1269,8 +1271,8 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
                 self.Table.delete(i)
-        self.entAgeMinCrop.configure(state=NORMAL)
-        self.entAgeMaxCrop.configure(state=NORMAL)
+        #self.entAgeMinCrop.configure(state=NORMAL)
+        #self.entAgeMaxCrop.configure(state=NORMAL)
         global g_plot_txt
         g_plot_txt = ""
 
@@ -1433,7 +1435,7 @@ class OperationWindow(Frame):
         self.ax_prob.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
         self.ax_cum.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
 
-    def set_axes(self, conc_title,conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
+    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
                  conc_graph_y, min_age, max_age):
         # set axis of all graphs
         self.ax_conc.set_title(conc_title)
@@ -1505,6 +1507,23 @@ class OperationWindow(Frame):
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
+        if gui_support.varMinAgeCrop.get() == 1:
+            min_crop = self.entAgeMinCrop.get()
+            try:
+                g_filters.minAgeCrop = float(min_crop)
+            except ValueError:
+                g_filters.minAgeCrop = 0
+                self.entAgeMinCrop.delete(0, END)
+                self.entAgeMinCrop.insert(0, '0')
+
+        if gui_support.varMaxAgeCrop.get() == 1:
+            max_crop = self.entAgeMaxCrop.get()
+            try:
+                g_filters.maxAgeCrop = float(max_crop)
+            except ValueError:
+                g_filters.maxAgeCrop = EarthAge
+                self.entAgeMaxCrop.delete(0, END)
+                self.entAgeMaxCrop.insert(0, EarthAge)
 
         #gets the user-selected items from the listbox
         item_indexes = self.lboxSamples.curselection()
@@ -1569,7 +1588,6 @@ class OperationWindow(Frame):
 
         finally:
             self.plot_conc_text_peaks()
-
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
