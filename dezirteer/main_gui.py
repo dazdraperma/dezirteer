@@ -752,7 +752,7 @@ class OperationWindow(Frame):
         self.lbConc.grid(row=0, columnspan=4, sticky='ew')
         self.apply_style(self.lbConc)
         self.lbConc.configure(font=font9)
-        self.lbConc.configure(text='9. Concordia')
+        self.lbConc.configure(text='10. Concordia')
 
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
@@ -827,7 +827,7 @@ class OperationWindow(Frame):
         self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
         self.apply_style(self.lbKdePdpHist)
         self.lbKdePdpHist.configure(font=font9)
-        self.lbKdePdpHist.configure(text='10. KDE/PDP/Hist')
+        self.lbKdePdpHist.configure(text='11. KDE/PDP/Hist')
 
         self.rbDrawKDE = Radiobutton(self.frGraphSettings)
         self.rbDrawKDE.configure(variable=gui_support.var_pdp_kde_hist, value=0)
