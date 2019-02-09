@@ -191,9 +191,17 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 25:
         pars[0].disc_type[1] = p_value
     elif p_number_in_list == 26:
-        pars[0].minAgeCrop = p_value
+        if varMinAgeCrop.get() == 0: #12345
+            pars[0].minAgeCrop = 0
+        else:
+            pars[0].minAgeCrop = float(p_value)
     elif p_number_in_list == 27:
-        pars[0].maxAgeCrop = p_value
+        if varMaxAgeCrop.get() == 0:
+            pars[0].maxAgeCrop = 5000
+        else:
+            pars[0].maxAgeCrop = float(p_value)
+
+
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])

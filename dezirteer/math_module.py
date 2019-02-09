@@ -950,11 +950,6 @@ class Analysis(object):
     def calc_age(self, isotopic_system):
         age_err_int = -1
         age_err_prop = -1
-        #int_prop = 0
-        #if err_int_prop == 'Internal':
-        #    int_prop = 1
-        #else: #if Propagated
-        #    int_prop = 2
         try:
             if isotopic_system == 0 and self.pb206_u238[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
@@ -1039,9 +1034,9 @@ class Analysis(object):
         min_age_crop = pFilter.minAgeCrop
         max_age_crop = pFilter.maxAgeCrop
         is_grain_in_chosen_sample = True
+        is_age_good = True
         age_206_238 = self.calc_age(0)
         age_207_206 = self.calc_age(3)
-
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
@@ -1079,17 +1074,25 @@ class Analysis(object):
         else:
             age_68_67 = -1
 
+        if age_68_67 == 0:
+            age = age_206_238[0]
+            err = age_206_238[int(pFilter.unc_type)]
+        else:
+            age = age_207_206[0]
+            err = age_207_206[int(pFilter.unc_type)]
+
+        # filter by minimum and maximum age crops
+        if min_age_crop > 0: # TEMP TO BE DELETED
+            pass
+
+        if (age > min_age_crop) and (age < max_age_crop):
+            is_age_good = True
+        else:
+            is_age_good = False
+
+
         # filter by measurement error
         if do_err:
-            if age_68_67 == 0:
-                age = age_206_238[0]
-                err = age_206_238[int(pFilter.unc_type)]
-            else:
-                age = age_207_206[0]
-                err = age_207_206[int(pFilter.unc_type)]
-            #age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
-            #err = self.calc_age(age_68_67 * 3)[int(pFilter.unc_type)]  # calculates correspondent error
-
             if err / age < err_cutoff:  # checks whether error is within limit
                 is_err_good = True
             else:
@@ -1126,7 +1129,7 @@ class Analysis(object):
             is_disc_good = False
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
-               is_grain_in_chosen_sample, this_age
+               is_grain_in_chosen_sample & is_age_good, this_age
 
 
 class AnalysesSet(object):

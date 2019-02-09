@@ -699,17 +699,6 @@ class OperationWindow(Frame):
         self.lbAgeCrop.configure(font=font9)
         self.lbAgeCrop.configure(text='9. Age crop')
 
-        self.chbMinAgeCrop = Checkbutton(self.frDisc)
-        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbMinAgeCrop)
-        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
-        self.chbMinAgeCrop.configure(justify=LEFT)
-        self.chbMinAgeCrop.configure(state=DISABLED)
-        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
-        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(22,
-                                                                                gui_support.varMinAgeCrop.get(),
-                                                                                pars_onChange, 26))
-
         self.entAgeMinCrop = Entry(self.frDisc)
         self.entAgeMinCrop.grid(row=14, column=1, pady=5, padx=5, sticky='w')
         self.entAgeMinCrop.configure(background="white")
@@ -719,16 +708,14 @@ class OperationWindow(Frame):
         self.entAgeMinCrop.configure(insertbackground="black")
         self.entAgeMinCrop.configure(width=5)
 
-        self.chbMaxAgeCrop = Checkbutton(self.frDisc)
-        self.chbMaxAgeCrop.grid(row=15, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbMaxAgeCrop)
-        self.chbMaxAgeCrop.configure(text="Max. age crop at (Ma):")
-        self.chbMaxAgeCrop.configure(justify=LEFT)
-        self.chbMaxAgeCrop.configure(state=DISABLED)
-        self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
-        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(22,
-                                                                          gui_support.varMaxAgeCrop.get(),
-                                                                          pars_onChange, 27))
+        self.chbMinAgeCrop = Checkbutton(self.frDisc)
+        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMinAgeCrop)
+        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
+        self.chbMinAgeCrop.configure(justify=LEFT)
+        self.chbMinAgeCrop.configure(state=DISABLED)
+        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
+        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange))
 
         self.entAgeMaxCrop = Entry(self.frDisc)
         self.entAgeMaxCrop.grid(row=15, column=1, pady=5, padx=5, sticky='w')
@@ -738,6 +725,16 @@ class OperationWindow(Frame):
         self.entAgeMaxCrop.configure(foreground="#000000")
         self.entAgeMaxCrop.configure(insertbackground="black")
         self.entAgeMaxCrop.configure(width=5)
+
+        self.chbMaxAgeCrop = Checkbutton(self.frDisc)
+        self.chbMaxAgeCrop.grid(row=15, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(text="Max. age crop at (Ma):")
+        self.chbMaxAgeCrop.configure(justify=LEFT)
+        self.chbMaxAgeCrop.configure(state=DISABLED)
+        self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(27, self.entAgeMaxCrop.get(), pars_onChange))
+
 
         # _______________frGraphSettings_________________________________________________________________________________
         self.frGraphSettings = Frame(self.frOper)
@@ -1241,7 +1238,7 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
                                  self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
-                                 self.rbUseCorr, self.cbTypePbc]
+                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
@@ -1272,6 +1269,8 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
                 self.Table.delete(i)
+        self.entAgeMinCrop.configure(state=NORMAL)
+        self.entAgeMaxCrop.configure(state=NORMAL)
         global g_plot_txt
         g_plot_txt = ""
 
