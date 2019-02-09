@@ -692,6 +692,53 @@ class OperationWindow(Frame):
         self.rbDiscUbased.configure(state=DISABLED)
         self.rbDiscUbased.configure(command=lambda: gui_support.onChange(8, 0, pars_onChange,
                                                                          self.scDiscAgeFixedLim))'''
+
+        self.lbAgeCrop = Label(self.frDisc)
+        self.lbAgeCrop.grid(row=13, columnspan=2, sticky='ew', pady=5)
+        self.apply_style(self.lbAgeCrop)
+        self.lbAgeCrop.configure(font=font9)
+        self.lbAgeCrop.configure(text='9. Age crop')
+
+        self.chbMinAgeCrop = Checkbutton(self.frDisc)
+        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMinAgeCrop)
+        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
+        self.chbMinAgeCrop.configure(justify=LEFT)
+        self.chbMinAgeCrop.configure(state=DISABLED)
+        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
+        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(22,
+                                                                                gui_support.varMinAgeCrop.get(),
+                                                                                pars_onChange, 26))
+
+        self.entAgeMinCrop = Entry(self.frDisc)
+        self.entAgeMinCrop.grid(row=14, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeMinCrop.configure(background="white")
+        self.entAgeMinCrop.configure(disabledforeground="#a3a3a3")
+        self.entAgeMinCrop.configure(font="TkFixedFont")
+        self.entAgeMinCrop.configure(foreground="#000000")
+        self.entAgeMinCrop.configure(insertbackground="black")
+        self.entAgeMinCrop.configure(width=5)
+
+        self.chbMaxAgeCrop = Checkbutton(self.frDisc)
+        self.chbMaxAgeCrop.grid(row=15, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(text="Max. age crop at (Ma):")
+        self.chbMaxAgeCrop.configure(justify=LEFT)
+        self.chbMaxAgeCrop.configure(state=DISABLED)
+        self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(22,
+                                                                          gui_support.varMaxAgeCrop.get(),
+                                                                          pars_onChange, 27))
+
+        self.entAgeMaxCrop = Entry(self.frDisc)
+        self.entAgeMaxCrop.grid(row=15, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeMaxCrop.configure(background="white")
+        self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
+        self.entAgeMaxCrop.configure(font="TkFixedFont")
+        self.entAgeMaxCrop.configure(foreground="#000000")
+        self.entAgeMaxCrop.configure(insertbackground="black")
+        self.entAgeMaxCrop.configure(width=5)
+
         # _______________frGraphSettings_________________________________________________________________________________
         self.frGraphSettings = Frame(self.frOper)
         self.frGraphSettings.configure(relief=GROOVE)

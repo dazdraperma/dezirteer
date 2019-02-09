@@ -190,6 +190,10 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].filter_by_commPb = p_value
     elif p_number_in_list == 25:
         pars[0].disc_type[1] = p_value
+    elif p_number_in_list == 26:
+        pars[0].minAgeCrop = p_value
+    elif p_number_in_list == 27:
+        pars[0].maxAgeCrop = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
@@ -227,7 +231,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
-    global varCommPb
+    global varCommPb, varMinAgeCrop, varMaxAgeCrop
     varUConc = IntVar()
     varDiscType = IntVar()
     varConcType = IntVar()
@@ -258,6 +262,8 @@ def set_Tk_var():
     varLimitAgeSpectrum = IntVar()
     varUncType = IntVar()
     varCommPb = IntVar()
+    varMinAgeCrop = IntVar()
+    varMaxAgeCrop = IntVar()
 
 
 def init(pTop, pGui, *args, **kwargs):

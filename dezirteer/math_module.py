@@ -244,7 +244,7 @@ class Filters(object):  # describes filters that should be applied to data in An
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
-                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
+                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=5000):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -255,6 +255,10 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__disc_type = disc_type
         self.__sample_name_filter = sample_name_filter
         self.__unc_type = unc_type #1 for internal, 2 for propagated
+        self.__filter_by_commPb = filter_by_commPb
+        self.__minAgeCrop = minAgeCrop
+        self.__maxAgeCrop = maxAgeCrop
+
 
     @property
     def filter_by_uconc(self):
@@ -335,6 +339,33 @@ class Filters(object):  # describes filters that should be applied to data in An
     @unc_type.setter
     def unc_type(self, value):
         self.__unc_type = value
+
+    @property
+    def filter_by_commPb(self):
+        return self.__filter_by_commPb
+
+    @filter_by_commPb.setter
+    def filter_by_commPb(self, value):
+        self.__filter_by_commPb = value
+
+    @property
+    def minAgeCrop(self):
+        return self.__minAgeCrop
+
+    @minAgeCrop.setter
+    def minAgeCrop(self, value):
+        self.__minAgeCrop = value
+
+    @property
+    def maxAgeCrop(self):
+        return self.__maxAgeCrop
+
+    @maxAgeCrop.setter
+    def maxAgeCrop(self, value):
+        self.__maxAgeCrop = value
+
+
+
 
 #this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
 #deletes empty lines if present, returns non-empty lines and their number.
@@ -1005,7 +1036,12 @@ class Analysis(object):
         pos_disc_cutoff = pFilter.pos_disc_filter
         neg_disc_cutoff = pFilter.neg_disc_filter
         sample_name_filter = pFilter.sample_name_filter
+        min_age_crop = pFilter.minAgeCrop
+        max_age_crop = pFilter.maxAgeCrop
         is_grain_in_chosen_sample = True
+        age_206_238 = self.calc_age(0)
+        age_207_206 = self.calc_age(3)
+
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
@@ -1028,16 +1064,16 @@ class Analysis(object):
 
         # decide on the default age system
         if which_age == 0:  # from the lesser error
-            if self.calc_age(0)[int(pFilter.unc_type)] > self.calc_age(3)[int(pFilter.unc_type)]:
+            if age_206_238[int(pFilter.unc_type)] > age_207_206[int(pFilter.unc_type)]:
                 age_68_67 = 1
                 this_age = 3
             else:
                 age_68_67 = 0
                 this_age = 0
-        elif (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:  # fixed limit, age>limit
+        elif (which_age == 1 and age_206_238[0] > age_fixed_limit) or which_age == 2:  # fixed limit, age>limit
             age_68_67 = 1
             this_age = 3
-        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
+        elif (which_age == 1 and age_206_238[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
             age_68_67 = 0
             this_age = 0
         else:
@@ -1045,8 +1081,14 @@ class Analysis(object):
 
         # filter by measurement error
         if do_err:
-            age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
-            err = self.calc_age(age_68_67 * 3)[int(pFilter.unc_type)]  # calculates correspondent error
+            if age_68_67 == 0:
+                age = age_206_238[0]
+                err = age_206_238[int(pFilter.unc_type)]
+            else:
+                age = age_207_206[0]
+                err = age_207_206[int(pFilter.unc_type)]
+            #age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
+            #err = self.calc_age(age_68_67 * 3)[int(pFilter.unc_type)]  # calculates correspondent error
 
             if err / age < err_cutoff:  # checks whether error is within limit
                 is_err_good = True
