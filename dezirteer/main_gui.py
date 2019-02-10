@@ -601,7 +601,7 @@ class OperationWindow(Frame):
         self.apply_style(self.lbCalcDisc)
         self.lbCalcDisc.configure(font=font9)
         self.scNegDisc.configure(state=DISABLED)
-        self.lbCalcDisc.configure(text='8. Discord. type')
+        self.lbCalcDisc.configure(text='8. Discordance between:')
 
         self.rbDiscSmallest = Radiobutton(self.frDisc)
         self.rbDiscSmallest.configure(variable=gui_support.varDiscType, value=4)
@@ -1507,23 +1507,12 @@ class OperationWindow(Frame):
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
+
         if gui_support.varMinAgeCrop.get() == 1:
-            min_crop = self.entAgeMinCrop.get()
-            try:
-                g_filters.minAgeCrop = float(min_crop)
-            except ValueError:
-                g_filters.minAgeCrop = 0
-                self.entAgeMinCrop.delete(0, END)
-                self.entAgeMinCrop.insert(0, '0')
+            is_editbox_float(self.entAgeMinCrop, '_Filters__minAgeCrop', 0)
 
         if gui_support.varMaxAgeCrop.get() == 1:
-            max_crop = self.entAgeMaxCrop.get()
-            try:
-                g_filters.maxAgeCrop = float(max_crop)
-            except ValueError:
-                g_filters.maxAgeCrop = EarthAge
-                self.entAgeMaxCrop.delete(0, END)
-                self.entAgeMaxCrop.insert(0, EarthAge)
+            is_editbox_float(self.entAgeMaxCrop, '_Filters__maxAgeCrop', EarthAge)
 
         #gets the user-selected items from the listbox
         item_indexes = self.lboxSamples.curselection()
@@ -1666,6 +1655,14 @@ class ScrolledTreeView(AutoScroll, ttk.Treeview):
         ttk.Treeview.__init__(self, master, **kw)
         AutoScroll.__init__(self, master)
 
+# checks editboxes for non-numbers; sets g_filters attributes with editbox values
+def is_editbox_float(edit_box, to_assign_to, to_replace_with):
+    try:
+        g_filters.__dict__[to_assign_to] = float(edit_box.get())
+    except ValueError:
+        g_filters.__dict__[to_assign_to] = to_replace_with
+        edit_box.delete(0, END)
+        edit_box.insert(0, to_replace_with)
 
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
