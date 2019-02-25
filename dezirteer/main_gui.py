@@ -1,3 +1,4 @@
+#test
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -230,7 +231,7 @@ class OperationWindow(Frame):
         self.lbUncType = Label(self.frImport)
         self.lbUncType.grid(row=4, column=0)
         self.apply_style(self.lbUncType)
-        self.lbUncType.configure(text='''Iolite uncertainty:''')
+        self.lbUncType.configure(text='''Uncertainty type:''')
 
         self.rbInternal = Radiobutton(self.frImport)
         self.rbInternal.grid(row=4, column=1, sticky='w')
@@ -289,7 +290,7 @@ class OperationWindow(Frame):
         self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
 
         self.scUconcCutoff = Scale(self.frImport)
-        self.scUconcCutoff.grid(row=10, column=1)
+        self.scUconcCutoff.grid(row=9, column=1, sticky='es', rowspan=2)
         self.scUconcCutoff.configure(activebackground="#d9d9d9")
         self.scUconcCutoff.configure(sliderlength=20)
         self.scUconcCutoff.configure(background="#d9d9d9")
@@ -329,25 +330,24 @@ class OperationWindow(Frame):
         self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
         self.lbWhichAge.configure(state=DISABLED)
 
-        self.rbUBased = Radiobutton(self.frFilter)
-        self.rbUBased.configure(variable=gui_support.varAgebased, value=0)
-        self.rbUBased.grid(row=1, sticky='w')
-        self.apply_style(self.rbUBased)
-        self.rbUBased.configure(justify=LEFT)
-        self.rbUBased.configure(text='''Based on U-conc.''')
-        self.rbUBased.configure(state=DISABLED)
-        self.rbUBased.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.rbDiscUbased, self.scAgeCutoff))
+        self.rbAgeSmallestErr = Radiobutton(self.frFilter)
+        self.rbAgeSmallestErr.configure(variable=gui_support.varAgebased, value=0)
+        self.rbAgeSmallestErr.grid(row=1, sticky='w', pady=5)
+        self.apply_style(self.rbAgeSmallestErr)
+        self.rbAgeSmallestErr.configure(justify=LEFT)
+        self.rbAgeSmallestErr.configure(text='From the lesser error')
+        self.rbAgeSmallestErr.select()
+        self.rbAgeSmallestErr.configure(state=DISABLED)
+        self.rbAgeSmallestErr.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
 
         self.rbAgeFixedLim = Radiobutton(self.frFilter)
         self.rbAgeFixedLim.configure(variable=gui_support.varAgebased, value=1)
-        self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=4)
+        self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=5)
         self.apply_style(self.rbAgeFixedLim)
         self.rbAgeFixedLim.configure(justify=LEFT)
         self.rbAgeFixedLim.configure(text='''Fixed limit (Ma):''')
         self.rbAgeFixedLim.configure(state=DISABLED)
-        self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.rbDiscAgeFixedLim,
-                                                                          self.scAgeCutoff))
-        self.rbAgeFixedLim.select()
+        self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.scAgeCutoff))
 
         self.rbAge206_207 = Radiobutton(self.frFilter)
         self.rbAge206_207.configure(variable=gui_support.varAgebased, value=2)
@@ -356,8 +356,7 @@ class OperationWindow(Frame):
         self.rbAge206_207.configure(justify=LEFT)
         self.rbAge206_207.configure(text='''206Pb/207Pb''')
         self.rbAge206_207.configure(state=DISABLED)
-        self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.rbDisc67_68,
-                                                                         self.scAgeCutoff))
+        self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.scAgeCutoff))
 
         self.rbAge206_238 = Radiobutton(self.frFilter)
         self.rbAge206_238.configure(variable=gui_support.varAgebased, value=3)
@@ -366,11 +365,10 @@ class OperationWindow(Frame):
         self.rbAge206_238.configure(justify=LEFT)
         self.rbAge206_238.configure(text='''206Pb/238U''')
         self.rbAge206_238.configure(state=DISABLED)
-        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.rbDisc75_68,
-                                                                         self.scAgeCutoff))
+        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))
 
         self.scAgeCutoff = Scale(self.frFilter)
-        self.scAgeCutoff.grid(row=2, column=1, sticky='ew')
+        self.scAgeCutoff.grid(row=1, column=1, sticky='ews', rowspan=2, pady=5)
         self.scAgeCutoff.configure(activebackground="#d9d9d9")
         self.scAgeCutoff.configure(sliderlength=20)
         self.scAgeCutoff.configure(background="#d9d9d9")
@@ -386,7 +384,7 @@ class OperationWindow(Frame):
         self.scAgeCutoff.set(1000)
         self.scAgeCutoff.configure(state=DISABLED)
         self.scAgeCutoff.configure(
-            command=lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange, self.scDiscAgeFixedLim))
+            command=lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
         self.scAgeCutoff.configure(troughcolor="#d9d9d9")
 
         self.lbPbc = Label(self.frFilter)
@@ -453,7 +451,7 @@ class OperationWindow(Frame):
                                                                            self.chbInclude207235Err, self.scErrFilter))
 
         self.scErrFilter = Scale(self.frFilter)
-        self.scErrFilter.grid(row=11, column=1, sticky='ew')
+        self.scErrFilter.grid(row=10, column=1, sticky='ews', rowspan=2)
         self.scErrFilter.configure(activebackground="#d9d9d9")
         self.scErrFilter.configure(sliderlength=20)
         self.scErrFilter.configure(background="#d9d9d9")
@@ -603,9 +601,20 @@ class OperationWindow(Frame):
         self.apply_style(self.lbCalcDisc)
         self.lbCalcDisc.configure(font=font9)
         self.scNegDisc.configure(state=DISABLED)
-        self.lbCalcDisc.configure(text='8. Discord. type')
+        self.lbCalcDisc.configure(text='8. Discordance between:')
 
-        self.chbDiscLinked2Age = Checkbutton(self.frDisc)
+        self.rbDiscSmallest = Radiobutton(self.frDisc)
+        self.rbDiscSmallest.configure(variable=gui_support.varDiscType, value=4)
+        self.rbDiscSmallest.grid(row=9, sticky='sw', pady=5)
+        self.apply_style(self.rbDiscSmallest)
+        self.rbDiscSmallest.configure(justify=LEFT)
+        self.rbDiscSmallest.configure(text='Lesser of 2 (recommended)')
+        self.rbDiscSmallest.select()
+        self.rbDiscSmallest.configure(state=DISABLED)
+        self.rbDiscSmallest.configure(command=lambda: gui_support.onChange(8, 4, pars_onChange,
+                                                                           self.scDiscAgeFixedLim))
+
+        '''self.chbDiscLinked2Age = Checkbutton(self.frDisc)
         self.chbDiscLinked2Age.grid(row=9, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbDiscLinked2Age)
         self.chbDiscLinked2Age.configure(text="Linked to the choice in #4")
@@ -619,29 +628,23 @@ class OperationWindow(Frame):
                                                                               self.rbDisc67_68,
                                                                               self.rbDisc75_68,
                                                                               self.scDiscAgeFixedLim,
-                                                                              self.scAgeCutoff))
+                                                                              self.scAgeCutoff,
+                                                                              self.rbDiscSmallest))'''
 
-        self.rbDiscUbased = Radiobutton(self.frDisc)
-        self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
-        self.rbDiscUbased.grid(row=10, sticky='w', pady=5)
-        self.apply_style(self.rbDiscUbased)
-        self.rbDiscUbased.configure(justify=LEFT)
-        self.rbDiscUbased.configure(text='''Based on U-conc''')
-        self.rbDiscUbased.configure(state=DISABLED)
-        self.rbDiscUbased.configure(command=lambda: gui_support.onChange(8, 0, pars_onChange))
+
 
         self.rbDiscAgeFixedLim = Radiobutton(self.frDisc)
         self.rbDiscAgeFixedLim.configure(variable=gui_support.varDiscType, value=1)
-        self.rbDiscAgeFixedLim.grid(row=11, column=0, sticky='ws', pady=5)
+        self.rbDiscAgeFixedLim.grid(row=10, column=0, sticky='ws', pady=5)
         self.apply_style(self.rbDiscAgeFixedLim)
         self.rbDiscAgeFixedLim.configure(justify=LEFT)
         self.rbDiscAgeFixedLim.configure(text='''Fixed limit (Ma):''')
         self.rbDiscAgeFixedLim.configure(state=DISABLED)
-        self.rbDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(8, 1, pars_onChange))
-        self.rbDiscAgeFixedLim.select()
+        self.rbDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(8, 1, pars_onChange,
+                                                                              self.scDiscAgeFixedLim))
 
         self.scDiscAgeFixedLim = Scale(self.frDisc)
-        self.scDiscAgeFixedLim.grid(row=11, column=1, sticky='w')
+        self.scDiscAgeFixedLim.grid(row=9, column=1, sticky='ws', rowspan=2)
         self.scDiscAgeFixedLim.configure(activebackground="#d9d9d9")
         self.scDiscAgeFixedLim.configure(sliderlength=20)
         self.scDiscAgeFixedLim.configure(background="#d9d9d9")
@@ -656,27 +659,84 @@ class OperationWindow(Frame):
         self.scDiscAgeFixedLim.configure(bd=2)
         self.scDiscAgeFixedLim.set(1000)
         self.scDiscAgeFixedLim.configure(state=DISABLED)
-        self.scDiscAgeFixedLim.configure(command=lambda x: gui_support.onChange(19, self.scDiscAgeFixedLim.get(),
-                                                                                pars_onChange, self.scDiscAgeFixedLim))
+        self.scDiscAgeFixedLim.configure(command=lambda x: gui_support.onChange(25, self.scDiscAgeFixedLim.get(),
+                                                                                pars_onChange))
         self.scDiscAgeFixedLim.configure(troughcolor="#d9d9d9")
 
         self.rbDisc67_68 = Radiobutton(self.frDisc)
         self.rbDisc67_68.configure(variable=gui_support.varDiscType, value=2)
-        self.rbDisc67_68.grid(row=12, sticky='w', pady=5)
+        self.rbDisc67_68.grid(row=11, sticky='w', pady=5)
         self.apply_style(self.rbDisc67_68)
         self.rbDisc67_68.configure(justify=LEFT)
         self.rbDisc67_68.configure(text='''206/207-238/206''')
         self.rbDisc67_68.configure(state=DISABLED)
-        self.rbDisc67_68.configure(command=lambda: gui_support.onChange(8, 2, pars_onChange))
+        self.rbDisc67_68.configure(command=lambda: gui_support.onChange(8, 2, pars_onChange,
+                                                                        self.scDiscAgeFixedLim))
 
         self.rbDisc75_68 = Radiobutton(self.frDisc)
         self.rbDisc75_68.configure(variable=gui_support.varDiscType, value=3)
-        self.rbDisc75_68.grid(row=13, sticky='sw', pady=5)
+        self.rbDisc75_68.grid(row=12, sticky='sw', pady=5)
         self.apply_style(self.rbDisc75_68)
         self.rbDisc75_68.configure(justify=LEFT)
         self.rbDisc75_68.configure(text='''235/207-238/206''')
         self.rbDisc75_68.configure(state=DISABLED)
-        self.rbDisc75_68.configure(command=lambda: gui_support.onChange(8, 3, pars_onChange))
+        self.rbDisc75_68.configure(command=lambda: gui_support.onChange(8, 3, pars_onChange,
+                                                                        self.scDiscAgeFixedLim))
+
+        '''self.rbDiscUbased = Radiobutton(self.frDisc)
+        self.rbDiscUbased.configure(variable=gui_support.varDiscType, value=0)
+        self.rbDiscUbased.grid(row=13, sticky='w', pady=5)
+        self.apply_style(self.rbDiscUbased)
+        self.rbDiscUbased.configure(justify=LEFT)
+        self.rbDiscUbased.configure(text='Based on U-conc')
+        self.rbDiscUbased.configure(state=DISABLED)
+        self.rbDiscUbased.configure(command=lambda: gui_support.onChange(8, 0, pars_onChange,
+                                                                         self.scDiscAgeFixedLim))'''
+
+        self.lbAgeCrop = Label(self.frDisc)
+        self.lbAgeCrop.grid(row=13, columnspan=2, sticky='ew', pady=5)
+        self.apply_style(self.lbAgeCrop)
+        self.lbAgeCrop.configure(font=font9)
+        self.lbAgeCrop.configure(text='9. Age crop')
+
+        self.entAgeMinCrop = Entry(self.frDisc)
+        self.entAgeMinCrop.grid(row=14, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeMinCrop.configure(background="white")
+        self.entAgeMinCrop.configure(disabledforeground="#a3a3a3")
+        self.entAgeMinCrop.configure(font="TkFixedFont")
+        self.entAgeMinCrop.configure(foreground="#000000")
+        self.entAgeMinCrop.configure(insertbackground="black")
+        self.entAgeMinCrop.configure(width=5)
+
+        self.chbMinAgeCrop = Checkbutton(self.frDisc)
+        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMinAgeCrop)
+        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
+        self.chbMinAgeCrop.configure(justify=LEFT)
+        self.chbMinAgeCrop.configure(state=DISABLED)
+        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
+        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
+                                                                          self.entAgeMinCrop))
+
+        self.entAgeMaxCrop = Entry(self.frDisc)
+        self.entAgeMaxCrop.grid(row=15, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeMaxCrop.configure(background="white")
+        self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
+        self.entAgeMaxCrop.configure(font="TkFixedFont")
+        self.entAgeMaxCrop.configure(foreground="#000000")
+        self.entAgeMaxCrop.configure(insertbackground="black")
+        self.entAgeMaxCrop.configure(width=5)
+
+        self.chbMaxAgeCrop = Checkbutton(self.frDisc)
+        self.chbMaxAgeCrop.grid(row=15, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(text="Max. age crop at (Ma):")
+        self.chbMaxAgeCrop.configure(justify=LEFT)
+        self.chbMaxAgeCrop.configure(state=DISABLED)
+        self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
+        self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(27, self.entAgeMaxCrop.get(), pars_onChange,
+                                                                          self.entAgeMaxCrop))
+
 
         # _______________frGraphSettings_________________________________________________________________________________
         self.frGraphSettings = Frame(self.frOper)
@@ -692,7 +752,7 @@ class OperationWindow(Frame):
         self.lbConc.grid(row=0, columnspan=4, sticky='ew')
         self.apply_style(self.lbConc)
         self.lbConc.configure(font=font9)
-        self.lbConc.configure(text='9. Concordia')
+        self.lbConc.configure(text='10. Concordia')
 
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
@@ -767,7 +827,7 @@ class OperationWindow(Frame):
         self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
         self.apply_style(self.lbKdePdpHist)
         self.lbKdePdpHist.configure(font=font9)
-        self.lbKdePdpHist.configure(text='10. KDE/PDP/Hist')
+        self.lbKdePdpHist.configure(text='11. KDE/PDP/Hist')
 
         self.rbDrawKDE = Radiobutton(self.frGraphSettings)
         self.rbDrawKDE.configure(variable=gui_support.var_pdp_kde_hist, value=0)
@@ -1178,24 +1238,18 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
-                               self.rbDiscUbased, self.rbUBased, self.chbInclude207235Err, self.scErrFilter,
-                               self.scUconcCutoff, self.rbDiscUbased, self.rbDiscAgeFixedLim,  self.rbDisc67_68,
-                               self.rbDisc75_68,  self.cbTypePbc] #self.scCommPbCutoff,  self.rbNoCommPb, self.rbUseCommPb
+        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
+                                 self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
+                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop]
         if is_data_present:
             for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
-            self.rbDiscUbased.configure(state=DISABLED)
-            self.rbDiscAgeFixedLim.configure(state=DISABLED)
-            self.rbDisc67_68.configure(state=DISABLED)
-            self.rbDisc75_68.configure(state=DISABLED)
-            self.cbTypePbc.configure(state="readonly")
-            self.rbAgeFixedLim.select()
-            self.chbDiscLinked2Age.select()
-            self.rbDiscAgeFixedLim.select()
 
+            self.rbDiscSmallest.select()
+            self.rbAgeSmallestErr.select()
+            self.scAgeCutoff.configure(state=DISABLED)
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
                 self.lboxSamples.insert(END, item.name)
@@ -1213,16 +1267,12 @@ class OperationWindow(Frame):
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
             self.btnCalcWindow.configure(state='normal')
-            #self.lbSeparatorType.configure(state='normal')
-            #self.cbSeparatorType.configure(state='readonly')
-            #self.rbUnderscore.configure(state='normal')
-            #self.rbDash.configure(state='normal')
-            #self.rbComma.configure(state='normal')
-            #self.rbDot.configure(state='normal')
             self.lbImport.configure(state='normal')
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
                 self.Table.delete(i)
+        #self.entAgeMinCrop.configure(state=NORMAL)
+        #self.entAgeMaxCrop.configure(state=NORMAL)
         global g_plot_txt
         g_plot_txt = ""
 
@@ -1324,10 +1374,8 @@ class OperationWindow(Frame):
         for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
-            self.ax_conc.plot(x, y, 'ko')
-            self.ax_conc.text(x, y, str(t), style='italic', )
-            # self.ax_conc.annotate(str(t), xy=(x, y), xytext=(x-0.4*x, y+0.4*y),
-            #            arrowprops=dict(facecolor='black', shrink=0.05))
+            self.ax_conc.plot(x, y, 'ks', markersize=3)
+            self.ax_conc.text(x, y, str(t), style='italic')
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
@@ -1387,7 +1435,7 @@ class OperationWindow(Frame):
         self.ax_prob.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
         self.ax_cum.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
 
-    def set_axes(self, conc_title,conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
+    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
                  conc_graph_y, min_age, max_age):
         # set axis of all graphs
         self.ax_conc.set_title(conc_title)
@@ -1460,6 +1508,12 @@ class OperationWindow(Frame):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
         g_filters.sample_name_filter = []
 
+        if gui_support.varMinAgeCrop.get() == 1:
+            is_editbox_float(self.entAgeMinCrop, '_Filters__minAgeCrop', 0)
+
+        if gui_support.varMaxAgeCrop.get() == 1:
+            is_editbox_float(self.entAgeMaxCrop, '_Filters__maxAgeCrop', EarthAge)
+
         #gets the user-selected items from the listbox
         item_indexes = self.lboxSamples.curselection()
         items = [self.lboxSamples.get(item_indexes) for item_indexes in item_indexes]
@@ -1513,9 +1567,9 @@ class OperationWindow(Frame):
             # plotting KDE/CKDE, PDP/CPDP or histogram
             self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
-        except ValueError:
-            self.lbShowStatus.configure(text="value error", fg="red")
-            print ("value error")
+        #except ValueError:
+        #    self.lbShowStatus.configure(text="value error", fg="red")
+        #    print ("value error")
 
         except TypeError:
             self.lbShowStatus.configure(text="type error", fg="red")
@@ -1523,7 +1577,6 @@ class OperationWindow(Frame):
 
         finally:
             self.plot_conc_text_peaks()
-
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
@@ -1602,6 +1655,14 @@ class ScrolledTreeView(AutoScroll, ttk.Treeview):
         ttk.Treeview.__init__(self, master, **kw)
         AutoScroll.__init__(self, master)
 
+# checks editboxes for non-numbers; sets g_filters attributes with editbox values
+def is_editbox_float(edit_box, to_assign_to, to_replace_with):
+    try:
+        g_filters.__dict__[to_assign_to] = float(edit_box.get())
+    except ValueError:
+        g_filters.__dict__[to_assign_to] = to_replace_with
+        edit_box.delete(0, END)
+        edit_box.insert(0, to_replace_with)
 
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
@@ -1612,7 +1673,7 @@ def main():
     g_kde = []
     g_ckde = []
     g_prev_cum = []
-    g_directory = "C:\odrive\Amazon Cloud Drive\cloud\Geochron\Santa Cruz LA"
+    g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
     g_list_col_names = ['208Pb/232Th', '208/232±1s(Int)', '208/232±1s(Prop)',
                         '207Pb/206Pb', '207/206±1s(Int)', '207/206±1s(Prop)',
                         '207Pb/235U', '207/235±1s(Int)', '207/235±1s(Prop)',

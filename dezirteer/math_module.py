@@ -11,6 +11,18 @@ import random
 pbpb_table =  []
 concordia_table = []
 
+def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
+    any_error = False
+    corr_coef_75_68 = (rat68err / rat68) / (rat75err / rat75)
+    corr_coef_86_76 = (rat68err / rat68) * (rat76 / rat76err)
+    if corr_coef_75_68 > 1:
+        corr_coef_75_68 = 1 / corr_coef_75_68
+        any_error = True
+    if corr_coef_86_76 > 1:
+        corr_coef_86_76 = 1 / corr_coef_86_76
+        any_error = True
+    return (corr_coef_75_68, corr_coef_86_76, any_error)
+
 
 def t_student(alpha, gl):
     return scipy.stats.t.ppf(1 - (alpha / 2), gl)
@@ -229,10 +241,10 @@ def find_age(pLeadRatio):
 
 
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
-    def __init__(self, filter_by_uconc=[False, 1000], which_age=[1, 1000], use_pbc=False,
+    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=False,
                  filter_by_err=[False, 0.1], include207235Err=False,
-                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=1,
-                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1]):
+                 pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
+                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -243,6 +255,10 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__disc_type = disc_type
         self.__sample_name_filter = sample_name_filter
         self.__unc_type = unc_type #1 for internal, 2 for propagated
+        self.__filter_by_commPb = filter_by_commPb
+        self.__minAgeCrop = minAgeCrop
+        self.__maxAgeCrop = maxAgeCrop
+
 
     @property
     def filter_by_uconc(self):
@@ -323,6 +339,33 @@ class Filters(object):  # describes filters that should be applied to data in An
     @unc_type.setter
     def unc_type(self, value):
         self.__unc_type = value
+
+    @property
+    def filter_by_commPb(self):
+        return self.__filter_by_commPb
+
+    @filter_by_commPb.setter
+    def filter_by_commPb(self, value):
+        self.__filter_by_commPb = value
+
+    @property
+    def minAgeCrop(self):
+        return self.__minAgeCrop
+
+    @minAgeCrop.setter
+    def minAgeCrop(self, value):
+        self.__minAgeCrop = value
+
+    @property
+    def maxAgeCrop(self):
+        return self.__maxAgeCrop
+
+    @maxAgeCrop.setter
+    def maxAgeCrop(self, value):
+        self.__maxAgeCrop = value
+
+
+
 
 #this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
 #deletes empty lines if present, returns non-empty lines and their number.
@@ -526,16 +569,6 @@ def file_to_analysis(imp_file, index):
         else:
             pb207_u235.append(float(an[header[3][1]]) / sigma_level)
 
-        if header[4] != -1:
-            corr_coef_75_68 = float(an[header[4]])
-        else:
-            corr_coef_75_68 = 0.99
-
-        if header[9] != -1:
-            corr_coef_86_76 = float(an[header[9]])
-        else:
-            corr_coef_86_76 = 0.99
-
         pb208_th232.append(float(an[header[5][0]]))
         pb208_th232.append(float(an[header[5][1]]) / sigma_level)
         if header[5][2] != -1:
@@ -549,6 +582,23 @@ def file_to_analysis(imp_file, index):
             pb207_pb206.append(float(an[header[6][2]]) / sigma_level)
         else:
             pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
+
+        rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
+        corr_coef_75_68_calculated = rho[0]
+        corr_coef_86_76_calculated = rho[1]
+
+        if header[4] != -1:
+            corr_coef_75_68 = float(an[header[4]])
+        else:
+            corr_coef_75_68 = corr_coef_75_68_calculated
+
+        if header[9] != -1:
+            corr_coef_86_76 = float(an[header[9]])
+        else:
+            corr_coef_86_76 = corr_coef_86_76_calculated
+
+
+
 
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
@@ -670,8 +720,10 @@ def file_to_analysis(imp_file, index):
         th232_pb204 = [-1, -1, -1]
         u238_pb204 = [-1, -1, -1]
 
-        corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+        rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
+        corr_coef_75_68 = rho[0]
+        corr_coef_86_76 = rho[1]
+
 
     else: #template
         sigma_level = 1
@@ -691,13 +743,13 @@ def file_to_analysis(imp_file, index):
         pb207_u235.append(float(an[6]) / sigma_level)
         pb207_u235.append(float(an[6]) / sigma_level)
 
-        corr_coef_75_68 = (pb206_u238[1] / pb206_u238[0]) / (pb207_u235[1] / pb207_u235[0])
-
         pb207_pb206.append(float(an[7]))
         pb207_pb206.append(float(an[8]) / sigma_level)
         pb207_pb206.append(float(an[8]) / sigma_level)
 
-        corr_coef_86_76 = ((1 / pb206_u238[1]) / (1 / pb206_u238[0])) / (pb207_pb206[1] / pb207_pb206[0])
+        rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
+        corr_coef_75_68 = rho[0]
+        corr_coef_86_76 = rho[1]
 
         u_conc.append(float(an[9]))
         u_conc.append(float(an[10]) / sigma_level)
@@ -898,11 +950,6 @@ class Analysis(object):
     def calc_age(self, isotopic_system):
         age_err_int = -1
         age_err_prop = -1
-        #int_prop = 0
-        #if err_int_prop == 'Internal':
-        #    int_prop = 1
-        #else: #if Propagated
-        #    int_prop = 2
         try:
             if isotopic_system == 0 and self.pb206_u238[0] > 0:
                 age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
@@ -925,10 +972,12 @@ class Analysis(object):
                 C1 = 1 / U238_U235
                 C2 = LAMBDA_235
                 C3 = LAMBDA_238
-                df = self.pb207_pb206[1]
+                df_int = self.pb207_pb206[1]
+                df_prop = self.pb207_pb206[2]
                 dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
                              (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                age_err_int = age_err_prop = abs(df / dfdt / 1000000)
+                age_err_int = abs(df_int / dfdt / 1000000)
+                age_err_prop = abs(df_prop / dfdt / 1000000)
                 age = age / 1000000
             else:
                 age = -1
@@ -937,12 +986,33 @@ class Analysis(object):
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, between_68_57):
-        if between_68_57:
-            return self.calc_age(1)[0] / self.calc_age(0)[0] - 1
+    def calc_discordance(self, disc_type, age_cutoff): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+        age_206_238 = self.calc_age(0)[0]
+        age_207_235 = self.calc_age(1)[0]
+        age_207_206 = self.calc_age(3)[0]
+        disc_68_57 = age_207_235 / age_206_238 - 1
+        disc_68_76 = 1 - age_206_238 / age_207_206
 
-        else:
-            return 1 - self.calc_age(0)[0] / self.calc_age(3)[0]
+        if disc_type == 0:
+            return -1
+
+        if disc_type == 1:
+            if age_206_238 > age_cutoff:
+                return disc_68_57
+            else:
+                return disc_68_76
+
+        if disc_type == 2:
+            return disc_68_76
+
+        elif disc_type == 3:
+            return disc_68_57
+
+        else: #if disc_type[0] == 4
+            if abs(disc_68_57) < abs(disc_68_76):
+                return disc_68_57
+            else:
+                return disc_68_76
 
     # true if should use U238/Pb206, false if should use Pb206/Pb207
     def use_206_238(self, age_cutoff):
@@ -957,11 +1027,16 @@ class Analysis(object):
         do_err = pFilter.filter_by_err[0]
         do_207235_err = pFilter.include207235Err
         err_cutoff = pFilter.filter_by_err[1]
-        type_disc = pFilter.disc_type
+        type_disc = pFilter.disc_type[0]
         pos_disc_cutoff = pFilter.pos_disc_filter
         neg_disc_cutoff = pFilter.neg_disc_filter
         sample_name_filter = pFilter.sample_name_filter
+        min_age_crop = pFilter.minAgeCrop
+        max_age_crop = pFilter.maxAgeCrop
         is_grain_in_chosen_sample = True
+        is_age_good = True
+        age_206_238 = self.calc_age(0)
+        age_207_206 = self.calc_age(3)
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
@@ -983,29 +1058,48 @@ class Analysis(object):
                 is_grain_in_chosen_sample = False
 
         # decide on the default age system
-        if (which_age == 1 and self.calc_age(0)[0] > age_fixed_limit) or which_age == 2:
+        if which_age == 0:  # from the lesser error
+            if age_206_238[int(pFilter.unc_type)] > age_207_206[int(pFilter.unc_type)]:
+                age_68_67 = 1
+                this_age = 3
+            else:
+                age_68_67 = 0
+                this_age = 0
+        elif (which_age == 1 and age_206_238[0] > age_fixed_limit) or which_age == 2:  # fixed limit, age>limit
             age_68_67 = 1
             this_age = 3
-        elif (which_age == 1 and self.calc_age(0)[0] < age_fixed_limit) or which_age == 3:
+        elif (which_age == 1 and age_206_238[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
             age_68_67 = 0
             this_age = 0
         else:
-            age_68_67 = -1  # this is for future implementation of 'based on Uconc' algorithm
+            age_68_67 = -1
+
+        if age_68_67 == 0:
+            age = age_206_238[0]
+            err = age_206_238[int(pFilter.unc_type)]
+        else:
+            age = age_207_206[0]
+            err = age_207_206[int(pFilter.unc_type)]
+
+        # filter by minimum and maximum age crops
+        if min_age_crop > 0: # TEMP TO BE DELETED
+            pass
+
+        if (age > min_age_crop) and (age < max_age_crop):
+            is_age_good = True
+        else:
+            is_age_good = False
+
 
         # filter by measurement error
         if do_err:
-            age = self.calc_age(age_68_67 * 3)[0]  # calculates either 68 or 67 age
-            err = self.calc_age(age_68_67 * 3)[1]  # calculates correspondent error
-            #Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
-
             if err / age < err_cutoff:  # checks whether error is within limit
                 is_err_good = True
             else:
                 is_err_good = False
             if do_207235_err == 1:
                 age207235 = self.calc_age(1)[0]
-                age207235err = self.calc_age(1)[1]
-                # Achtung! НУЖНО ПОМЕНЯТЬ, ЧТОБЫ использовалось как Internal так и Propagated
+                age207235err = self.calc_age(1)[int(pFilter.unc_type)]
                 if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
                 else:
@@ -1016,15 +1110,18 @@ class Analysis(object):
             is_err_good = True  # if no need to filter by age error
             is_207235err_good = True
 
-        # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86
-        if type_disc == 0:
+        # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
+        disc = self.calc_discordance(type_disc, pFilter.disc_type[1]) #22222
+        '''if type_disc == 0:
             disc = -1  # this is for future implementation of 'based on Uconc' algorithm
         elif type_disc == 1:
-            disc = self.calc_discordance(not age_68_67)
+            disc = self.calc_discordance(1, )
         elif type_disc == 2:
-            disc = self.calc_discordance(True)
+            disc = self.calc_discordance(2)
         elif type_disc == 3:
-            disc = self.calc_discordance(False)  # 12345
+            disc = self.calc_discordance(3)  #11111
+        else: #if 4
+            disc = self.calc_discordance(4)  # 11111'''
 
         if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
             is_disc_good = True
@@ -1032,7 +1129,7 @@ class Analysis(object):
             is_disc_good = False
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
-               is_grain_in_chosen_sample, this_age
+               is_grain_in_chosen_sample & is_age_good, this_age
 
 
 class AnalysesSet(object):
