@@ -1370,8 +1370,17 @@ class OperationWindow(Frame):
             cum_title = "Cumulative Histogram"
         return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
 
-    def draw_concordia_ticks(self, xconc, yconc):
-        for t in [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]:
+    def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
+        if max_age-min_age > 1000 and min_age>500:
+            min_age=(min_age//1000+0.5)*1000
+            step=500
+        elif max_age-min_age > 1000 and min_age<500:
+            min_age=500
+            step=500
+        else:
+            min_age=(min_age//100+1)*100
+            step=100
+        for t in range(min_age, max_age,step):
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
             self.ax_conc.plot(x, y, 'ks', markersize=3)
@@ -1554,7 +1563,7 @@ class OperationWindow(Frame):
         self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
                       conc_graph_y, min_age, max_age)
 
-        self.draw_concordia_ticks(xconc, yconc)
+        self.draw_concordia_ticks(xconc, yconc, min_age, max_age)
 
         if args:
             user_selected_analysis = args
