@@ -1371,16 +1371,16 @@ class OperationWindow(Frame):
         return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
-        if max_age-min_age > 1000 and min_age>500:
-            min_age=(min_age//1000+0.5)*1000
-            step=500
-        elif max_age-min_age > 1000 and min_age<500:
-            min_age=500
-            step=500
+        if max_age-min_age > 1000 and min_age > 500:
+            min_age = (min_age//1000+0.5)*1000
+            step = 500
+        elif max_age-min_age > 1000 and min_age < 500:
+            min_age = 500
+            step = 500
         else:
-            min_age=(min_age//100+1)*100
-            step=100
-        for t in range(min_age, max_age,step):
+            min_age = (min_age//100+1)*100
+            step = 100
+        for t in range(int(min_age), int(max_age) , step):
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
             self.ax_conc.plot(x, y, 'ks', markersize=3)
