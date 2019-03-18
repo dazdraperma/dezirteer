@@ -1358,6 +1358,8 @@ def same_sample_set(p_set: AnalysesSet):
             lset = []
             lset.append(an)
             prev_str = temp_str
+            if i + 1 == len(p_set):
+                list_of_analyses_set.append(AnalysesSet(lset, prev_str))
         elif (temp_str == prev_str) and (i + 1 < len(p_set)):
             lset.append(an)
         elif (temp_str == prev_str) and (i + 1 == len(p_set)):
