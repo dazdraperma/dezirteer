@@ -267,6 +267,12 @@ class OperationWindow(Frame):
         self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0, height=5)
         self.lboxSamples.grid(row=7, columnspan=3, sticky="ew", padx=5)
 
+        scrollbar = Scrollbar(self.lboxSamples, orient="vertical")
+        scrollbar.config(command=self.lboxSamples.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        self.lboxSamples.config(yscrollcommand=scrollbar.set)
+
         self.lbUConcFilter = Label(self.frImport)
         self.lbUConcFilter.grid(row=8, columnspan=3, pady=4, sticky='ew')
         self.apply_style(self.lbUConcFilter)
