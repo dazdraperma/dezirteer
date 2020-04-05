@@ -137,10 +137,6 @@ class OperationWindow(Frame):
         self.Table['columns'] = g_list_col_names
         self.Table.bind("<Double-1>", self.tableOnDoubleClick)
 
-
-        #pars_onChange = []
-
-
         # ________frOper_________________________________________________________________________________________________
         self.frOper = Frame(master)
         self.frOper.grid(row=1, column=0, sticky='sew')
@@ -159,57 +155,6 @@ class OperationWindow(Frame):
         self.lbImport.configure(font=font9)
         self.apply_style(self.lbImport)
         self.lbImport.configure(text="1. Import data")
-
-        '''self.lbSeparatorType = Label(self.frImport)
-        self.lbSeparatorType.grid(row=1, column=0, columnspan=1, pady=5, sticky='e')
-        self.apply_style(self.lbSeparatorType)
-        self.lbSeparatorType.configure(text='Analysis # separator:')
-
-        self.rbUnderscore = Radiobutton(self.frImport)
-        self.rbUnderscore.grid(row=1, column=2, sticky='w')
-        self.apply_style(self.rbUnderscore)
-        self.rbUnderscore.configure(font="TkTextFont")
-        self.rbUnderscore.configure(text="_")
-        self.rbUnderscore.configure(variable=gui_support.varSeparatorType, value="_")
-        self.rbUnderscore.configure(command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
-        self.rbUnderscore.select()
-
-        self.rbDash = Radiobutton(self.frImport)
-        self.rbDash.grid(row=1, column=3, sticky='w')
-        self.apply_style(self.rbDash)
-        self.rbDash.configure(font="TkTextFont")
-        self.rbDash.configure(text="-")
-        self.rbDash.configure(variable=gui_support.varSeparatorType, value="-")
-        self.rbDash.configure(
-            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
-
-        self.rbComma = Radiobutton(self.frImport)
-        self.rbComma.grid(row=1, column=4, sticky='w')
-        self.apply_style(self.rbComma)
-        self.rbComma.configure(font="TkTextFont")
-        self.rbComma.configure(text=",")
-        self.rbComma.configure(variable=gui_support.varSeparatorType, value=",")
-        self.rbComma.configure(
-            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))
-
-        self.rbDot = Radiobutton(self.frImport)
-        self.rbDot.grid(row=1, column=5, sticky='w')
-        self.apply_style(self.rbDot)
-        self.rbDot.configure(font="TkTextFont")
-        self.rbDot.configure(text=".")
-        self.rbDot.configure(variable=gui_support.varSeparatorType, value=".")
-        self.rbDot.configure(
-            command=lambda: gui_support.onChange(25, gui_support.varSeparatorType, pars_onChange))'''
-
-
-
-        #self.cbSeparatorType = ttk.Combobox(self.frImport)
-        #self.cbSeparatorType.grid(row=1, column=1, sticky='w')
-        #self.cbSeparatorType.configure(textvariable=gui_support.varSeparatorType)
-        #self.cbSeparatorType.configure(width=3)
-        #self.cbSeparatorType.configure(values=['_', '-', '.', ','], state='readonly')
-        #self.cbSeparatorType.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(25, self.cbSeparatorType.get(), pars_onChange))
-        #self.cbSeparatorType.current(0)
 
         self.btnImport = Button(self.frImport, width=14, height=2)
         self.btnImport.grid(row=2, columnspan=3, pady=10)
@@ -249,29 +194,19 @@ class OperationWindow(Frame):
         self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
         self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
 
-
-        '''self.cbUncType = ttk.Combobox(self.frImport)
-        self.cbUncType.grid(row=4, column=1, sticky='w')
-        self.cbUncType.configure(textvariable=gui_support.varUncType)
-        self.cbUncType.configure(width=10)
-        self.cbUncType.configure(values=['Internal', 'Propagated'], state='readonly')
-        self.cbUncType.current(0)
-        #self.cbUncType.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange, ))
-        '''
         self.lbChooseSample = Label(self.frImport)
         self.lbChooseSample.grid(row=6, columnspan=3, sticky="ew", pady=15)
         self.apply_style(self.lbChooseSample)
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
 
-        self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0, height=5)
+        self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0, height=25)
         self.lboxSamples.grid(row=7, columnspan=3, sticky="ew", padx=5)
 
         scrollbar = Scrollbar(self.lboxSamples, orient="vertical")
         scrollbar.config(command=self.lboxSamples.yview)
-        scrollbar.pack(side="right", fill="y")
-
         self.lboxSamples.config(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
 
         self.lbUConcFilter = Label(self.frImport)
         self.lbUConcFilter.grid(row=8, columnspan=3, pady=4, sticky='ew')
@@ -1689,23 +1624,23 @@ def main():
     g_ckde = []
     g_prev_cum = []
     g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
-    g_list_col_names = ['208Pb/232Th', '208/232±1s(Int)', '208/232±1s(Prop)',
-                        '207Pb/206Pb', '207/206±1s(Int)', '207/206±1s(Prop)',
-                        '207Pb/235U', '207/235±1s(Int)', '207/235±1s(Prop)',
-                        '206Pb/238U', '206/238±1s(Int)', '206/238±1s(Prop)',
+    g_list_col_names = ['208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
+                        '207Pb/206Pb', '207/206Err 1s(Int)', '207/206Err 1s(Prop)',
+                        '207Pb/235U', '207/235Err 1s(Int)', '207/235Err 1s(Prop)',
+                        '206Pb/238U', '206/238Err 1s(Int)', '206/238Err 1s(Prop)',
                         'corr. coef.75_68', 'corr. coef.86_76',
-                        'Uconc (approx. ppm)', 'Uconc±1s(Int)', 'Uconc±1s(Prop)',
-                        'pbc (approx. ppm)', 'pbc±1s(Int)', 'pbc±1s(Prop)',
-                        '206Pb/204Pb', '206/204±1s(Int)', '206/204±1s(Prop)',
-                        '207Pb/204Pb', '207/204±1s(Int)', '207/204±1s(Prop)',
-                        '208Pb/204Pb', '208/204±1s(Int)', '208/204±1s(Prop)',
-                        '232Th/204Pb', '232/204±1s(Int)', '232/204±1s(Prop)',
-                        '238U/204Pb', '238/204±1s(Int)', '238/204±1s(Prop)',
+                        'Uconc (approx. ppm)', 'UconcErr 1s(Int)', 'UconcErr 1s(Prop)',
+                        'pbc (approx. ppm)', 'pbcErr 1s(Int)', 'pbcErr 1s(Prop)',
+                        '206Pb/204Pb', '206/204Err 1s(Int)', '206/204Err 1s(Prop)',
+                        '207Pb/204Pb', '207/204Err 1s(Int)', '207/204Err 1s(Prop)',
+                        '208Pb/204Pb', '208/204Err 1s(Int)', '208/204Err 1s(Prop)',
+                        '232Th/204Pb', '232/204Err 1s(Int)', '232/204Err 1s(Prop)',
+                        '238U/204Pb', '238/204Err 1s(Int)', '238/204Err 1s(Prop)',
 
-                        'Age 208Pb/232Th', 'Age208/232±1s(Int)', 'Age208/232±1s(Prop)',
-                        'Age 207Pb/206Pb',  'Age207/206±1s(Int)', 'Age207/206±1s(Prop)',
-                        'Age 207Pb/235U', 'Age207/235±1s(Int)', 'Age207/235±1s(Prop)',
-                        'Age 206Pb/238U', 'Age206/238±1s(Int)', 'Age206/238±1s(Prop)',
+                        'Age 208Pb/232Th', 'Age208/232Err 1s(Int)', 'Age208/232Err 1s(Prop)',
+                        'Age 207Pb/206Pb',  'Age207/206Err 1s(Int)', 'Age207/206Err 1s(Prop)',
+                        'Age 207Pb/235U', 'Age207/235Err 1s(Int)', 'Age207/235Err 1s(Prop)',
+                        'Age 206Pb/238U', 'Age206/238Err 1s(Int)', 'Age206/238Err 1s(Prop)',
 
                         #'204-corr. age 208Pb/232Th', '204-corr. age 208Pb/232Th±1s(Int)', '204-corr. age 208Pb/232Th±1s(Prop)',
                         #'204-corr. age 207Pb/206Pb', '204-corr. age 207Pb/206Pb±1s(Int)', '204-corr. age 207Pb/206Pb±1s(Prop)',

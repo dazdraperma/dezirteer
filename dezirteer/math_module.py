@@ -139,7 +139,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
     elif corr_type == 3:  # and
         # age
-        t2 =0  # NEED CORRECTION!!!  age of pb lost, must enterd by user
+        t2 =0  # NEED CORRECTION!!!  age of pb lost, must entered by user
         t1 = zir.pb207_u235
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
@@ -477,7 +477,7 @@ def header_pos(imported_list):
                 prop = file_header.index('Final206_204_Prop2SE')
             else:
                 prop = -1
-            l_list.append([file_header.index('Final206_204'), file_header.index('Final206_204_Int2SE'), prop])
+                l_list.append([file_header.index('Final206_204'), file_header.index('Final206_204_Int2SE'), prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -1256,8 +1256,7 @@ class AnalysesSet(object):
         if bool(self.good_set):
             while index < EarthAge:
                 list_pdp.append(self.pdp_calc(index, unc_type))
-                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[
-                    index - 1]:  # peak recognizing
+                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[index - 1]:  # peak recognizing
                     list_peaks.append(index - 1)
                 index += 1
             return [list_pdp, list_peaks]
@@ -1358,7 +1357,7 @@ def same_sample_set(p_set: AnalysesSet):
             lset = []
             lset.append(an)
             prev_str = temp_str
-            if i + 1 == len(p_set):
+            if i + 1 == len(p_set): #for a case with the last sample with a single grain
                 list_of_analyses_set.append(AnalysesSet(lset, prev_str))
         elif (temp_str == prev_str) and (i + 1 < len(p_set)):
             lset.append(an)
