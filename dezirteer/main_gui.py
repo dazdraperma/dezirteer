@@ -32,15 +32,15 @@ matplotlib.use("TkAgg")
 #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
 #sets 0 values to both variables
 def set_pval_dval():
-    global g_prev_cum, g_grainset, g_pval_dval
+    global g_prev_cum, g_grainset, g_pval_dval, g_ckde, g_cpdp
     if g_prev_cum == []:
         pval = 0
         dval = 0
     else:
         if g_graph_settings.pdp_kde_hist == 0:
-            curr_cum = g_grainset.ckde(g_graph_settings.bandwidth)
+            curr_cum = g_ckde
         elif g_graph_settings.pdp_kde_hist == 1:
-            curr_cum = g_grainset.cpdp(gui_support.varUncType.get())
+            curr_cum = g_cpdp
         else:
             curr_cum = []
         dval = d_value(curr_cum, g_prev_cum)
@@ -50,10 +50,11 @@ def set_pval_dval():
 
 
 def peaks():
+    global g_kde, g_pdp
     if g_graph_settings.pdp_kde_hist == 0:
-        return g_grainset.kde(g_graph_settings.bandwidth)[1]
+        return g_kde[1]
     else:
-        return g_grainset.pdp(gui_support.varUncType.get())[1]
+        return g_pdp[1]
 
 
 def show_calc_frame(container):
@@ -103,7 +104,7 @@ class OperationWindow(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
         self.master = master
-        global g_filters, g_grainset, g_list_col_names
+        global g_filters, g_grainset, g_list_col_names, g_ckde, g_cpdp, g_kde, g_pdp
 
         _bgcolor = '#d9d9d9'
         _fgcolor = '#000000'
@@ -965,11 +966,13 @@ class OperationWindow(Frame):
         self.frProb.configure(highlightcolor="black")
 
         try:
-            if g_graph_settings.pdp_kde_hist == 0:
-                graph_to_draw = g_grainset.kde(g_graph_settings.bandwidth)
+            if (g_graph_settings.pdp_kde_hist == 0) and (g_kde != []):
+                graph_to_draw = g_kde
 
-            elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
+            elif (g_graph_settings.pdp_kde_hist == 1) and (g_pdp != []):
+                graph_to_draw = g_pdp[0]
+            else:
+                pass
         except NameError:
             pass
 
@@ -1009,11 +1012,13 @@ class OperationWindow(Frame):
         self.frCum.configure(height=10)
 
         try:
-            if g_graph_settings.pdp_kde_hist == 0:
-                graph_to_draw = g_grainset.ckde(g_graph_settings.bandwidth)
+            if (g_graph_settings.pdp_kde_hist == 0) and (g_ckde != []):
+                graph_to_draw = g_ckde
 
-            elif g_graph_settings.pdp_kde_hist == 1:
-                graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
+            elif (g_graph_settings.pdp_kde_hist == 1) and (g_cpdp != []):
+                graph_to_draw = g_cpdp
+            else:
+                pass
         except NameError:
             pass
 
@@ -1295,14 +1300,15 @@ class OperationWindow(Frame):
 
     def kde_pdp_hist(self):
         # choosing kde/pdp/hist based on user input
+        global g_ckde, g_cpdp, g_kde, g_pdp
         if g_graph_settings.pdp_kde_hist == 0:
-            prob_graph_to_draw = g_grainset.kde(g_graph_settings.bandwidth)[0]
-            cum_graph_to_draw = g_grainset.ckde(g_graph_settings.bandwidth)
+            prob_graph_to_draw = g_kde[0]
+            cum_graph_to_draw = g_ckde
             prob_title = "Kernel Density Estimates (KDE)"
             cum_title = "Cumulative KDE"
         elif g_graph_settings.pdp_kde_hist == 1:
-            prob_graph_to_draw = g_grainset.pdp(gui_support.varUncType.get())[0]
-            cum_graph_to_draw = g_grainset.cpdp(gui_support.varUncType.get())
+            prob_graph_to_draw = g_pdp[0]
+            cum_graph_to_draw = g_cpdp
             prob_title = "Probability Density Plot (PDP)"
             cum_title = "Cumulative PDP"
         else:
@@ -1400,6 +1406,7 @@ class OperationWindow(Frame):
         self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
 
     def plot_peaks(self):
+        global g_kde, g_pdp
         prob_graph_to_draw = self.kde_pdp_hist()[0]
         min_max_age = self.min_max_ages()
         min_age = min_max_age[0]
@@ -1410,9 +1417,9 @@ class OperationWindow(Frame):
         if gui_support.varShowCalc.get() == 1:
             i = 0
             if g_graph_settings.pdp_kde_hist == 0:
-                list_peaks = g_grainset.kde(g_graph_settings.bandwidth)[1]
+                list_peaks = g_kde[1]
             elif g_graph_settings.pdp_kde_hist == 1:
-                list_peaks = g_grainset.pdp(gui_support.varUncType.get())[1]
+                list_peaks = g_pdp[1]
             else:
                 list_peaks = []
             while i < len(list_peaks):
@@ -1443,7 +1450,7 @@ class OperationWindow(Frame):
         g_plot_txt = ""
 
     def plot_conc_text_peaks(self):
-        global g_prev_n, g_prev_cum, g_pval_dval
+        global g_prev_n, g_prev_cum, g_pval_dval, g_ckde, g_cpdp
 
         self.plot_text(g_pval_dval[0], g_pval_dval[1])
         self.canvas_conc.draw()
@@ -1451,14 +1458,15 @@ class OperationWindow(Frame):
         self.btnClear.configure(state=NORMAL)
         g_prev_n = g_number_of_good_grains
         if g_graph_settings.pdp_kde_hist == 0:
-            g_prev_cum = g_grainset.ckde(g_graph_settings.bandwidth)
+            g_prev_cum = g_ckde
         else:
-            g_prev_cum = g_grainset.cpdp(gui_support.varUncType.get())
+            g_prev_cum = g_cpdp
 
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
+        global g_cpdp, g_ckde, g_kde, g_pdp
         g_filters.sample_name_filter = []
 
 
@@ -1473,10 +1481,18 @@ class OperationWindow(Frame):
         items = [self.lboxSamples.get(item_indexes) for item_indexes in item_indexes]
         g_filters.sample_name_filter = items
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters, g_list_col_names)
-        set_pval_dval()
+
 
         #checks if histogram is to be drawn
         do_hist = (g_graph_settings.pdp_kde_hist == 2)
+
+
+        g_kde = g_grainset.kde(g_graph_settings.bandwidth)
+        g_pdp = g_grainset.pdp(gui_support.varUncType.get())
+        g_cpdp= g_grainset.cpdp(gui_support.varUncType.get())
+        g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
+
+        set_pval_dval()
 
         # cropping age interval: either full, or cropped from min_age to max_age
         age_lim = self.min_max_ages()
