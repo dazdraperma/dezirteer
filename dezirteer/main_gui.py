@@ -1685,7 +1685,7 @@ def main():
     g_prev_n = 0
     g_graph_settings = gui_support.GraphSettings()
     root = Tk()
-    root.title('De-Zir-teer')
+    root.title('Dezirteer: 0.5.2020.04.13.01')
     root.wm_resizable(1, 1)
     gui_support.set_Tk_var()
     master = OperationWindow(root)
