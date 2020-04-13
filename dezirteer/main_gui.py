@@ -32,7 +32,7 @@ matplotlib.use("TkAgg")
 #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
 #sets 0 values to both variables
 def set_pval_dval():
-    global g_prev_cum, g_grainset
+    global g_prev_cum, g_grainset, g_pval_dval
     if g_prev_cum == []:
         pval = 0
         dval = 0
@@ -45,7 +45,8 @@ def set_pval_dval():
             curr_cum = []
         dval = d_value(curr_cum, g_prev_cum)
         pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])
-    return [pval, dval]
+    g_pval_dval = [pval, dval]
+    #return [pval, dval]
 
 
 def peaks():
@@ -56,6 +57,7 @@ def peaks():
 
 
 def show_calc_frame(container):
+        global g_pval_dval
         frContainer = Frame(container)
         frContainer.configure(relief=GROOVE)
         frContainer.configure(borderwidth="2")
@@ -87,12 +89,12 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 2].grid(row=counter + 1, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 2].configure(text="KS p-val")
         list_of_labels[counter * 2 + 3].grid(row=counter + 1, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 3].configure(text=set_pval_dval()[0])
+        list_of_labels[counter * 2 + 3].configure(text=g_pval_dval[0])
 
         list_of_labels[counter * 2 + 4].grid(row=counter + 2, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 4].configure(text="KS d-val")
         list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 5].configure(text=set_pval_dval()[1])
+        list_of_labels[counter * 2 + 5].configure(text=g_pval_dval[1])
 
 
 
@@ -890,7 +892,7 @@ class OperationWindow(Frame):
         self.cbShowCalc.configure(justify=LEFT)
         self.cbShowCalc.configure(text='''Show peaks?''')
         self.cbShowCalc.configure(variable=gui_support.varShowCalc)
-        self.cbShowCalc.configure(command=lambda: self.plot_text(set_pval_dval()[0], set_pval_dval()[1]))
+        self.cbShowCalc.configure(command=lambda: self.plot_text(g_pval_dval[0], g_pval_dval[1]))
 
         self.btnCalcWindow = Button(self.frStatus)
         self.btnCalcWindow.grid(column=6, row=0, sticky='e', padx=5, pady=6)
@@ -1441,8 +1443,9 @@ class OperationWindow(Frame):
         g_plot_txt = ""
 
     def plot_conc_text_peaks(self):
-        global g_prev_n, g_prev_cum
-        self.plot_text(set_pval_dval()[0], set_pval_dval()[1])
+        global g_prev_n, g_prev_cum, g_pval_dval
+
+        self.plot_text(g_pval_dval[0], g_pval_dval[1])
         self.canvas_conc.draw()
         #self.canvas_prob.draw() and self.canvas_cum.draw are executed in plot_text
         self.btnClear.configure(state=NORMAL)
@@ -1455,8 +1458,9 @@ class OperationWindow(Frame):
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
-        global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n
+        global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
         g_filters.sample_name_filter = []
+
 
         if gui_support.varMinAgeCrop.get() == 1:
             is_editbox_float(self.entAgeMinCrop, '_Filters__minAgeCrop', 0)
@@ -1469,6 +1473,7 @@ class OperationWindow(Frame):
         items = [self.lboxSamples.get(item_indexes) for item_indexes in item_indexes]
         g_filters.sample_name_filter = items
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters, g_list_col_names)
+        set_pval_dval()
 
         #checks if histogram is to be drawn
         do_hist = (g_graph_settings.pdp_kde_hist == 2)
@@ -1515,6 +1520,7 @@ class OperationWindow(Frame):
             self.plot_conc_ellipses(user_selected_analysis)
 
             # plotting KDE/CKDE, PDP/CPDP or histogram
+
             self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
 
         #except ValueError:
@@ -1617,11 +1623,12 @@ def is_editbox_float(edit_box, to_assign_to, to_replace_with):
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
-    global g_pdp, g_cpdp, g_kde, g_ckde
+    global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval
     g_pdp = []
     g_cpdp = []
     g_kde = []
     g_ckde = []
+    g_pval_dval = [-1, -1]
     g_prev_cum = []
     g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
     g_list_col_names = ['208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
@@ -1655,7 +1662,7 @@ def main():
 
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',
-                        'best age', 'best age±1s']
+                        'best age', 'best ageErr 1s']
     fill_pbpb_table()
     fill_concordia_table()
     g_filters = Filters()
