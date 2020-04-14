@@ -13,7 +13,7 @@ with open('LICENSE') as f:
 
 setup(
     name='Dezirteer',
-    version='0.5.2020.04.13.01',
+    version='0.5.2020.04.13.02',
     description='Package for dezirteer.com',
     long_description=readme,
     author='Vladislav Powerman',

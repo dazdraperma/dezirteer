@@ -447,15 +447,28 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             j += 1
         file.write("\n" * 2)
 
-        file.write("filter by U conc?, Uconc filter value (if used), correction by Pbc, filter by measurement's error, "
-                   "measurement's error value (if used), Positive discordance filter, Negative discordance filter, "
-                   "Which age was used, age cutoff (if used), How was discordance calculated, age cutoff (if used), "
-                   "internal or propagated, errors \n " +
-            str(p_filters.filter_by_uconc[0]) + ',' + str(p_filters.filter_by_uconc[1]) + ',' + str(p_filters.use_pbc) +
-                   ',' + str(p_filters.filter_by_err[0]) + ',' + str(p_filters.filter_by_err[1]) + ',' +
-                   str(p_filters.pos_disc_filter) + ',' + str(p_filters.neg_disc_filter) + ',' +
-                   str(p_filters.which_age[0]) + ',' + str(p_filters.which_age[1]) + ',' + str(p_filters.disc_type[0]) +
-                   ',' + str(p_filters.disc_type[1]) + ',' + str(p_filters.unc_type))
+        file.write("filter by U conc?, "
+                   "Uconc filter value (if used), "
+                   "correction by Pbc, "
+                   "filter by measurement's error, "
+                   "measurement's error value (if used), "
+                   "Positive discordance filter, "
+                   "Negative discordance filter, "
+                   "Which age was used, "
+                   "age cutoff (if used), "
+                   "How was discordance calculated, "
+                   "age cutoff for discordance calculation (if used) \n " +
+            str(p_filters.filter_by_uconc[0]) + ',' +
+                   str(p_filters.filter_by_uconc[1]) + ',' +
+                   str(p_filters.use_pbc) + ',' +
+                   str(p_filters.filter_by_err[0]) + ',' +
+                   str(p_filters.filter_by_err[1]) + ',' +
+                   str(p_filters.pos_disc_filter) + ',' +
+                   str(p_filters.neg_disc_filter) + ',' +
+                   str(p_filters.which_age[0]) + ',' +
+                   str(p_filters.which_age[1]) + ',' +
+                   str(p_filters.disc_type[0]) + ',' +
+                   str(p_filters.disc_type[1]))
 
         file.close()
 
