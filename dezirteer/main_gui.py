@@ -1,7 +1,6 @@
 #test
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#Test comment
 import os
 import gui_support
 import matplotlib
