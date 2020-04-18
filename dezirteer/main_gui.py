@@ -436,6 +436,7 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(foreground="#000000")
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
+        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange)))
         #self.entAgeCutoff.insert(0, "10")
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
