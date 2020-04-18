@@ -425,7 +425,7 @@ class OperationWindow(Frame):
         self.lbWhichAge.grid(row=0, columnspan=3, sticky='ew', pady=5)
         self.apply_style(self.lbWhichAge)
         self.lbWhichAge.configure(font=font9)
-        self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
+        self.lbWhichAge.configure(text='How to calc best age:')
         self.lbWhichAge.configure(state=DISABLED)
 
         self.entAgeCutoff = Entry(self.frAgeDisc)
@@ -441,14 +441,18 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
 
+        self.lblAgeMa = Label(self.frAgeDisc)
+        self.lblAgeMa.grid(row=1, column=2, sticky='w', pady=5)
+        self.apply_style(self.lblAgeMa)
+        self.lblAgeMa.configure(text="Ma")
+
         self.cbWhichAge = ttk.Combobox(self.frAgeDisc)
         self.cbWhichAge.grid(row=1, column=0, sticky='ew')
-        #self.cbWhichAge.configure(textvariable=gui_support.varAgeType)
         self.cbWhichAge.configure(width=15)
         self.cbWhichAge.configure(takefocus="")
         self.cbWhichAge.configure(state=DISABLED)
 
-        self.cbWhichAge.configure(values=('Lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
+        self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
         self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
                                                                                        pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
         self.cbWhichAge.current(0)
@@ -569,11 +573,11 @@ class OperationWindow(Frame):
         self.cbTypePbc.current(0)'''
 
         self.lbCalcDisc = Label(self.frAgeDisc)
-        self.lbCalcDisc.grid(row=7, columnspan=2, sticky='ew', pady=15)
+        self.lbCalcDisc.grid(row=7, columnspan=2, sticky='ew', pady=5)
         self.apply_style(self.lbCalcDisc)
         self.lbCalcDisc.configure(font=font9)
         self.lbCalcDisc.configure(state=DISABLED)
-        self.lbCalcDisc.configure(text='Discordance:')
+        self.lbCalcDisc.configure(text='How to calc discordance:')
 
         self.entDiscAgeFixedLim = Entry(self.frAgeDisc)
         self.entDiscAgeFixedLim.grid(row=8, column=1, pady=5, padx=5, sticky='w')
@@ -588,6 +592,11 @@ class OperationWindow(Frame):
         self.entDiscAgeFixedLim.configure(state=DISABLED)
         self.entDiscAgeFixedLim.configure(width=5)
 
+        self.lblDiscMa = Label(self.frAgeDisc)
+        self.lblDiscMa.grid(row=8, column=2, sticky='w', pady=5)
+        self.apply_style(self.lblDiscMa)
+        self.lblDiscMa.configure(text="Ma")
+
         self.cbWhichConc = ttk.Combobox(self.frAgeDisc)
         self.cbWhichConc.grid(row=8, column=0, sticky='ew')
         self.cbWhichConc.configure(width=15)
@@ -600,8 +609,7 @@ class OperationWindow(Frame):
                                                                                         self.entDiscAgeFixedLim))
         self.cbWhichConc.current(3)
 
-        #self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
-                                                                                       #pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
+
 
         '''
        
@@ -668,29 +676,6 @@ class OperationWindow(Frame):
         self.scDiscAgeFixedLim.configure(troughcolor="#d9d9d9")
 
         '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         self.lbFilterByError = Label(self.frAgeDisc)
         self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
@@ -809,16 +794,57 @@ class OperationWindow(Frame):
         self.frDisc.configure(highlightcolor="black")
 
         self.lbDiscFilt = Label(self.frDisc)
-        self.lbDiscFilt.grid(row=3, columnspan=2, sticky='ew')
+        self.lbDiscFilt.grid(row=0, columnspan=2, sticky='ew')
         self.apply_style(self.lbDiscFilt)
         self.lbDiscFilt.configure(font=font9)
-        self.lbDiscFilt.configure(text='''7. Discord. filters (%)''')
+        self.lbDiscFilt.configure(text='Discord. filters (%)')
 
-        self.lbPosDiscFilt = Label(self.frDisc)
+        self.lblMinus = Label(self.frDisc)
+        self.lblMinus.grid(row=1, column=0, sticky='w', pady=5)
+        self.apply_style(self.lblMinus)
+        self.lblMinus.configure(text="-")
+
+        self.entNegDiscFilt = Entry(self.frDisc)
+        self.entNegDiscFilt.grid(row=1, column=1, pady=5, padx=5, sticky='w')
+        self.entNegDiscFilt.configure(background="white")
+        self.entNegDiscFilt.configure(disabledforeground="#a3a3a3")
+        self.entNegDiscFilt.configure(font="TkFixedFont")
+        self.entNegDiscFilt.configure(foreground="#000000")
+        self.entNegDiscFilt.configure(insertbackground="black")
+        self.entNegDiscFilt.configure(textvariable=gui_support.varNegDiscFilter)
+        self.entNegDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(7, float(
+            ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+        self.entNegDiscFilt.configure(state=DISABLED)
+        self.entNegDiscFilt.configure(width=5)
+
+        self.lblDisc = Label(self.frDisc)
+        self.lblDisc.grid(row=1, column=2, sticky='w', pady=5)
+        self.apply_style(self.lblDisc)
+        self.lblDisc.configure(text="< D(%) <")
+
+        self.lblPlus = Label(self.frDisc)
+        self.lblPlus.grid(row=1, column=3, sticky='w', pady=5)
+        self.apply_style(self.lblPlus)
+        self.lblPlus.configure(text="+")
+
+        self.entPosDiscFilt = Entry(self.frDisc)
+        self.entPosDiscFilt.grid(row=1, column=4, pady=5, padx=5, sticky='w')
+        self.entPosDiscFilt.configure(background="white")
+        self.entPosDiscFilt.configure(disabledforeground="#a3a3a3")
+        self.entPosDiscFilt.configure(font="TkFixedFont")
+        self.entPosDiscFilt.configure(foreground="#000000")
+        self.entPosDiscFilt.configure(insertbackground="black")
+        self.entPosDiscFilt.configure(textvariable=gui_support.varPosDiscFilter)
+        self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
+            ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+        self.entPosDiscFilt.configure(state=DISABLED)
+        self.entPosDiscFilt.configure(width=5)
+
+        '''self.lbPosDiscFilt = Label(self.frDisc)
         self.lbPosDiscFilt.grid(row=4, columnspan=2, sticky='ew')
         self.apply_style(self.lbPosDiscFilt)
         self.lbPosDiscFilt.configure(anchor='w')
-        self.lbPosDiscFilt.configure(text='''Positive:''')
+        self.lbPosDiscFilt.configure(text='Positive:')
 
         self.scPosDisc = Scale(self.frDisc)
         self.scPosDisc.grid(row=5, columnspan=2, sticky='ew')
@@ -843,7 +869,7 @@ class OperationWindow(Frame):
         self.apply_style(self.lbNegDiscFilt)
         self.lbNegDiscFilt.configure(anchor='w')
         self.lbNegDiscFilt.configure(state=DISABLED)
-        self.lbNegDiscFilt.configure(text='''Negative:''')
+        self.lbNegDiscFilt.configure(text='Negative:')
 
         self.scNegDisc = Scale(self.frDisc)
         self.scNegDisc.grid(row=7, columnspan=2, sticky='ew')
@@ -862,7 +888,7 @@ class OperationWindow(Frame):
         self.scNegDisc.set(-10)
         self.scNegDisc.configure(state=DISABLED)
         self.scNegDisc.configure(troughcolor="#d9d9d9")
-        self.scNegDisc.configure(command=lambda x: gui_support.onChange(7, self.scNegDisc.get(), pars_onChange))
+        self.scNegDisc.configure(command=lambda x: gui_support.onChange(7, self.scNegDisc.get(), pars_onChange))'''
 
         '''self.lbCalcDisc = Label(self.frDisc)
         self.lbCalcDisc.grid(row=8, columnspan=2, sticky='ew', pady=15)

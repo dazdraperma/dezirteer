@@ -146,7 +146,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 6:
         pars[0].pos_disc_filter = p_value/100
     elif p_number_in_list == 7:
-        pars[0].neg_disc_filter = p_value/100
+        pars[0].neg_disc_filter = p_value/100*(-1)
     elif p_number_in_list == 8:
         pars[0].disc_type[0] = p_value
         if p_value == 1:
@@ -269,7 +269,9 @@ def set_Tk_var():
     varShowMultiple = IntVar()
     varDrawKde = IntVar()
     varPosDiscFilter = IntVar()
+    varPosDiscFilter.set(20)
     varNegDiscFilter = IntVar()
+    varNegDiscFilter.set(10)
     varFitDiscordia = IntVar()
     varDrawPDP = IntVar()
     varDrawKDE = IntVar()
