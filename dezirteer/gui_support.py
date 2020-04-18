@@ -148,11 +148,12 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 7:
         pars[0].neg_disc_filter = p_value/100
     elif p_number_in_list == 8:
-        pars[0].disc_type = [p_value, args[0].get()]
+        pars[0].disc_type[0] = p_value
         if p_value == 1:
-            args[0].configure(state=NORMAL)
+            args[1].configure(state=NORMAL)
+            pars[0].disc_type[1] = varAgeCutoff.get()
         else:
-            args[0].configure(state=DISABLED)
+            args[1].configure(state=DISABLED)
     elif p_number_in_list == 9:
         pars[0].conc_type = p_value
     elif p_number_in_list == 11:
@@ -256,7 +257,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
-    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff
+    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff
     varUConc = IntVar()
     varDiscType = IntVar()
     varConcType = IntVar()
@@ -291,6 +292,8 @@ def set_Tk_var():
     varMaxAgeCrop = IntVar()
     varAgeCutoff = IntVar()
     varAgeCutoff.set(1000)
+    varDiscCutoff = IntVar()
+    varDiscCutoff.set(1000)
 
 
 def init(pTop, pGui, *args, **kwargs):
