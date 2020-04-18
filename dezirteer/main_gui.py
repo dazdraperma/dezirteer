@@ -428,15 +428,41 @@ class OperationWindow(Frame):
         self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
         self.lbWhichAge.configure(state=DISABLED)
 
+        self.entAgeCutoff = Entry(self.frAgeDisc)
+        self.entAgeCutoff.grid(row=1, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeCutoff.configure(background="white")
+        self.entAgeCutoff.configure(disabledforeground="#a3a3a3")
+        self.entAgeCutoff.configure(font="TkFixedFont")
+        self.entAgeCutoff.configure(foreground="#000000")
+        self.entAgeCutoff.configure(insertbackground="black")
+        self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
+        #self.entAgeCutoff.insert(0, "10")
+        self.entAgeCutoff.configure(state=DISABLED)
+        self.entAgeCutoff.configure(width=5)
+
         self.cbWhichAge = ttk.Combobox(self.frAgeDisc)
-        self.cbWhichAge.grid(row=1, sticky='ew')
+        self.cbWhichAge.grid(row=1, column=0, sticky='ew')
         #self.cbWhichAge.configure(textvariable=gui_support.varAgeType)
         self.cbWhichAge.configure(width=15)
         self.cbWhichAge.configure(takefocus="")
         self.cbWhichAge.configure(state=DISABLED)
+
         self.cbWhichAge.configure(values=('Lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
-        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(), pars_onChange, self.scAgeCutoff))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
+                                                                                       pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
         self.cbWhichAge.current(0)
+        #command = lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
+
+
+        '''self.chbMinAgeCrop = Checkbutton(self.frDisc)
+        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbMinAgeCrop)
+        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
+        self.chbMinAgeCrop.configure(justify=LEFT)
+        self.chbMinAgeCrop.configure(state=DISABLED)
+        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
+        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
+                                                                          self.entAgeMinCrop))'''
 
 
         '''self.rbAgeSmallestErr = Radiobutton(self.frFilter)
@@ -476,7 +502,7 @@ class OperationWindow(Frame):
         self.rbAge206_238.configure(state=DISABLED)
         self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))'''
 
-        self.scAgeCutoff = Scale(self.frAgeDisc)
+        '''self.scAgeCutoff = Scale(self.frAgeDisc)
         self.scAgeCutoff.grid(row=1, column=1, sticky='ews', rowspan=2, pady=5)
         self.scAgeCutoff.configure(activebackground="#d9d9d9")
         self.scAgeCutoff.configure(sliderlength=20)
@@ -494,7 +520,7 @@ class OperationWindow(Frame):
         self.scAgeCutoff.configure(state=DISABLED)
         self.scAgeCutoff.configure(
             command=lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
-        self.scAgeCutoff.configure(troughcolor="#d9d9d9")
+        self.scAgeCutoff.configure(troughcolor="#d9d9d9")'''
 
         self.lbPbc = Label(self.frAgeDisc)
         self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
@@ -1205,7 +1231,8 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
                                  self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
-                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop, self.cbWhichAge]
+                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop,
+                                 self.cbWhichAge, self.entAgeCutoff]
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
@@ -1214,7 +1241,7 @@ class OperationWindow(Frame):
 
             self.rbDiscSmallest.select()
             #self.rbAgeSmallestErr.select()
-            self.scAgeCutoff.configure(state=DISABLED)
+            #self.scAgeCutoff.configure(state=DISABLED)
             self.cbWhichAge.configure(state="readonly")
 
             self.lboxSamples.delete(0, END)
