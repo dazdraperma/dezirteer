@@ -110,7 +110,7 @@ class OperationWindow(Frame):
         _compcolor = '#d9d9d9'
         _ana1color = '#d9d9d9'
         _ana2color = '#d9d9d9'
-        font9 = "-family {Segoe UI} -size 12 -weight bold -slant roman" \
+        font9 = "-family {Segoe UI} -size 8 -weight bold -slant roman" \
                 " -underline 0 -overstrike 0"
 
         self.style = ttk.Style()
@@ -269,7 +269,7 @@ class OperationWindow(Frame):
         toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
         toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
 
-        self.frTable = Frame(master, height=200)
+        self.frTable = Frame(master, height=100)
         self.frTable.configure(relief=GROOVE)
         self.frTable.configure(borderwidth="2")
         self.frTable.configure(relief=GROOVE)
@@ -352,7 +352,7 @@ class OperationWindow(Frame):
         self.frSample.configure(highlightcolor="black")
 
         self.lbChooseSample = Label(self.frSample)
-        self.lbChooseSample.grid(row=0, columnspan=3, sticky="ew", pady=15)
+        self.lbChooseSample.grid(row=0, columnspan=3, sticky="ew", pady=5)
         self.apply_style(self.lbChooseSample)
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
@@ -422,7 +422,7 @@ class OperationWindow(Frame):
         self.frAgeDisc.grid(row=0, column=2, sticky='ns')
 
         self.lbWhichAge = Label(self.frAgeDisc)
-        self.lbWhichAge.grid(row=0, columnspan=3, sticky='ew')
+        self.lbWhichAge.grid(row=0, columnspan=3, sticky='ew', pady=5)
         self.apply_style(self.lbWhichAge)
         self.lbWhichAge.configure(font=font9)
         self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
@@ -436,8 +436,8 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(foreground="#000000")
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
-        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange)))
-        #self.entAgeCutoff.insert(0, "10")
+        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
+                                                                              pars_onChange)))
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
 
@@ -452,7 +452,7 @@ class OperationWindow(Frame):
         self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
                                                                                        pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
         self.cbWhichAge.current(0)
-        #command = lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
+
 
 
         '''self.chbMinAgeCrop = Checkbutton(self.frDisc)
@@ -528,14 +528,24 @@ class OperationWindow(Frame):
         self.apply_style(self.lbPbc)
         self.lbPbc.configure(font=font9)
         self.lbPbc.configure(state=DISABLED)
-        self.lbPbc.configure(text='5. Uncorr. or Pbc?')
+        self.lbPbc.configure(text='Common Pb corr.')
 
-        self.rbUseUncorr = Radiobutton(self.frAgeDisc)
+        self.cbPbc = ttk.Combobox(self.frAgeDisc)
+        self.cbPbc.grid(row=6, column=0, sticky='ew')
+        # self.cbPbc.configure(textvariable=gui_support.varAgeType)
+        self.cbPbc.configure(width=15)
+        self.cbPbc.configure(takefocus="")
+        self.cbPbc.configure(state=DISABLED)
+        self.cbPbc.configure(values=('None', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
+        self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(), pars_onChange))
+        self.cbPbc.current(0)
+
+        '''self.rbUseUncorr = Radiobutton(self.frAgeDisc)
         self.rbUseUncorr.configure(variable=gui_support.varUncorrOrPbc, value=False)
         self.rbUseUncorr.grid(row=6, sticky='w')
         self.apply_style(self.rbUseUncorr)
         self.rbUseUncorr.configure(justify=LEFT)
-        self.rbUseUncorr.configure(text='''Uncorr. for Pbc''')
+        self.rbUseUncorr.configure(text='Uncorr. for Pbc')
         self.rbUseUncorr.configure(state=DISABLED)
         self.rbUseUncorr.configure(command=lambda: gui_support.onChange(4, False, pars_onChange))
         self.rbUseUncorr.select()
@@ -547,7 +557,7 @@ class OperationWindow(Frame):
         self.rbUseCorr.configure(justify=LEFT)
         self.rbUseCorr.configure(state=DISABLED)
         self.rbUseCorr.configure(command=lambda: gui_support.onChange(4, True, pars_onChange))
-        self.rbUseCorr.configure(text='''Pbc-corr.''')
+        self.rbUseCorr.configure(text='Pbc-corr.')
 
         self.cbTypePbc = ttk.Combobox(self.frAgeDisc)
         self.cbTypePbc.grid(row=8, sticky='ew')
@@ -556,7 +566,7 @@ class OperationWindow(Frame):
         self.cbTypePbc.configure(takefocus="")
         self.cbTypePbc.configure(state=DISABLED)
         self.cbTypePbc.configure(state="readonly", values=('204-corr', '207-corr', '208-corr', 'Andersen'))
-        self.cbTypePbc.current(0)
+        self.cbTypePbc.current(0)'''
 
         self.lbFilterByError = Label(self.frAgeDisc)
         self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
@@ -1231,9 +1241,9 @@ class OperationWindow(Frame):
 
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
-                                 self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
-                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop,
-                                 self.cbWhichAge, self.entAgeCutoff]
+                                 self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff,
+                                 self.entAgeMinCrop, self.entAgeMaxCrop,
+                                 self.cbWhichAge, self.cbPbc, self.entAgeCutoff] #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc,
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
@@ -1244,6 +1254,7 @@ class OperationWindow(Frame):
             #self.rbAgeSmallestErr.select()
             #self.scAgeCutoff.configure(state=DISABLED)
             self.cbWhichAge.configure(state="readonly")
+            self.cbPbc.configure(state="readonly")
 
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
