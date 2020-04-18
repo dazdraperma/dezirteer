@@ -124,24 +124,169 @@ class OperationWindow(Frame):
         master.columnconfigure(1, weight=1)
         master.rowconfigure(0, weight=1)
 
-        self.frTable = Frame(master, width=955, height=255)
+        # _____________________frGraph___________________________________________________________________________________
+        self.frGraph = Frame(master)
+        self.frGraph.configure(relief=GROOVE)
+        self.frGraph.configure(borderwidth="2")
+        self.frGraph.configure(relief=GROOVE)
+        self.frGraph.configure(background="#d9d9d9")
+        self.frGraph.configure(highlightbackground="#d9d9d9")
+        self.frGraph.configure(highlightcolor="black")
+        self.frGraph.grid(row=0, rowspan=2, columnspan=3, sticky='nswe')
+        #self.frGraph.columnconfigure(0, weight=1)
+        self.frGraph.rowconfigure(0, weight=1)
+        self.frGraph.rowconfigure(1, weight=0)
+
+        #______________frCon
+        self.frConc = Frame(self.frGraph)
+        self.frConc.grid(column=0, row=0, sticky='nswe')
+        self.frConc.configure(relief=GROOVE)
+        self.frConc.configure(borderwidth="2")
+        self.frConc.configure(relief=GROOVE)
+        self.frConc.configure(background="#d9d9d9")
+        self.frConc.configure(highlightbackground="#d9d9d9")
+        self.frConc.configure(highlightcolor="black")
+
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.ax_conc = self.fig.add_subplot(111)
+        self.ax_conc.axes
+        self.ax_conc.set_xlabel('207Pb/235U')
+        self.ax_conc.set_ylabel('206Pb/238U')
+        self.ax_conc.set_title('Concordia')
+        try:
+            self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
+        except UnboundLocalError:
+            pass
+
+        self.canvas_conc = FigureCanvasTkAgg(self.fig, self.frConc)
+        self.canvas_conc.draw()
+        self.canvas_conc.get_tk_widget().pack(side='top', fill='both', expand=1)
+
+        self.frConcToolbar = Frame(self.frGraph)
+        self.frConcToolbar.grid(column=0, row=1, sticky='ew')
+        self.frConcToolbar.configure(relief=GROOVE)
+        self.frConcToolbar.configure(borderwidth="2")
+        self.frConcToolbar.configure(relief=GROOVE)
+        self.frConcToolbar.configure(background="#d9d9d9")
+        self.frConcToolbar.configure(highlightbackground="#d9d9d9")
+        self.frConcToolbar.configure(highlightcolor="black")
+        self.frConcToolbar.configure(width=100)
+
+        # ______________frProb
+        self.frProb = Frame(self.frGraph)
+        self.frProb.grid(row=0, column=1, sticky='nswe')
+        self.frProb.configure(relief=GROOVE)
+        self.frProb.configure(borderwidth="2")
+        self.frProb.configure(relief=GROOVE)
+        self.frProb.configure(background="#d9d9d9")
+        self.frProb.configure(highlightbackground="#d9d9d9")
+        self.frProb.configure(highlightcolor="black")
+
+        try:
+            if (g_graph_settings.pdp_kde_hist == 0) and (g_kde != []):
+                graph_to_draw = g_kde
+
+            elif (g_graph_settings.pdp_kde_hist == 1) and (g_pdp != []):
+                graph_to_draw = g_pdp[0]
+            else:
+                pass
+        except NameError:
+            pass
+
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.ax_prob = self.fig.add_subplot(111)
+        self.ax_prob.axes
+        self.ax_prob.set_title('KDE/PDP/Histogram')
+        self.ax_prob.axes.get_yaxis().set_visible(False)
+        try:
+            self.ax_prob.plot(list(range(0, EarthAge)), graph_to_draw)
+        except UnboundLocalError:
+            pass
+
+        self.canvas_prob = FigureCanvasTkAgg(self.fig, self.frProb)
+        self.canvas_prob.draw()
+        self.canvas_prob.get_tk_widget().pack(side='top', fill='both', expand=1)
+
+        self.frProbToolbar = Frame(self.frGraph)
+        self.frProbToolbar.grid(row=1, column=1, sticky='ew')
+        self.frProbToolbar.configure(relief=GROOVE)
+        self.frProbToolbar.configure(borderwidth="2")
+        self.frProbToolbar.configure(relief=GROOVE)
+        self.frProbToolbar.configure(background="#d9d9d9")
+        self.frProbToolbar.configure(highlightbackground="#d9d9d9")
+        self.frProbToolbar.configure(highlightcolor="black")
+        self.frProbToolbar.configure(width=100)
+
+        # ______________frCum
+        self.frCum = Frame(self.frGraph)
+        self.frCum.grid(row=0, column=2, sticky='nswe')
+        self.frCum.configure(relief=GROOVE)
+        self.frCum.configure(borderwidth="2")
+        self.frCum.configure(relief=GROOVE)
+        self.frCum.configure(background="#d9d9d9")
+        self.frCum.configure(highlightbackground="#d9d9d9")
+        self.frCum.configure(highlightcolor="black")
+        self.frCum.configure(height=10)
+
+        try:
+            if (g_graph_settings.pdp_kde_hist == 0) and (g_ckde != []):
+                graph_to_draw = g_ckde
+
+            elif (g_graph_settings.pdp_kde_hist == 1) and (g_cpdp != []):
+                graph_to_draw = g_cpdp
+            else:
+                pass
+        except NameError:
+            pass
+
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.ax_cum = self.fig.add_subplot(111)
+        self.ax_cum.set_title('Cumulative diagrams')
+        self.ax_cum.axes.get_yaxis().set_visible(False)
+
+        try:
+            self.ax_cum.plot(list(range(0, EarthAge)), graph_to_draw)
+        except UnboundLocalError:
+            pass
+
+        self.canvas_cum = FigureCanvasTkAgg(self.fig, self.frCum)
+        self.canvas_cum.draw()
+        self.canvas_cum.get_tk_widget().pack(side='top', fill='both', expand=1)
+
+        self.frCumToolbar = Frame(self.frGraph)
+        self.frCumToolbar.grid(row=1, column=2, sticky='ew')
+        self.frCumToolbar.configure(relief=GROOVE)
+        self.frCumToolbar.configure(borderwidth="2")
+        self.frCumToolbar.configure(relief=GROOVE)
+        self.frCumToolbar.configure(background="#d9d9d9")
+        self.frCumToolbar.configure(highlightbackground="#d9d9d9")
+        self.frCumToolbar.configure(highlightcolor="black")
+        self.frCumToolbar.configure(width=100)
+
+        # ________frTable_________________________________________________________________________________________________
+        global toolbarConc, toolbarProb, toolbarCum
+        toolbarConc = NavigationToolbar2Tk(self.canvas_conc, self.frConcToolbar)
+        toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
+        toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
+
+        self.frTable = Frame(master, height=200)
         self.frTable.configure(relief=GROOVE)
         self.frTable.configure(borderwidth="2")
         self.frTable.configure(relief=GROOVE)
         self.frTable.configure(background="#d9d9d9")
         self.frTable.configure(highlightbackground="#d9d9d9")
         self.frTable.configure(highlightcolor="black")
-        self.frTable.grid(row=0, column=0, sticky='NWES')
+        self.frTable.grid(row=2, sticky='sew')
         self.style.configure('Treeview.Heading', font="TkDefaultFont")
 
         self.Table = ScrolledTreeView(self.frTable)
-        self.Table.place(relx=0.0, rely=0.0, relheight=0.96, relwidth=1.0)
+        self.Table.place(relx=0.0, rely=0.0, relheight=1.0, relwidth=1.0)
         self.Table['columns'] = g_list_col_names
         self.Table.bind("<Double-1>", self.tableOnDoubleClick)
 
         # ________frOper_________________________________________________________________________________________________
         self.frOper = Frame(master)
-        self.frOper.grid(row=1, column=0, sticky='sew')
+        self.frOper.grid(row=3, sticky='sew')
 
         self.frImport = Frame(self.frOper)
         self.frImport.grid(row=0, column=0, sticky='ns')
@@ -196,28 +341,38 @@ class OperationWindow(Frame):
         self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
         self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
 
-        self.lbChooseSample = Label(self.frImport)
-        self.lbChooseSample.grid(row=6, columnspan=3, sticky="ew", pady=15)
+        # _______________frSample________________________________________________________________________________________
+        self.frSample = Frame(self.frOper)
+        self.frSample.grid(row=0, column=1, sticky='ns')
+        self.frSample.configure(relief=GROOVE)
+        self.frSample.configure(borderwidth="2")
+        self.frSample.configure(relief=GROOVE)
+        self.frSample.configure(background="#d9d9d9")
+        self.frSample.configure(highlightbackground="#d9d9d9")
+        self.frSample.configure(highlightcolor="black")
+
+        self.lbChooseSample = Label(self.frSample)
+        self.lbChooseSample.grid(row=0, columnspan=3, sticky="ew", pady=15)
         self.apply_style(self.lbChooseSample)
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
 
-        self.lboxSamples = Listbox(self.frImport, selectmode='extended', exportselection=0, height=25)
-        self.lboxSamples.grid(row=7, columnspan=3, sticky="ew", padx=5)
+        self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, height=25)
+        self.lboxSamples.grid(row=1, columnspan=3, sticky="ew", padx=5)
 
         scrollbar = Scrollbar(self.lboxSamples, orient="vertical")
         scrollbar.config(command=self.lboxSamples.yview)
         self.lboxSamples.config(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
 
-        self.lbUConcFilter = Label(self.frImport)
-        self.lbUConcFilter.grid(row=8, columnspan=3, pady=4, sticky='ew')
+        self.lbUConcFilter = Label(self.frSample)
+        self.lbUConcFilter.grid(row=2, columnspan=3, pady=4, sticky='ew')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="3. Filter by Uconc?")
 
-        self.rbNoUconc = Radiobutton(self.frImport)
-        self.rbNoUconc.grid(row=9, column=0, sticky='w')
+        self.rbNoUconc = Radiobutton(self.frSample)
+        self.rbNoUconc.grid(row=3, column=0, sticky='w')
         self.apply_style(self.rbNoUconc)
         self.rbNoUconc.configure(font="TkTextFont")
         self.rbNoUconc.configure(text="Don't filter")
@@ -225,15 +380,15 @@ class OperationWindow(Frame):
         self.rbNoUconc.configure(variable=gui_support.varUConc, value=False)
         self.rbNoUconc.configure(command=lambda: gui_support.onChange(2, False, pars_onChange, self.scUconcCutoff))
 
-        self.rbUseUconc = Radiobutton(self.frImport)
-        self.rbUseUconc.grid(row=10, column=0, sticky='sw')
+        self.rbUseUconc = Radiobutton(self.frSample)
+        self.rbUseUconc.grid(row=4, column=0, sticky='sw')
         self.apply_style(self.rbUseUconc)
         self.rbUseUconc.configure(text="Cutoff at")
         self.rbUseUconc.configure(variable=gui_support.varUConc, value=True)
         self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
 
-        self.scUconcCutoff = Scale(self.frImport)
-        self.scUconcCutoff.grid(row=9, column=1, sticky='es', rowspan=2)
+        self.scUconcCutoff = Scale(self.frSample)
+        self.scUconcCutoff.grid(row=5, column=1, sticky='es', rowspan=2)
         self.scUconcCutoff.configure(activebackground="#d9d9d9")
         self.scUconcCutoff.configure(sliderlength=20)
         self.scUconcCutoff.configure(background="#d9d9d9")
@@ -251,29 +406,40 @@ class OperationWindow(Frame):
         self.scUconcCutoff.configure(troughcolor="#d9d9d9")
         self.scUconcCutoff.configure(command=lambda x: gui_support.onChange(18, self.scUconcCutoff.get(), pars_onChange))
 
-        self.lblPPM = Label(self.frImport)
-        self.lblPPM.grid(row=10, column=2, sticky='se', pady=4)
+        self.lblPPM = Label(self.frSample)
+        self.lblPPM.grid(row=6, column=2, sticky='se', pady=4)
         self.apply_style(self.lblPPM)
         self.lblPPM.configure(text="ppm")
 
-        # _______________frFilter________________________________________________________________________________________
-        self.frFilter = Frame(self.frOper)
-        self.frFilter.configure(relief=GROOVE)
-        self.frFilter.configure(borderwidth="2")
-        self.frFilter.configure(relief=GROOVE)
-        self.frFilter.configure(background="#d9d9d9")
-        self.frFilter.configure(highlightbackground="#d9d9d9")
-        self.frFilter.configure(highlightcolor="black")
-        self.frFilter.grid(row=0, column=1, sticky='ns')
+        # _______________frAgeDisc________________________________________________________________________________________
+        self.frAgeDisc = Frame(self.frOper)
+        self.frAgeDisc.configure(relief=GROOVE)
+        self.frAgeDisc.configure(borderwidth="2")
+        self.frAgeDisc.configure(relief=GROOVE)
+        self.frAgeDisc.configure(background="#d9d9d9")
+        self.frAgeDisc.configure(highlightbackground="#d9d9d9")
+        self.frAgeDisc.configure(highlightcolor="black")
+        self.frAgeDisc.grid(row=0, column=2, sticky='ns')
 
-        self.lbWhichAge = Label(self.frFilter)
+        self.lbWhichAge = Label(self.frAgeDisc)
         self.lbWhichAge.grid(row=0, columnspan=3, sticky='ew')
         self.apply_style(self.lbWhichAge)
         self.lbWhichAge.configure(font=font9)
         self.lbWhichAge.configure(text='''4. Best age: 7/6 or 6/8?''')
         self.lbWhichAge.configure(state=DISABLED)
 
-        self.rbAgeSmallestErr = Radiobutton(self.frFilter)
+        self.cbWhichAge = ttk.Combobox(self.frAgeDisc)
+        self.cbWhichAge.grid(row=1, sticky='ew')
+        #self.cbWhichAge.configure(textvariable=gui_support.varAgeType)
+        self.cbWhichAge.configure(width=15)
+        self.cbWhichAge.configure(takefocus="")
+        self.cbWhichAge.configure(state=DISABLED)
+        self.cbWhichAge.configure(values=('Lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(), pars_onChange, self.scAgeCutoff))
+        self.cbWhichAge.current(0)
+
+
+        '''self.rbAgeSmallestErr = Radiobutton(self.frFilter)
         self.rbAgeSmallestErr.configure(variable=gui_support.varAgebased, value=0)
         self.rbAgeSmallestErr.grid(row=1, sticky='w', pady=5)
         self.apply_style(self.rbAgeSmallestErr)
@@ -288,7 +454,7 @@ class OperationWindow(Frame):
         self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=5)
         self.apply_style(self.rbAgeFixedLim)
         self.rbAgeFixedLim.configure(justify=LEFT)
-        self.rbAgeFixedLim.configure(text='''Fixed limit (Ma):''')
+        self.rbAgeFixedLim.configure(text='Fixed limit (Ma):')
         self.rbAgeFixedLim.configure(state=DISABLED)
         self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.scAgeCutoff))
 
@@ -297,7 +463,7 @@ class OperationWindow(Frame):
         self.rbAge206_207.grid(row=3, sticky='w')
         self.apply_style(self.rbAge206_207)
         self.rbAge206_207.configure(justify=LEFT)
-        self.rbAge206_207.configure(text='''206Pb/207Pb''')
+        self.rbAge206_207.configure(text='206Pb/207Pb')
         self.rbAge206_207.configure(state=DISABLED)
         self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.scAgeCutoff))
 
@@ -306,11 +472,11 @@ class OperationWindow(Frame):
         self.rbAge206_238.grid(row=4, sticky='w', pady=10)
         self.apply_style(self.rbAge206_238)
         self.rbAge206_238.configure(justify=LEFT)
-        self.rbAge206_238.configure(text='''206Pb/238U''')
+        self.rbAge206_238.configure(text='206Pb/238U')
         self.rbAge206_238.configure(state=DISABLED)
-        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))
+        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))'''
 
-        self.scAgeCutoff = Scale(self.frFilter)
+        self.scAgeCutoff = Scale(self.frAgeDisc)
         self.scAgeCutoff.grid(row=1, column=1, sticky='ews', rowspan=2, pady=5)
         self.scAgeCutoff.configure(activebackground="#d9d9d9")
         self.scAgeCutoff.configure(sliderlength=20)
@@ -330,14 +496,14 @@ class OperationWindow(Frame):
             command=lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
         self.scAgeCutoff.configure(troughcolor="#d9d9d9")
 
-        self.lbPbc = Label(self.frFilter)
+        self.lbPbc = Label(self.frAgeDisc)
         self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
         self.apply_style(self.lbPbc)
         self.lbPbc.configure(font=font9)
         self.lbPbc.configure(state=DISABLED)
-        self.lbPbc.configure(text='''5. Uncorr. or Pbc?''')
+        self.lbPbc.configure(text='5. Uncorr. or Pbc?')
 
-        self.rbUseUncorr = Radiobutton(self.frFilter)
+        self.rbUseUncorr = Radiobutton(self.frAgeDisc)
         self.rbUseUncorr.configure(variable=gui_support.varUncorrOrPbc, value=False)
         self.rbUseUncorr.grid(row=6, sticky='w')
         self.apply_style(self.rbUseUncorr)
@@ -347,7 +513,7 @@ class OperationWindow(Frame):
         self.rbUseUncorr.configure(command=lambda: gui_support.onChange(4, False, pars_onChange))
         self.rbUseUncorr.select()
 
-        self.rbUseCorr = Radiobutton(self.frFilter)
+        self.rbUseCorr = Radiobutton(self.frAgeDisc)
         self.rbUseCorr.grid(row=7, sticky='w')
         self.rbUseCorr.configure(variable=gui_support.varUncorrOrPbc, value=True)
         self.apply_style(self.rbUseCorr)
@@ -356,7 +522,7 @@ class OperationWindow(Frame):
         self.rbUseCorr.configure(command=lambda: gui_support.onChange(4, True, pars_onChange))
         self.rbUseCorr.configure(text='''Pbc-corr.''')
 
-        self.cbTypePbc = ttk.Combobox(self.frFilter)
+        self.cbTypePbc = ttk.Combobox(self.frAgeDisc)
         self.cbTypePbc.grid(row=8, sticky='ew')
         self.cbTypePbc.configure(textvariable=gui_support.varTypePbc)
         self.cbTypePbc.configure(width=15)
@@ -365,14 +531,14 @@ class OperationWindow(Frame):
         self.cbTypePbc.configure(state="readonly", values=('204-corr', '207-corr', '208-corr', 'Andersen'))
         self.cbTypePbc.current(0)
 
-        self.lbFilterByError = Label(self.frFilter)
+        self.lbFilterByError = Label(self.frAgeDisc)
         self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
         self.apply_style(self.lbFilterByError)
         self.lbFilterByError.configure(font=font9)
         self.lbFilterByError.configure(state=DISABLED)
         self.lbFilterByError.configure(text='''6. Filter by error?''')
 
-        self.rbNoErrFilter = Radiobutton(self.frFilter)
+        self.rbNoErrFilter = Radiobutton(self.frAgeDisc)
         self.rbNoErrFilter.configure(variable=gui_support.varErrFilter, value=False)
         self.rbNoErrFilter.grid(row=10, sticky='w')
         self.apply_style(self.rbNoErrFilter)
@@ -383,7 +549,7 @@ class OperationWindow(Frame):
         self.rbNoErrFilter.configure(text='''Don't filter''')
         self.rbNoErrFilter.select()
 
-        self.rbUseErrFilter = Radiobutton(self.frFilter)
+        self.rbUseErrFilter = Radiobutton(self.frAgeDisc)
         self.rbUseErrFilter.configure(variable=gui_support.varErrFilter, value=True)
         self.rbUseErrFilter.grid(row=11, column=0, sticky='sw', pady=4)
         self.apply_style(self.rbUseErrFilter)
@@ -393,7 +559,7 @@ class OperationWindow(Frame):
         self.rbUseErrFilter.configure(command=lambda: gui_support.onChange(5, True, pars_onChange,
                                                                            self.chbInclude207235Err, self.scErrFilter))
 
-        self.scErrFilter = Scale(self.frFilter)
+        self.scErrFilter = Scale(self.frAgeDisc)
         self.scErrFilter.grid(row=10, column=1, sticky='ews', rowspan=2)
         self.scErrFilter.configure(activebackground="#d9d9d9")
         self.scErrFilter.configure(sliderlength=20)
@@ -414,7 +580,7 @@ class OperationWindow(Frame):
         self.scErrFilter.configure(
             command=lambda x: gui_support.onChange(20, self.scErrFilter.get(), pars_onChange, g_list_col_names))
 
-        self.chbInclude207235Err = Checkbutton(self.frFilter)
+        self.chbInclude207235Err = Checkbutton(self.frAgeDisc)
         self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
         self.apply_style(self.chbInclude207235Err)
         self.chbInclude207235Err.configure(text="include error in 207/235?")
@@ -473,15 +639,13 @@ class OperationWindow(Frame):
 
         # _______________frDisc__________________________________________________________________________________________
         self.frDisc = Frame(self.frOper)
-        self.frDisc.grid(row=0, column=2, sticky='ns')
+        self.frDisc.grid(row=0, column=3, sticky='ns')
         self.frDisc.configure(relief=GROOVE)
         self.frDisc.configure(borderwidth="2")
         self.frDisc.configure(relief=GROOVE)
         self.frDisc.configure(background="#d9d9d9")
         self.frDisc.configure(highlightbackground="#d9d9d9")
         self.frDisc.configure(highlightcolor="black")
-
-
 
         self.lbDiscFilt = Label(self.frDisc)
         self.lbDiscFilt.grid(row=3, columnspan=2, sticky='ew')
@@ -689,7 +853,7 @@ class OperationWindow(Frame):
         self.frGraphSettings.configure(background="#d9d9d9")
         self.frGraphSettings.configure(highlightbackground="#d9d9d9")
         self.frGraphSettings.configure(highlightcolor="black")
-        self.frGraphSettings.grid(row=0, column=3, sticky="ns")
+        self.frGraphSettings.grid(row=0, column=4, sticky="ns")
 
         self.lbConc = Label(self.frGraphSettings)
         self.lbConc.grid(row=0, columnspan=4, sticky='ew')
@@ -860,7 +1024,7 @@ class OperationWindow(Frame):
         self.frStatus.configure(borderwidth="2")
         self.frStatus.configure(relief=GROOVE)
         self.frStatus.configure(background="#d9d9d9")
-        self.frStatus.grid(row=2, column=0, sticky='ew')
+        self.frStatus.grid(row=4, sticky='ew')
 
         self.btnDraw = Button(self.frStatus)
         self.btnDraw.grid(column=4, row=0, sticky='e', padx=5, pady=6)
@@ -902,153 +1066,7 @@ class OperationWindow(Frame):
         self.btnCalcWindow.configure(width=20)
         self.btnCalcWindow.configure(command=lambda: self.show_frame())
 
-        # _____________________frGraph___________________________________________________________________________________
-        self.frGraph = Frame(master)
-        self.frGraph.configure(relief=GROOVE)
-        self.frGraph.configure(borderwidth="2")
-        self.frGraph.configure(relief=GROOVE)
-        self.frGraph.configure(background="#d9d9d9")
-        self.frGraph.configure(highlightbackground="#d9d9d9")
-        self.frGraph.configure(highlightcolor="black")
-        self.frGraph.grid(row=0, column=1, rowspan=3, sticky='nswe')
-        self.frGraph.columnconfigure(0, weight=1)
-        self.frGraph.rowconfigure(0, weight=1)
-        self.frGraph.rowconfigure(1, weight=0)
-        self.frGraph.rowconfigure(2, weight=1)
-        self.frGraph.rowconfigure(3, weight=0)
-        self.frGraph.rowconfigure(4, weight=1)
-        self.frGraph.rowconfigure(5, weight=0)
 
-        #______________frCon
-        self.frConc = Frame(self.frGraph)
-        self.frConc.grid(row=0, sticky='nswe')
-        self.frConc.configure(relief=GROOVE)
-        self.frConc.configure(borderwidth="2")
-        self.frConc.configure(relief=GROOVE)
-        self.frConc.configure(background="#d9d9d9")
-        self.frConc.configure(highlightbackground="#d9d9d9")
-        self.frConc.configure(highlightcolor="black")
-
-        self.fig = Figure(figsize=(6, 2.15), frameon=False)
-        self.ax_conc = self.fig.add_subplot(111)
-        self.ax_conc.axes
-        self.ax_conc.set_xlabel('207Pb/235U')
-        self.ax_conc.set_ylabel('206Pb/238U')
-        self.ax_conc.set_title('Concordia')
-        try:
-            self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
-        except UnboundLocalError:
-            pass
-
-        self.canvas_conc = FigureCanvasTkAgg(self.fig, self.frConc)
-        self.canvas_conc.draw()
-        self.canvas_conc.get_tk_widget().pack(side='top', fill='both', expand=1)
-
-        self.frConcToolbar = Frame(self.frGraph)
-        self.frConcToolbar.grid(row=1, sticky='ew')
-        self.frConcToolbar.configure(relief=GROOVE)
-        self.frConcToolbar.configure(borderwidth="2")
-        self.frConcToolbar.configure(relief=GROOVE)
-        self.frConcToolbar.configure(background="#d9d9d9")
-        self.frConcToolbar.configure(highlightbackground="#d9d9d9")
-        self.frConcToolbar.configure(highlightcolor="black")
-        self.frConcToolbar.configure(width=200)
-
-        # ______________frProb
-        self.frProb = Frame(self.frGraph)
-        self.frProb.grid(row=2, sticky='nswe')
-        self.frProb.configure(relief=GROOVE)
-        self.frProb.configure(borderwidth="2")
-        self.frProb.configure(relief=GROOVE)
-        self.frProb.configure(background="#d9d9d9")
-        self.frProb.configure(highlightbackground="#d9d9d9")
-        self.frProb.configure(highlightcolor="black")
-
-        try:
-            if (g_graph_settings.pdp_kde_hist == 0) and (g_kde != []):
-                graph_to_draw = g_kde
-
-            elif (g_graph_settings.pdp_kde_hist == 1) and (g_pdp != []):
-                graph_to_draw = g_pdp[0]
-            else:
-                pass
-        except NameError:
-            pass
-
-        self.fig = Figure(figsize=(6, 2.15), frameon=False)
-        self.ax_prob = self.fig.add_subplot(111)
-        self.ax_prob.axes
-        self.ax_prob.set_title('KDE/PDP/Histogram')
-        self.ax_prob.axes.get_yaxis().set_visible(False)
-        try:
-            self.ax_prob.plot(list(range(0, EarthAge)), graph_to_draw)
-        except UnboundLocalError:
-            pass
-
-        self.canvas_prob = FigureCanvasTkAgg(self.fig, self.frProb)
-        self.canvas_prob.draw()
-        self.canvas_prob.get_tk_widget().pack(side='top', fill='both', expand=1)
-
-        self.frProbToolbar = Frame(self.frGraph)
-        self.frProbToolbar.grid(row=3, sticky='ew')
-        self.frProbToolbar.configure(relief=GROOVE)
-        self.frProbToolbar.configure(borderwidth="2")
-        self.frProbToolbar.configure(relief=GROOVE)
-        self.frProbToolbar.configure(background="#d9d9d9")
-        self.frProbToolbar.configure(highlightbackground="#d9d9d9")
-        self.frProbToolbar.configure(highlightcolor="black")
-        self.frProbToolbar.configure(width=200)
-
-        # ______________frCum
-        self.frCum = Frame(self.frGraph)
-        self.frCum.grid(row=4, sticky='nswe')
-        self.frCum.configure(relief=GROOVE)
-        self.frCum.configure(borderwidth="2")
-        self.frCum.configure(relief=GROOVE)
-        self.frCum.configure(background="#d9d9d9")
-        self.frCum.configure(highlightbackground="#d9d9d9")
-        self.frCum.configure(highlightcolor="black")
-        self.frCum.configure(height=10)
-
-        try:
-            if (g_graph_settings.pdp_kde_hist == 0) and (g_ckde != []):
-                graph_to_draw = g_ckde
-
-            elif (g_graph_settings.pdp_kde_hist == 1) and (g_cpdp != []):
-                graph_to_draw = g_cpdp
-            else:
-                pass
-        except NameError:
-            pass
-
-        self.fig = Figure(figsize=(6, 2.15), frameon=False)
-        self.ax_cum = self.fig.add_subplot(111)
-        self.ax_cum.set_title('Cumulative diagrams')
-        self.ax_cum.axes.get_yaxis().set_visible(False)
-
-        try:
-            self.ax_cum.plot(list(range(0, EarthAge)), graph_to_draw)
-        except UnboundLocalError:
-            pass
-
-        self.canvas_cum = FigureCanvasTkAgg(self.fig, self.frCum)
-        self.canvas_cum.draw()
-        self.canvas_cum.get_tk_widget().pack(side='top', fill='both', expand=1)
-
-        self.frCumToolbar = Frame(self.frGraph)
-        self.frCumToolbar.grid(row=5, sticky='ew')
-        self.frCumToolbar.configure(relief=GROOVE)
-        self.frCumToolbar.configure(borderwidth="2")
-        self.frCumToolbar.configure(relief=GROOVE)
-        self.frCumToolbar.configure(background="#d9d9d9")
-        self.frCumToolbar.configure(highlightbackground="#d9d9d9")
-        self.frCumToolbar.configure(highlightcolor="black")
-        self.frCumToolbar.configure(width=200)
-
-        global toolbarConc, toolbarProb, toolbarCum
-        toolbarConc = NavigationToolbar2Tk(self.canvas_conc, self.frConcToolbar)
-        toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
-        toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
 
         #________________Menu___________________________________________________________________________________________
         self.menubar = Menu(master, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
@@ -1187,16 +1205,18 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
                                  self.scErrFilter, self.scDiscAgeFixedLim, self.scUconcCutoff, self.rbUseUncorr,
-                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop]
+                                 self.rbUseCorr, self.cbTypePbc, self.entAgeMinCrop, self.entAgeMaxCrop, self.cbWhichAge]
         if is_data_present:
-            for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
+            for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
 
             self.rbDiscSmallest.select()
-            self.rbAgeSmallestErr.select()
+            #self.rbAgeSmallestErr.select()
             self.scAgeCutoff.configure(state=DISABLED)
+            self.cbWhichAge.configure(state="readonly")
+
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
                 self.lboxSamples.insert(END, item.name)
@@ -1209,7 +1229,7 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text=g_file_type+status_text, fg=status_color)
         else:
             self.lboxSamples.delete(0, END)
-            for var_frame in (self.frImport, self.frFilter, self.frDisc, self.frGraphSettings, self.frStatus):
+            for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')

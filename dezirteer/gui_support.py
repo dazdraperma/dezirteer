@@ -254,7 +254,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
-    global varCommPb, varMinAgeCrop, varMaxAgeCrop
+    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeType
     varUConc = IntVar()
     varDiscType = IntVar()
     varConcType = IntVar()
@@ -287,6 +287,7 @@ def set_Tk_var():
     varCommPb = IntVar()
     varMinAgeCrop = IntVar()
     varMaxAgeCrop = IntVar()
+    varAgeType = StringVar()
 
 
 def init(pTop, pGui, *args, **kwargs):
