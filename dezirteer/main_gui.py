@@ -411,75 +411,6 @@ class OperationWindow(Frame):
         self.cbWhichAge.current(0)
 
 
-
-        '''self.chbMinAgeCrop = Checkbutton(self.frDisc)
-        self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbMinAgeCrop)
-        self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
-        self.chbMinAgeCrop.configure(justify=LEFT)
-        self.chbMinAgeCrop.configure(state=DISABLED)
-        self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
-        self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
-                                                                          self.entAgeMinCrop))'''
-
-
-        '''self.rbAgeSmallestErr = Radiobutton(self.frFilter)
-        self.rbAgeSmallestErr.configure(variable=gui_support.varAgebased, value=0)
-        self.rbAgeSmallestErr.grid(row=1, sticky='w', pady=5)
-        self.apply_style(self.rbAgeSmallestErr)
-        self.rbAgeSmallestErr.configure(justify=LEFT)
-        self.rbAgeSmallestErr.configure(text='From the lesser error')
-        self.rbAgeSmallestErr.select()
-        self.rbAgeSmallestErr.configure(state=DISABLED)
-        self.rbAgeSmallestErr.configure(command=lambda: gui_support.onChange(3, 0, pars_onChange, self.scAgeCutoff))
-
-        self.rbAgeFixedLim = Radiobutton(self.frFilter)
-        self.rbAgeFixedLim.configure(variable=gui_support.varAgebased, value=1)
-        self.rbAgeFixedLim.grid(row=2, column=0, sticky='sw', pady=5)
-        self.apply_style(self.rbAgeFixedLim)
-        self.rbAgeFixedLim.configure(justify=LEFT)
-        self.rbAgeFixedLim.configure(text='Fixed limit (Ma):')
-        self.rbAgeFixedLim.configure(state=DISABLED)
-        self.rbAgeFixedLim.configure(command=lambda: gui_support.onChange(3, 1, pars_onChange, self.scAgeCutoff))
-
-        self.rbAge206_207 = Radiobutton(self.frFilter)
-        self.rbAge206_207.configure(variable=gui_support.varAgebased, value=2)
-        self.rbAge206_207.grid(row=3, sticky='w')
-        self.apply_style(self.rbAge206_207)
-        self.rbAge206_207.configure(justify=LEFT)
-        self.rbAge206_207.configure(text='206Pb/207Pb')
-        self.rbAge206_207.configure(state=DISABLED)
-        self.rbAge206_207.configure(command=lambda: gui_support.onChange(3, 2, pars_onChange, self.scAgeCutoff))
-
-        self.rbAge206_238 = Radiobutton(self.frFilter)
-        self.rbAge206_238.configure(variable=gui_support.varAgebased, value=3)
-        self.rbAge206_238.grid(row=4, sticky='w', pady=10)
-        self.apply_style(self.rbAge206_238)
-        self.rbAge206_238.configure(justify=LEFT)
-        self.rbAge206_238.configure(text='206Pb/238U')
-        self.rbAge206_238.configure(state=DISABLED)
-        self.rbAge206_238.configure(command=lambda: gui_support.onChange(3, 3, pars_onChange, self.scAgeCutoff))'''
-
-        '''self.scAgeCutoff = Scale(self.frAgeDisc)
-        self.scAgeCutoff.grid(row=1, column=1, sticky='ews', rowspan=2, pady=5)
-        self.scAgeCutoff.configure(activebackground="#d9d9d9")
-        self.scAgeCutoff.configure(sliderlength=20)
-        self.scAgeCutoff.configure(background="#d9d9d9")
-        self.scAgeCutoff.configure(font="TkTextFont")
-        self.scAgeCutoff.configure(foreground="#000000")
-        self.scAgeCutoff.configure(highlightbackground="#d9d9d9")
-        self.scAgeCutoff.configure(highlightcolor="black")
-        self.scAgeCutoff.configure(length="100")
-        self.scAgeCutoff.configure(orient="horizontal")
-        self.scAgeCutoff.configure(tickinterval="0")
-        self.scAgeCutoff.configure(to="3000")
-        self.scAgeCutoff.configure(bd=2)
-        self.scAgeCutoff.set(1000)
-        self.scAgeCutoff.configure(state=DISABLED)
-        self.scAgeCutoff.configure(
-            command=lambda x: gui_support.onChange(19, self.scAgeCutoff.get(), pars_onChange))
-        self.scAgeCutoff.configure(troughcolor="#d9d9d9")'''
-
         self.lbPbc = Label(self.frAgeDisc)
         self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
         self.apply_style(self.lbPbc)
@@ -489,7 +420,6 @@ class OperationWindow(Frame):
 
         self.cbPbc = ttk.Combobox(self.frAgeDisc)
         self.cbPbc.grid(row=6, column=0, sticky='ew')
-        # self.cbPbc.configure(textvariable=gui_support.varAgeType)
         self.cbPbc.configure(width=15)
         self.cbPbc.configure(takefocus="")
         self.cbPbc.configure(state=DISABLED)
@@ -497,33 +427,6 @@ class OperationWindow(Frame):
         self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(), pars_onChange))
         self.cbPbc.current(0)
 
-        '''self.rbUseUncorr = Radiobutton(self.frAgeDisc)
-        self.rbUseUncorr.configure(variable=gui_support.varUncorrOrPbc, value=False)
-        self.rbUseUncorr.grid(row=6, sticky='w')
-        self.apply_style(self.rbUseUncorr)
-        self.rbUseUncorr.configure(justify=LEFT)
-        self.rbUseUncorr.configure(text='Uncorr. for Pbc')
-        self.rbUseUncorr.configure(state=DISABLED)
-        self.rbUseUncorr.configure(command=lambda: gui_support.onChange(4, False, pars_onChange))
-        self.rbUseUncorr.select()
-
-        self.rbUseCorr = Radiobutton(self.frAgeDisc)
-        self.rbUseCorr.grid(row=7, sticky='w')
-        self.rbUseCorr.configure(variable=gui_support.varUncorrOrPbc, value=True)
-        self.apply_style(self.rbUseCorr)
-        self.rbUseCorr.configure(justify=LEFT)
-        self.rbUseCorr.configure(state=DISABLED)
-        self.rbUseCorr.configure(command=lambda: gui_support.onChange(4, True, pars_onChange))
-        self.rbUseCorr.configure(text='Pbc-corr.')
-
-        self.cbTypePbc = ttk.Combobox(self.frAgeDisc)
-        self.cbTypePbc.grid(row=8, sticky='ew')
-        self.cbTypePbc.configure(textvariable=gui_support.varTypePbc)
-        self.cbTypePbc.configure(width=15)
-        self.cbTypePbc.configure(takefocus="")
-        self.cbTypePbc.configure(state=DISABLED)
-        self.cbTypePbc.configure(state="readonly", values=('204-corr', '207-corr', '208-corr', 'Andersen'))
-        self.cbTypePbc.current(0)'''
 
         self.lbCalcDisc = Label(self.frAgeDisc)
         self.lbCalcDisc.grid(row=7, columnspan=2, sticky='ew', pady=5)
@@ -564,142 +467,29 @@ class OperationWindow(Frame):
 
 
 
-        '''
-       
-        self.rbDiscAgeFixedLim = Radiobutton(self.frDisc)
-        self.rbDiscAgeFixedLim.configure(variable=gui_support.varDiscType, value=1)
-        self.rbDiscAgeFixedLim.grid(row=10, column=0, sticky='ws', pady=5)
-        self.apply_style(self.rbDiscAgeFixedLim)
-        self.rbDiscAgeFixedLim.configure(justify=LEFT)
-        self.rbDiscAgeFixedLim.configure(text='Fixed limit (Ma):')
-        self.rbDiscAgeFixedLim.configure(state=DISABLED)
-        self.rbDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(8, 1, pars_onChange,
-                                                                              self.scDiscAgeFixedLim))
-                                                                              
-        self.rbDisc67_68 = Radiobutton(self.frDisc)
-        self.rbDisc67_68.configure(variable=gui_support.varDiscType, value=2)
-        self.rbDisc67_68.grid(row=11, sticky='w', pady=5)
-        self.apply_style(self.rbDisc67_68)
-        self.rbDisc67_68.configure(justify=LEFT)
-        self.rbDisc67_68.configure(text='206/207-238/206')
-        self.rbDisc67_68.configure(state=DISABLED)
-        self.rbDisc67_68.configure(command=lambda: gui_support.onChange(8, 2, pars_onChange,
-                                                                        self.scDiscAgeFixedLim))
 
-        self.rbDisc75_68 = Radiobutton(self.frDisc)
-        self.rbDisc75_68.configure(variable=gui_support.varDiscType, value=3)
-        self.rbDisc75_68.grid(row=12, sticky='sw', pady=5)
-        self.apply_style(self.rbDisc75_68)
-        self.rbDisc75_68.configure(justify=LEFT)
-        self.rbDisc75_68.configure(text='235/207-238/206')
-        self.rbDisc75_68.configure(state=DISABLED)
-        self.rbDisc75_68.configure(command=lambda: gui_support.onChange(8, 3, pars_onChange,
-                                                                        self.scDiscAgeFixedLim))                                                                
+        # _______________frFilter_________________________________________________________________________________________
+        self.frFilter = Frame(self.frOper)
+        self.frFilter.grid(row=0, column=3, sticky='ns')
+        self.frFilter.configure(relief=GROOVE)
+        self.frFilter.configure(borderwidth="2")
+        self.frFilter.configure(relief=GROOVE)
+        self.frFilter.configure(background="#d9d9d9")
+        self.frFilter.configure(highlightbackground="#d9d9d9")
+        self.frFilter.configure(highlightcolor="black")
 
-        self.rbDiscSmallest = Radiobutton(self.frDisc)
-        self.rbDiscSmallest.configure(variable=gui_support.varDiscType, value=4)
-        self.rbDiscSmallest.grid(row=9, sticky='sw', pady=5)
-        self.apply_style(self.rbDiscSmallest)
-        self.rbDiscSmallest.configure(justify=LEFT)
-        self.rbDiscSmallest.configure(text='Lesser of 2 (recommended)')
-        self.rbDiscSmallest.select()
-        self.rbDiscSmallest.configure(state=DISABLED)
-        self.rbDiscSmallest.configure(command=lambda: gui_support.onChange(8, 4, pars_onChange,
-                                                                           self.scDiscAgeFixedLim))
-        
-        
-        self.scDiscAgeFixedLim = Scale(self.frDisc)
-        self.scDiscAgeFixedLim.grid(row=9, column=1, sticky='ws', rowspan=2)
-        self.scDiscAgeFixedLim.configure(activebackground="#d9d9d9")
-        self.scDiscAgeFixedLim.configure(sliderlength=20)
-        self.scDiscAgeFixedLim.configure(background="#d9d9d9")
-        self.scDiscAgeFixedLim.configure(font="TkTextFont")
-        self.scDiscAgeFixedLim.configure(foreground="#000000")
-        self.scDiscAgeFixedLim.configure(highlightbackground="#d9d9d9")
-        self.scDiscAgeFixedLim.configure(highlightcolor="black")
-        self.scDiscAgeFixedLim.configure(length="100")
-        self.scDiscAgeFixedLim.configure(orient="horizontal")
-        self.scDiscAgeFixedLim.configure(tickinterval="0")
-        self.scDiscAgeFixedLim.configure(to="3000")
-        self.scDiscAgeFixedLim.configure(bd=2)
-        self.scDiscAgeFixedLim.set(1000)
-        self.scDiscAgeFixedLim.configure(state=DISABLED)
-        self.scDiscAgeFixedLim.configure(command=lambda x: gui_support.onChange(25, self.scDiscAgeFixedLim.get(),
-                                                                                pars_onChange))
-        self.scDiscAgeFixedLim.configure(troughcolor="#d9d9d9")
-
-        '''
-
-
-
-
-        '''self.lbFiltCommPb = Label(self.frFilter)
-        self.lbFiltCommPb.grid(row=13, columnspan=3, pady=15, sticky='ew')
-        self.apply_style(self.lbFiltCommPb)
-        self.lbFiltCommPb.configure(font=font9)
-        self.lbFiltCommPb.configure(text='7. Filter by the fraction of common-Pb')
-
-        self.rbNoCommPb = Radiobutton(self.frFilter)
-        self.rbNoCommPb.grid(row=14, column=0, sticky='w')
-        self.apply_style(self.rbNoCommPb)
-        self.rbNoCommPb.configure(font="TkTextFont")
-        self.rbNoCommPb.configure(text="Don't filter")
-        self.rbNoCommPb.select()
-        self.rbNoCommPb.configure(variable=gui_support.varCommPb, value=False)
-        self.rbNoCommPb.configure(command=lambda: gui_support.onChange(24, False, pars_onChange, self.scCommPbCutoff))
-
-        self.rbUseCommPb = Radiobutton(self.frFilter)
-        self.rbUseCommPb.grid(row=15, column=0, sticky='sw')
-        self.apply_style(self.rbUseCommPb)
-        self.rbUseCommPb.configure(text="Cutoff at fraction:")
-        self.rbUseCommPb.configure(variable=gui_support.varCommPb, value=True)
-        self.rbUseCommPb.configure(command=lambda: gui_support.onChange(24, True, pars_onChange, self.scCommPbCutoff))
-
-        self.scCommPbCutoff = Scale(self.frFilter)
-        self.scCommPbCutoff.grid(row=15, column=1)
-        self.scCommPbCutoff.configure(activebackground="#d9d9d9")
-        self.scCommPbCutoff.configure(sliderlength=20)
-        self.scCommPbCutoff.configure(background="#d9d9d9")
-        self.scCommPbCutoff.configure(font="TkTextFont")
-        self.scCommPbCutoff.configure(foreground="#000000")
-        self.scCommPbCutoff.configure(highlightbackground="#d9d9d9")
-        self.scCommPbCutoff.configure(highlightcolor="black")
-        self.scCommPbCutoff.configure(length="100")
-        self.scCommPbCutoff.configure(orient="horizontal")
-        self.scCommPbCutoff.configure(resolution="0.1")
-        self.scCommPbCutoff.configure(from_="0")
-        self.scCommPbCutoff.configure(to="1")
-        self.scCommPbCutoff.configure(bd=2)
-        self.scCommPbCutoff.set(0.1)
-        self.scCommPbCutoff.configure(troughcolor="#d9d9d9")
-        self.scCommPbCutoff.configure(
-            command=lambda x: gui_support.onChange(18, self.scCommPbCutoff.get(), pars_onChange))'''
-
-
-
-
-        # _______________frDisc__________________________________________________________________________________________
-        self.frDisc = Frame(self.frOper)
-        self.frDisc.grid(row=0, column=3, sticky='ns')
-        self.frDisc.configure(relief=GROOVE)
-        self.frDisc.configure(borderwidth="2")
-        self.frDisc.configure(relief=GROOVE)
-        self.frDisc.configure(background="#d9d9d9")
-        self.frDisc.configure(highlightbackground="#d9d9d9")
-        self.frDisc.configure(highlightcolor="black")
-
-        self.lbDiscFilt = Label(self.frDisc)
+        self.lbDiscFilt = Label(self.frFilter)
         self.lbDiscFilt.grid(row=0, column=0, columnspan=3, sticky='ew')
         self.apply_style(self.lbDiscFilt)
         self.lbDiscFilt.configure(font=font9)
         self.lbDiscFilt.configure(text='Discord. filters (%)')
 
-        self.lblMinus = Label(self.frDisc)
+        self.lblMinus = Label(self.frFilter)
         self.lblMinus.grid(row=1, column=0, sticky='e', pady=5)
         self.apply_style(self.lblMinus)
         self.lblMinus.configure(text="-")
 
-        self.entNegDiscFilt = Entry(self.frDisc)
+        self.entNegDiscFilt = Entry(self.frFilter)
         self.entNegDiscFilt.grid(row=1, column=1, pady=5, sticky='w')
         self.entNegDiscFilt.configure(background="white")
         self.entNegDiscFilt.configure(disabledforeground="#a3a3a3")
@@ -712,17 +502,17 @@ class OperationWindow(Frame):
         self.entNegDiscFilt.configure(state=DISABLED)
         self.entNegDiscFilt.configure(width=5)
 
-        self.lblDisc = Label(self.frDisc)
+        self.lblDisc = Label(self.frFilter)
         self.lblDisc.grid(row=1, column=2, sticky='w', pady=5)
         self.apply_style(self.lblDisc)
         self.lblDisc.configure(text="< D(%) <")
 
-        self.lblPlus = Label(self.frDisc)
+        self.lblPlus = Label(self.frFilter)
         self.lblPlus.grid(row=1, column=3, sticky='w', pady=5)
         self.apply_style(self.lblPlus)
         self.lblPlus.configure(text="+")
 
-        self.entPosDiscFilt = Entry(self.frDisc)
+        self.entPosDiscFilt = Entry(self.frFilter)
         self.entPosDiscFilt.grid(row=1, column=4, pady=5,  sticky='w')
         self.entPosDiscFilt.configure(background="white")
         self.entPosDiscFilt.configure(disabledforeground="#a3a3a3")
@@ -735,14 +525,14 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.configure(state=DISABLED)
         self.entPosDiscFilt.configure(width=5)
 
-        self.lbFilterByError = Label(self.frDisc)
+        self.lbFilterByError = Label(self.frFilter)
         self.lbFilterByError.grid(row=2, columnspan=3, pady=10, sticky='ew')
         self.apply_style(self.lbFilterByError)
         self.lbFilterByError.configure(font=font9)
         self.lbFilterByError.configure(state=DISABLED)
         self.lbFilterByError.configure(text='Filter by error:')
 
-        self.entErrFilter = Entry(self.frDisc)
+        self.entErrFilter = Entry(self.frFilter)
         self.entErrFilter.grid(row=3, column=1, pady=5, padx=5, sticky='w')
         self.entErrFilter.configure(background="white")
         self.entErrFilter.configure(disabledforeground="#a3a3a3")
@@ -757,12 +547,12 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(state=DISABLED)
 
 
-        self.lblErrCutoff = Label(self.frDisc)
+        self.lblErrCutoff = Label(self.frFilter)
         self.lblErrCutoff.grid(row=3, column=2, sticky='w', pady=5)
         self.apply_style(self.lblErrCutoff)
         self.lblErrCutoff.configure(text="%")
 
-        self.cbWhichAge = ttk.Combobox(self.frDisc)
+        self.cbWhichAge = ttk.Combobox(self.frFilter)
         self.cbWhichAge.grid(row=3, column=0, sticky='w')
         self.cbWhichAge.configure(width=15)
         self.cbWhichAge.configure(takefocus="")
@@ -776,7 +566,7 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(width=10)
         self.cbWhichAge.current(0)
 
-        self.chbInclude207235Err = Checkbutton(self.frDisc)
+        self.chbInclude207235Err = Checkbutton(self.frFilter)
         self.chbInclude207235Err.grid(row=4, column=0, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbInclude207235Err)
         self.chbInclude207235Err.configure(text="include error in 207/235?")
@@ -787,17 +577,13 @@ class OperationWindow(Frame):
                                                                                 gui_support.varInclude207235Err.get(),
                                                                                 pars_onChange, pars_onChange,))
 
-
-
-
-
-        self.lbUConcFilter = Label(self.frDisc)
+        self.lbUConcFilter = Label(self.frFilter)
         self.lbUConcFilter.grid(row=5, columnspan=3, pady=4, sticky='w')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="Filter by Uconc:")
 
-        self.entUconcCutoff = Entry(self.frDisc)
+        self.entUconcCutoff = Entry(self.frFilter)
         self.entUconcCutoff.grid(row=6, column=1, pady=5, padx=5, sticky='w')
         self.entUconcCutoff.configure(background="white")
         self.entUconcCutoff.configure(disabledforeground="#a3a3a3")
@@ -811,12 +597,12 @@ class OperationWindow(Frame):
         self.entUconcCutoff.configure(width=5)
         self.entUconcCutoff.configure(state=DISABLED)
 
-        self.lblUConcCutoff = Label(self.frDisc)
+        self.lblUConcCutoff = Label(self.frFilter)
         self.lblUConcCutoff.grid(row=6, column=2, sticky='w', pady=5)
         self.apply_style(self.lblUConcCutoff)
         self.lblUConcCutoff.configure(text="ppm")
 
-        self.cbUConc = ttk.Combobox(self.frDisc)
+        self.cbUConc = ttk.Combobox(self.frFilter)
         self.cbUConc.grid(row=6, column=0, sticky='w')
         self.cbUConc.configure(width=15)
         self.cbUConc.configure(takefocus="")
@@ -830,73 +616,13 @@ class OperationWindow(Frame):
         self.cbUConc.configure(width=10)
         self.cbUConc.current(0)
 
-
-
-
-
-        '''self.lbUConcFilter = Label(self.frSample)
-        self.lbUConcFilter.grid(row=2, columnspan=3, pady=4, sticky='ew')
-        self.apply_style(self.lbUConcFilter)
-        self.lbUConcFilter.configure(font=font9)
-        self.lbUConcFilter.configure(text="3. Filter by Uconc?")
-
-        self.rbNoUconc = Radiobutton(self.frSample)
-        self.rbNoUconc.grid(row=3, column=0, sticky='w')
-        self.apply_style(self.rbNoUconc)
-        self.rbNoUconc.configure(font="TkTextFont")
-        self.rbNoUconc.configure(text="Don't filter")
-        self.rbNoUconc.select()
-        self.rbNoUconc.configure(variable=gui_support.varUConc, value=False)
-        self.rbNoUconc.configure(command=lambda: gui_support.onChange(2, False, pars_onChange, self.scUconcCutoff))
-
-        self.rbUseUconc = Radiobutton(self.frSample)
-        self.rbUseUconc.grid(row=4, column=0, sticky='sw')
-        self.apply_style(self.rbUseUconc)
-        self.rbUseUconc.configure(text="Cutoff at")
-        self.rbUseUconc.configure(variable=gui_support.varUConc, value=True)
-        self.rbUseUconc.configure(command=lambda: gui_support.onChange(2, True, pars_onChange, self.scUconcCutoff))
-
-        self.scUconcCutoff = Scale(self.frSample)
-        self.scUconcCutoff.grid(row=5, column=1, sticky='es', rowspan=2)
-        self.scUconcCutoff.configure(activebackground="#d9d9d9")
-        self.scUconcCutoff.configure(sliderlength=20)
-        self.scUconcCutoff.configure(background="#d9d9d9")
-        self.scUconcCutoff.configure(font="TkTextFont")
-        self.scUconcCutoff.configure(foreground="#000000")
-        self.scUconcCutoff.configure(highlightbackground="#d9d9d9")
-        self.scUconcCutoff.configure(highlightcolor="black")
-        self.scUconcCutoff.configure(length="100")
-        self.scUconcCutoff.configure(orient="horizontal")
-        self.scUconcCutoff.configure(tickinterval="0")
-        self.scUconcCutoff.configure(to="3000")
-        self.scUconcCutoff.configure(bd=2)
-        self.scUconcCutoff.set(1000)
-        self.scUconcCutoff.configure(state=DISABLED)
-        self.scUconcCutoff.configure(troughcolor="#d9d9d9")
-        self.scUconcCutoff.configure(command=lambda x: gui_support.onChange(18, self.scUconcCutoff.get(), pars_onChange))
-
-        self.lblPPM = Label(self.frSample)
-        self.lblPPM.grid(row=6, column=2, sticky='se', pady=4)
-        self.apply_style(self.lblPPM)
-        self.lblPPM.configure(text="ppm")'''
-
-
-
-
-
-
-
-
-
-
-
-        self.lbAgeCrop = Label(self.frDisc)
+        self.lbAgeCrop = Label(self.frFilter)
         self.lbAgeCrop.grid(row=13, columnspan=2, sticky='ew', pady=5)
         self.apply_style(self.lbAgeCrop)
         self.lbAgeCrop.configure(font=font9)
         self.lbAgeCrop.configure(text='9. Age crop')
 
-        self.entAgeMinCrop = Entry(self.frDisc)
+        self.entAgeMinCrop = Entry(self.frFilter)
         self.entAgeMinCrop.grid(row=14, column=1, pady=5, padx=5, sticky='w')
         self.entAgeMinCrop.configure(background="white")
         self.entAgeMinCrop.configure(disabledforeground="#a3a3a3")
@@ -905,7 +631,7 @@ class OperationWindow(Frame):
         self.entAgeMinCrop.configure(insertbackground="black")
         self.entAgeMinCrop.configure(width=5)
 
-        self.chbMinAgeCrop = Checkbutton(self.frDisc)
+        self.chbMinAgeCrop = Checkbutton(self.frFilter)
         self.chbMinAgeCrop.grid(row=14, column=0, sticky='w', pady=5)
         self.apply_style(self.chbMinAgeCrop)
         self.chbMinAgeCrop.configure(text="Min. age crop at (Ma):")
@@ -915,7 +641,7 @@ class OperationWindow(Frame):
         self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
                                                                           self.entAgeMinCrop))
 
-        self.entAgeMaxCrop = Entry(self.frDisc)
+        self.entAgeMaxCrop = Entry(self.frFilter)
         self.entAgeMaxCrop.grid(row=15, column=1, pady=5, padx=5, sticky='w')
         self.entAgeMaxCrop.configure(background="white")
         self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
@@ -924,7 +650,7 @@ class OperationWindow(Frame):
         self.entAgeMaxCrop.configure(insertbackground="black")
         self.entAgeMaxCrop.configure(width=5)
 
-        self.chbMaxAgeCrop = Checkbutton(self.frDisc)
+        self.chbMaxAgeCrop = Checkbutton(self.frFilter)
         self.chbMaxAgeCrop.grid(row=15, column=0, sticky='w', pady=5)
         self.apply_style(self.chbMaxAgeCrop)
         self.chbMaxAgeCrop.configure(text="Max. age crop at (Ma):")
@@ -962,7 +688,8 @@ class OperationWindow(Frame):
         self.cbConcType.configure(takefocus="")
         self.cbConcType.configure(state=DISABLED)
         self.cbConcType.configure(values=('Standard', 'Tera-Wass.'))
-        self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0, self.cbConcType.current()))
+        self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0,
+                                                                                             self.cbConcType.current()))
         self.cbConcType.config(width=8)
         self.cbConcType.current(0)
 
@@ -972,8 +699,8 @@ class OperationWindow(Frame):
         self.lbEclipsesAt.configure(text='Eclipses at')
 
         self.cbEclipsesAt = ttk.Combobox(self.frGraphSettings)
-        self.cbEclipsesAt.grid(row=1, column=31, sticky='w')
-        self.cbEclipsesAt.configure(width=15)
+        self.cbEclipsesAt.grid(row=1, column=3, sticky='w')
+        self.cbEclipsesAt.configure(width=5)
         self.cbEclipsesAt.configure(takefocus="")
         self.cbEclipsesAt.configure(state=DISABLED)
         self.cbEclipsesAt.configure(values=('1σ', '2σ'))
@@ -1007,53 +734,87 @@ class OperationWindow(Frame):
         self.entAnchoredAge.configure(insertbackground="black")
         self.entAnchoredAge.configure(width=5)'''
 
-        self.lbKdePdpHist = Label(self.frGraphSettings)
-        self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
-        self.apply_style(self.lbKdePdpHist)
-        self.lbKdePdpHist.configure(font=font9)
-        self.lbKdePdpHist.configure(text='11. KDE/PDP/Hist')
+        self.lbDensityPlot = Label(self.frGraphSettings)
+        self.lbDensityPlot.grid(row=2, columnspan=3, pady=5, sticky='ew')
+        self.apply_style(self.lbDensityPlot)
+        self.lbDensityPlot.configure(font=font9)
+        self.lbDensityPlot.configure(text='Density plot:')
 
-        self.rbDrawKDE = Radiobutton(self.frGraphSettings)
-        self.rbDrawKDE.configure(variable=gui_support.var_pdp_kde_hist, value=0)
-        self.rbDrawKDE.grid(row=8, column=0, pady=5, sticky='e')
-        self.apply_style(self.rbDrawKDE)
-        self.rbDrawKDE.configure(text='KDE')
-        self.rbDrawKDE.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 7, 0))
-        self.rbDrawKDE.select()
+        self.lbDensityPlotType = Label(self.frGraphSettings)
+        self.lbDensityPlotType.grid(row=3, column=0, pady=5, sticky='w')
+        self.apply_style(self.lbDensityPlotType)
+        self.lbDensityPlotType.configure(font=font9)
+        self.lbDensityPlotType.configure(text='Type:')
 
-        self.rbDrawPdp = Radiobutton(self.frGraphSettings)
-        self.rbDrawPdp.configure(variable=gui_support.var_pdp_kde_hist, value=1)
-        self.rbDrawPdp.grid(row=8, column=1, pady=5, sticky='ew')
-        self.apply_style(self.rbDrawPdp)
-        self.rbDrawPdp.configure(text='PDP')
-        self.rbDrawPdp.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 8, 1))
+        self.entKDEBandwidth = Entry(self.frGraphSettings)
+        self.entKDEBandwidth.grid(row=3, column=3, pady=5, padx=5, sticky='w')
+        self.entKDEBandwidth.configure(background="white")
+        self.entKDEBandwidth.configure(disabledforeground="#a3a3a3")
+        self.entKDEBandwidth.configure(font="TkFixedFont")
+        self.entKDEBandwidth.configure(foreground="#000000")
+        self.entKDEBandwidth.configure(insertbackground="black")
+        self.entKDEBandwidth.configure(textvariable=gui_support.varKDEBandwidth)
+        self.entKDEBandwidth.configure(width=5)
+        self.entKDEBandwidth.bind('<KeyRelease>', (lambda _: gui_support.onGraphChange(g_graph_settings, 11,
+                                                                                       float(''.join(c for c in
+                                                                                                     self.entKDEBandwidth.get()
+                                                                                                     if (
+                                                                                                                 c.isdigit() or c == '.'))))))
 
-        self.rbDrawHist = Radiobutton(self.frGraphSettings)
-        self.rbDrawHist.configure(variable=gui_support.var_pdp_kde_hist, value=2)
-        self.rbDrawHist.grid(row=8, column=2, pady=5, sticky='w')
-        self.apply_style(self.rbDrawHist)
-        self.rbDrawHist.configure(text='Hist.')
-        self.rbDrawHist.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 8, 2))
+        self.entKDEBandwidth.configure(state=DISABLED)
+        self.entKDEBandwidth.configure(width=5)
 
-        self.scBandwidth = Scale(self.frGraphSettings)
-        self.scBandwidth.grid(row=9, columnspan=4, sticky='ew')
-        self.scBandwidth.configure(activebackground="#d9d9d9")
-        self.scBandwidth.configure(background="#d9d9d9")
-        self.scBandwidth.configure(font="TkTextFont")
-        self.scBandwidth.configure(foreground="#000000")
-        self.scBandwidth.configure(highlightbackground="#d9d9d9")
-        self.scBandwidth.configure(highlightcolor="black")
-        self.scBandwidth.configure(length="20")
-        self.scBandwidth.configure(label="KDE's bandwidth (Ma):")
-        self.scBandwidth.configure(orient="horizontal")
-        self.scBandwidth.configure(from_="1")
-        self.scBandwidth.configure(tickinterval="499")
-        self.scBandwidth.configure(to="500")
-        self.scBandwidth.configure(bd=2)
-        self.scBandwidth.set(50)
-        self.scBandwidth.configure(troughcolor="#d9d9d9")
-        self.scBandwidth.configure(command=lambda x: gui_support.onGraphChange(g_graph_settings, 11,
-                                                                                       self.scBandwidth.get()))
+        self.entHistBinwidth = Entry(self.frGraphSettings)
+        self.entHistBinwidth.grid(row=3, column=5, pady=5, padx=5, sticky='w')
+        self.entHistBinwidth.configure(background="white")
+        self.entHistBinwidth.configure(disabledforeground="#a3a3a3")
+        self.entHistBinwidth.configure(font="TkFixedFont")
+        self.entHistBinwidth.configure(foreground="#000000")
+        self.entHistBinwidth.configure(insertbackground="black")
+        self.entHistBinwidth.configure(textvariable=gui_support.varHistBinwidth)
+        self.entHistBinwidth.configure(width=5)
+        self.entHistBinwidth.bind('<KeyRelease>', (lambda _: gui_support.onGraphChange(g_graph_settings, 12,
+                                                                                       float(''.join(c for c in
+                                                                                                     self.entHistBinwidth.get()
+                                                                                                     if (
+                                                                                                             c.isdigit() or c == '.'))))))
+
+        self.entHistBinwidth.configure(state=DISABLED)
+        self.entHistBinwidth.configure(width=5)
+
+
+
+
+        self.cbDensityPlotType = ttk.Combobox(self.frGraphSettings)
+        self.cbDensityPlotType.grid(row=3, column=1, sticky='w')
+        self.cbDensityPlotType.configure(takefocus="")
+        self.cbDensityPlotType.configure(state=DISABLED)
+        self.cbDensityPlotType.configure(values=('KDE', 'PDP', 'Histogram'))
+        self.cbDensityPlotType.bind('<<ComboboxSelected>>',
+                               lambda event: gui_support.onGraphChange(g_graph_settings, 7,
+                                                                       self.cbDensityPlotType.current(),
+                                                                       self.entKDEBandwidth, self.entHistBinwidth))
+        self.cbDensityPlotType.config(width=7)
+        self.cbDensityPlotType.current(0)
+
+        self.lbKDEBandwidth = Label(self.frGraphSettings)
+        self.lbKDEBandwidth.grid(row=3, column=2, pady=5, sticky='w')
+        self.apply_style(self.lbKDEBandwidth)
+        self.lbKDEBandwidth.configure(font=font9)
+        self.lbKDEBandwidth.configure(text='Band:')
+
+
+        self.lbHistBinwidth = Label(self.frGraphSettings)
+        self.lbHistBinwidth.grid(row=3, column=4, pady=5, sticky='w')
+        self.apply_style(self.lbHistBinwidth)
+        self.lbHistBinwidth.configure(font=font9)
+        self.lbHistBinwidth.configure(text='Bin:')
+
+
+
+
+
+        '''
 
         self.scBinwidth = Scale(self.frGraphSettings)
         self.scBinwidth.grid(row=10, columnspan=4, sticky='ew')
@@ -1073,13 +834,13 @@ class OperationWindow(Frame):
         self.scBinwidth.set(50)
         self.scBinwidth.configure(troughcolor="#d9d9d9")
         self.scBinwidth.configure(command=lambda x: gui_support.onGraphChange(g_graph_settings, 12,
-                                                                                      self.scBinwidth.get()))
+                                                                                      self.scBinwidth.get()))'''
 
         self.cbKeepPrev = Checkbutton(self.frGraphSettings)
         self.cbKeepPrev.grid(row=11, column=0, pady=5, sticky='ew')
         self.apply_style(self.cbKeepPrev)
         self.cbKeepPrev.configure(justify=LEFT)
-        self.cbKeepPrev.configure(text='''Keep prev.''')
+        self.cbKeepPrev.configure(text='Keep prev.')
         self.cbKeepPrev.configure(variable=gui_support.varKeepPrev)
         self.cbKeepPrev.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
                                                                               gui_support.varKeepPrev,
@@ -1282,11 +1043,12 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff,self.cbUConc, self.cbConcType, self.cbEclipsesAt,self.cbWhichAge,
-                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff]
+                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
+                                 self.entHistBinwidth, self.cbDensityPlotType]
                                  #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
                                  # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
         if is_data_present:
-            for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
+            for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
@@ -1297,6 +1059,8 @@ class OperationWindow(Frame):
             self.cbUConc.configure(state="readonly")
             self.cbConcType.configure(state="readonly")
             self.cbEclipsesAt.configure(state="readonly")
+            self.cbDensityPlotType.configure(state="readonly")
+            self.entHistBinwidth.configure(state="disabled")
 
 
             self.lboxSamples.delete(0, END)
@@ -1311,7 +1075,7 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text=g_file_type+status_text, fg=status_color)
         else:
             self.lboxSamples.delete(0, END)
-            for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
+            for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
@@ -1487,7 +1251,7 @@ class OperationWindow(Frame):
     def plot_hist(self, min_age, max_age, prob_graph_to_draw):
         bin_sequence = []
         age = min_age
-        bin_width = self.scBinwidth.get()
+        bin_width = float(self.entHistBinwidth.get())
         while age < max_age:
             bin_sequence.append(age)
             age += bin_width

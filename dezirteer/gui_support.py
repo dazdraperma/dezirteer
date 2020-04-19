@@ -235,8 +235,15 @@ def onGraphChange(p_graph_settings, p_number_in_list, p_value, *args, **kwargs):
         p_graph_settings.eclipses_at = p_value
     elif p_number_in_list == 7:
         p_graph_settings.pdp_kde_hist = p_value
-    elif p_number_in_list == 8:
-        p_graph_settings.pdp_kde_hist = p_value
+        if p_value == 0:
+            args[0].configure(state="normal")
+            args[1].configure(state="disabled")
+        elif p_value == 1:
+            args[0].configure(state="disabled")
+            args[1].configure(state="disabled")
+        else:
+            args[0].configure(state="disabled")
+            args[1].configure(state="normal")
     elif p_number_in_list == 11:
         p_graph_settings.bandwidth = p_value
     elif p_number_in_list == 12:
@@ -257,7 +264,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
-    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff
+    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth,varHistBinwidth
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -298,6 +305,10 @@ def set_Tk_var():
     varAgeCutoff.set(1000)
     varDiscCutoff = IntVar()
     varDiscCutoff.set(1000)
+    varKDEBandwidth = IntVar()
+    varKDEBandwidth.set(50)
+    varHistBinwidth = IntVar()
+    varHistBinwidth.set(50)
 
 
 def init(pTop, pGui, *args, **kwargs):
