@@ -359,13 +359,10 @@ class OperationWindow(Frame):
 
         scrollbar = Scrollbar(self.frSample, orient=VERTICAL)
         self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, yscrollcommand=scrollbar.set)
-        self.lboxSamples.config(height=5)
+        self.lboxSamples.config(height=10)
         scrollbar.config(command=self.lboxSamples.yview)
-        scrollbar.grid(row=1, column=1, sticky="ns")
+        scrollbar.grid(row=1, column=1, sticky="nsw")
         self.lboxSamples.grid(row=1, column=0, sticky="ew", padx=5)
-
-
-
 
         # _______________frAgeDisc________________________________________________________________________________________
         self.frAgeDisc = Frame(self.frOper)
@@ -954,12 +951,28 @@ class OperationWindow(Frame):
         self.lbConc.configure(font=font9)
         self.lbConc.configure(text='10. Concordia')
 
+
+
+
+
+
+
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
         self.apply_style(self.lbConcType)
         self.lbConcType.configure(text='Conc.type:')
 
-        self.rbStdConc = Radiobutton(self.frGraphSettings)
+        self.cbConcType = ttk.Combobox(self.frGraphSettings)
+        self.cbConcType.grid(row=1, column=1, sticky='w')
+        self.cbConcType.configure(width=15)
+        self.cbConcType.configure(takefocus="")
+        self.cbConcType.configure(state=DISABLED)
+        self.cbConcType.configure(values=('Standard', 'Tera-Wass.'))
+        self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0, self.cbConcType.current()))
+        self.cbConcType.current(0)
+
+
+        '''self.rbStdConc = Radiobutton(self.frGraphSettings)
         self.rbStdConc.configure(variable=gui_support.varConcType, value=0)
         self.rbStdConc.grid(row=1, column=1, pady=5, sticky='w')
         self.apply_style(self.rbStdConc)
@@ -974,7 +987,10 @@ class OperationWindow(Frame):
         self.apply_style(self.rbTerWassConc)
         self.rbTerWassConc.configure(justify=LEFT)
         self.rbTerWassConc.configure(text='Ter-Wass.')
-        self.rbTerWassConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 1))
+        self.rbTerWassConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 1))'''
+
+
+
 
         self.lbEclipsesAt = Label(self.frGraphSettings)
         self.lbEclipsesAt.grid(row=3, column=0, pady=5, sticky='w')
@@ -1298,7 +1314,7 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
                                  #self.scUconcCutoff, self.scErrFilter,
-                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter, self.entUconcCutoff, self.cbUConc,
+                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter, self.entUconcCutoff, self.cbUConc, self.cbConcType,
                                  self.cbWhichAge, self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff] #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
@@ -1313,6 +1329,7 @@ class OperationWindow(Frame):
             self.cbPbc.configure(state="readonly")
             self.cbWhichConc.configure(state="readonly")
             self.cbUConc.configure(state="readonly")
+            self.cbConcType.configure(state="readonly")
 
 
             self.lboxSamples.delete(0, END)
