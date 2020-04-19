@@ -12,6 +12,7 @@ from tkinter import filedialog
 from math import sqrt, tan, atan, degrees, cos, sin, pi
 from scipy import stats
 
+
 try:
     from Tkinter import *
     from Tkinter import messagebox
@@ -137,7 +138,7 @@ class OperationWindow(Frame):
         self.frGraph.columnconfigure(1, weight=1)
         self.frGraph.columnconfigure(2, weight=1)
         self.frGraph.rowconfigure(0, weight=1)
-        self.frGraph.rowconfigure(1, weight=0)
+
 
         #______________frCon
         self.frConc = Frame(self.frGraph)
@@ -767,7 +768,7 @@ class OperationWindow(Frame):
         self.lbHistBinwidth.configure(text='Bin width:')
 
         self.lbAgeCrop = Label(self.frGraphSettings)
-        self.lbAgeCrop.grid(row=5, columnspan=2, sticky='ew', pady=5)
+        self.lbAgeCrop.grid(row=5, columnspan=4, sticky='ew', pady=5)
         self.apply_style(self.lbAgeCrop)
         self.lbAgeCrop.configure(font=font9)
         self.lbAgeCrop.configure(text='Age crop:')
@@ -792,7 +793,7 @@ class OperationWindow(Frame):
                                                                           self.entAgeMinCrop))
 
         self.entAgeMaxCrop = Entry(self.frGraphSettings)
-        self.entAgeMaxCrop.grid(row=7, column=1, pady=5, sticky='w')
+        self.entAgeMaxCrop.grid(row=6, column=3, pady=5, sticky='w')
         self.entAgeMaxCrop.configure(background="white")
         self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
         self.entAgeMaxCrop.configure(font="TkFixedFont")
@@ -801,7 +802,7 @@ class OperationWindow(Frame):
         self.entAgeMaxCrop.configure(width=5)
 
         self.chbMaxAgeCrop = Checkbutton(self.frGraphSettings)
-        self.chbMaxAgeCrop.grid(row=7, column=0, sticky='w', pady=5)
+        self.chbMaxAgeCrop.grid(row=6, column=2, sticky='w', pady=5)
         self.apply_style(self.chbMaxAgeCrop)
         self.chbMaxAgeCrop.configure(text="Max age:")
         self.chbMaxAgeCrop.configure(justify=LEFT)
@@ -812,16 +813,6 @@ class OperationWindow(Frame):
 
 
 
-        self.cbLimitAgeSpectrum = Checkbutton(self.frGraphSettings)
-        self.cbLimitAgeSpectrum.grid(row=6, column=2, pady=5, columnspan=2, sticky='w')
-        self.apply_style(self.cbLimitAgeSpectrum)
-        self.cbLimitAgeSpectrum.configure(justify=LEFT)
-        self.cbLimitAgeSpectrum.configure(text='Zoom to ages')
-        self.cbLimitAgeSpectrum.configure(variable=gui_support.varLimitAgeSpectrum)
-        self.cbLimitAgeSpectrum.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
-                                                                              gui_support.varLimitAgeSpectrum,
-                                                                              self.cbKeepPrev))
-
         # _________________frStatus_________________________________________________________________________________________
         self.frStatus = Frame(master)
         self.frStatus.configure(relief=GROOVE)
@@ -830,13 +821,13 @@ class OperationWindow(Frame):
         self.frStatus.configure(background="#d9d9d9")
         self.frStatus.grid(row=4, columnspan=3, sticky='ew')
 
-        self.btnDraw = Button(self.frStatus)
-        self.btnDraw.grid(column=4, row=0, rowspan=2, sticky='e', padx=5, pady=6)
-        self.apply_style(self.btnDraw)
-        self.btnDraw.configure(text="(Re-)Draw")
-        self.btnDraw.configure(height=2)
-        self.btnDraw.configure(width=20)
-        self.btnDraw.configure(command=lambda: self.clear_and_plot())
+        self.btnCalcWindow = Button(self.frStatus)
+        self.btnCalcWindow.grid(column=4, row=0, rowspan=2, sticky='e', padx=5, pady=6)
+        self.apply_style(self.btnCalcWindow)
+        self.btnCalcWindow.configure(text="Statistics")
+        self.btnCalcWindow.configure(height=2)
+        self.btnCalcWindow.configure(width=20)
+        self.btnCalcWindow.configure(command=lambda: self.show_frame())
 
         self.btnClear = Button(self.frStatus)
         self.btnClear.grid(column=3, row=0, rowspan=2, sticky='e', padx=5, pady=6)
@@ -858,12 +849,12 @@ class OperationWindow(Frame):
         self.cbShowCalc.grid(row=0, column=5, padx=5, sticky='w')
         self.apply_style(self.cbShowCalc)
         self.cbShowCalc.configure(justify=LEFT)
-        self.cbShowCalc.configure(text='Show peaks?')
+        self.cbShowCalc.configure(text='Show peaks and stat.')
         self.cbShowCalc.configure(variable=gui_support.varShowCalc)
         self.cbShowCalc.configure(command=lambda: self.plot_text(g_pval_dval[0], g_pval_dval[1]))
 
         self.cbKeepPrev = Checkbutton(self.frStatus)
-        self.cbKeepPrev.grid(row=1, column=5, padx=5, sticky='w')
+        self.cbKeepPrev.grid(row=0, column=6, padx=5, sticky='w')
         self.apply_style(self.cbKeepPrev)
         self.cbKeepPrev.configure(justify=LEFT)
         self.cbKeepPrev.configure(text='Keep prev.')
@@ -872,14 +863,23 @@ class OperationWindow(Frame):
                                                                             gui_support.varKeepPrev,
                                                                             self.cbLimitAgeSpectrum))
 
-        self.btnCalcWindow = Button(self.frStatus)
-        self.btnCalcWindow.grid(column=6, row=0, rowspan=2, sticky='e', padx=5, pady=6)
-        self.apply_style(self.btnCalcWindow)
-        self.btnCalcWindow.configure(text="Calculations")
-        self.btnCalcWindow.configure(height=2)
-        self.btnCalcWindow.configure(width=20)
-        self.btnCalcWindow.configure(command=lambda: self.show_frame())
+        self.cbLimitAgeSpectrum = Checkbutton(self.frStatus)
+        self.cbLimitAgeSpectrum.grid(row=0, column=7, pady=5, columnspan=2, sticky='w')
+        self.apply_style(self.cbLimitAgeSpectrum)
+        self.cbLimitAgeSpectrum.configure(justify=LEFT)
+        self.cbLimitAgeSpectrum.configure(text='Zoom to ages')
+        self.cbLimitAgeSpectrum.configure(variable=gui_support.varLimitAgeSpectrum)
+        self.cbLimitAgeSpectrum.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
+                                                                                    gui_support.varLimitAgeSpectrum,
+                                                                                    self.cbKeepPrev))
 
+        self.btnDraw = Button(self.frStatus)
+        self.btnDraw.grid(column=9, row=0, rowspan=2, sticky='e', padx=5, pady=6)
+        self.apply_style(self.btnDraw)
+        self.btnDraw.configure(text="Plot")
+        self.btnDraw.configure(height=2)
+        self.btnDraw.configure(width=20)
+        self.btnDraw.configure(command=lambda: self.clear_and_plot())
 
 
         #________________Menu___________________________________________________________________________________________
@@ -1005,6 +1005,7 @@ class OperationWindow(Frame):
         self.canvas_cum.draw()
         self.canvas_prob.draw()
         self.btnClear.configure(state=DISABLED)
+        self.btnCalcWindow.configure(state=DISABLED)
         g_plot_txt = ""
 
     def export_dialog(self):
@@ -1057,7 +1058,7 @@ class OperationWindow(Frame):
                 for child in var_frame.winfo_children():
                     child.configure(state=DISABLED)
             self.btnImport.configure(state='normal')
-            self.btnCalcWindow.configure(state='normal')
+            self.btnCalcWindow.configure(state='disabled')
             self.lbImport.configure(state='normal')
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
@@ -1299,6 +1300,7 @@ class OperationWindow(Frame):
         self.canvas_conc.draw()
         #self.canvas_prob.draw() and self.canvas_cum.draw are executed in plot_text
         self.btnClear.configure(state=NORMAL)
+        self.btnCalcWindow.configure(state=NORMAL)
         g_prev_n = g_number_of_good_grains
         if g_graph_settings.pdp_kde_hist == 0:
             g_prev_cum = g_ckde
