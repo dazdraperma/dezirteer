@@ -963,50 +963,26 @@ class OperationWindow(Frame):
         self.cbConcType.configure(state=DISABLED)
         self.cbConcType.configure(values=('Standard', 'Tera-Wass.'))
         self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0, self.cbConcType.current()))
+        self.cbConcType.config(width=8)
         self.cbConcType.current(0)
 
-
-
         self.lbEclipsesAt = Label(self.frGraphSettings)
-        self.lbEclipsesAt.grid(row=2, column=0, pady=5, sticky='w')
+        self.lbEclipsesAt.grid(row=1, column=2, pady=5, sticky='w')
         self.apply_style(self.lbEclipsesAt)
         self.lbEclipsesAt.configure(text='Eclipses at')
 
         self.cbEclipsesAt = ttk.Combobox(self.frGraphSettings)
-        self.cbEclipsesAt.grid(row=2, column=1, sticky='w')
+        self.cbEclipsesAt.grid(row=1, column=31, sticky='w')
         self.cbEclipsesAt.configure(width=15)
         self.cbEclipsesAt.configure(takefocus="")
         self.cbEclipsesAt.configure(state=DISABLED)
         self.cbEclipsesAt.configure(values=('1σ', '2σ'))
         self.cbEclipsesAt.bind('<<ComboboxSelected>>',
                              lambda event: gui_support.onGraphChange(g_graph_settings, 2, self.cbEclipsesAt.current()+1))
+        self.cbEclipsesAt.config(width=3)
         self.cbEclipsesAt.current(0)
 
-
-
-        '''self.lbEclipsesAt = Label(self.frGraphSettings)
-        self.lbEclipsesAt.grid(row=3, column=0, pady=5, sticky='w')
-        self.apply_style(self.lbEclipsesAt)
-        self.lbEclipsesAt.configure(text='Eclipses at:')
-
-        self.rbEcl1Sigma = Radiobutton(self.frGraphSettings)
-        self.rbEcl1Sigma.configure(variable=gui_support.varEclipseSigma, value=1)
-        self.rbEcl1Sigma.grid(row=3, column=1, columnspan=4, pady=5, sticky='w')
-        self.apply_style(self.rbEcl1Sigma)
-        self.rbEcl1Sigma.configure(justify=LEFT)
-        self.rbEcl1Sigma.configure(text='1σ')
-        self.rbEcl1Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 1))
-        self.rbEcl1Sigma.select()
-
-        self.rbEcl2Sigma = Radiobutton(self.frGraphSettings)
-        self.rbEcl2Sigma.configure(variable=gui_support.varEclipseSigma, value=2)
-        self.rbEcl2Sigma.grid(row=3, column=2, pady=5, sticky='w')
-        self.apply_style(self.rbEcl2Sigma)
-        self.rbEcl2Sigma.configure(justify=LEFT)
-        self.rbEcl2Sigma.configure(text='2σ')
-        self.rbEcl2Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 2))'''
-
-        self.chbFitDiscordia = Checkbutton(self.frGraphSettings)
+        '''self.chbFitDiscordia = Checkbutton(self.frGraphSettings)
         self.chbFitDiscordia.grid(row=5, pady=5, sticky='w')
         self.apply_style(self.chbFitDiscordia)
         self.chbFitDiscordia.configure(justify=LEFT)
@@ -1029,7 +1005,7 @@ class OperationWindow(Frame):
         self.entAnchoredAge.configure(font="TkFixedFont")
         self.entAnchoredAge.configure(foreground="#000000")
         self.entAnchoredAge.configure(insertbackground="black")
-        self.entAnchoredAge.configure(width=5)
+        self.entAnchoredAge.configure(width=5)'''
 
         self.lbKdePdpHist = Label(self.frGraphSettings)
         self.lbKdePdpHist.grid(row=7, columnspan=3, pady=15, sticky='ew')
@@ -1304,11 +1280,11 @@ class OperationWindow(Frame):
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
     def reset_controls(self, is_data_present):
-        features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
-                                 #self.scUconcCutoff, self.scErrFilter,
-                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter, self.entUconcCutoff,
-                                 self.cbUConc, self.cbConcType, self.cbEclipsesAt,
-                                 self.cbWhichAge, self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff] #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
+        features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
+                                 self.entUconcCutoff,self.cbUConc, self.cbConcType, self.cbEclipsesAt,self.cbWhichAge,
+                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff]
+                                 #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
+                                 # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
