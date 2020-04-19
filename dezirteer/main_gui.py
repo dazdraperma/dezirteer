@@ -543,8 +543,7 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(insertbackground="black")
         self.entErrFilter.configure(textvariable=gui_support.varErrFilter)
         self.entErrFilter.bind('<KeyRelease>', (lambda _: gui_support.onChange(20, float(
-            ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))),
-                                                                               pars_onChange)))
+            ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entErrFilter.configure(width=5)
         self.entErrFilter.configure(state=DISABLED)
 
@@ -1144,24 +1143,24 @@ class OperationWindow(Frame):
 
     def kde_pdp_hist(self):
         # choosing kde/pdp/hist based on user input
-        global g_ckde, g_cpdp, g_kde, g_pdp
+        global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
         if g_graph_settings.pdp_kde_hist == 0:
-            prob_graph_to_draw = g_kde[0]
-            cum_graph_to_draw = g_ckde
-            prob_title = "Kernel Density Estimates (KDE)"
-            cum_title = "Cumulative KDE"
+            g_prob_graph_to_draw = g_kde[0]
+            g_cum_graph_to_draw = g_ckde
+            g_prob_title = "Kernel Density Estimates (KDE)"
+            g_cum_title = "Cumulative KDE"
         elif g_graph_settings.pdp_kde_hist == 1:
-            prob_graph_to_draw = g_pdp[0]
-            cum_graph_to_draw = g_cpdp
-            prob_title = "Probability Density Plot (PDP)"
-            cum_title = "Cumulative PDP"
+            g_prob_graph_to_draw = g_pdp[0]
+            g_cum_graph_to_draw = g_cpdp
+            g_prob_title = "Probability Density Plot (PDP)"
+            g_cum_title = "Cumulative PDP"
         else:
             tuple_list = sorted(list(g_grainset.good_set.values()), key=lambda x: x[0])
-            prob_graph_to_draw = [x[0] for x in tuple_list]
-            cum_graph_to_draw = []
-            prob_title = "Histogram"
-            cum_title = "Cumulative Histogram"
-        return[prob_graph_to_draw, cum_graph_to_draw, prob_title, cum_title]
+            g_prob_graph_to_draw = [x[0] for x in tuple_list]
+            g_cum_graph_to_draw = []
+            g_prob_title = "Histogram"
+            g_cum_title = "Cumulative Histogram"
+        return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
         if max_age-min_age > 1000 and min_age > 500:
@@ -1227,39 +1226,41 @@ class OperationWindow(Frame):
                          fill=oval_fill)
             self.ax_conc.add_patch(el)
 
-    def plot_hist(self, min_age, max_age, prob_graph_to_draw):
+    def plot_hist(self, min_age, max_age):
+        global g_prob_graph_to_draw
         bin_sequence = []
         age = min_age
         bin_width = float(self.entHistBinwidth.get())
         while age < max_age:
             bin_sequence.append(age)
             age += bin_width
-        self.ax_prob.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
-        self.ax_cum.hist(prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
+        self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
+        self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
 
-    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
-                 conc_graph_y, min_age, max_age):
+    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age):
         # set axis of all graphs
+        global g_prob_title, g_cum_title
         self.ax_conc.set_title(conc_title)
         self.ax_conc.set_xlabel(conc_graph_xtitle, labelpad=-12, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.set_ylabel(conc_graph_ytitle, fontsize=8)
-        self.ax_prob.set_title(prob_title)
+        self.ax_prob.set_title(g_prob_title)
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
-        self.ax_cum.set_title(cum_title)
+        self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
 
     def plot_peaks(self):
-        global g_kde, g_pdp
-        prob_graph_to_draw = self.kde_pdp_hist()[0]
+        global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
+        g_prob_graph_to_draw = self.kde_pdp_hist()[0]
         min_max_age = self.min_max_ages()
         min_age = min_max_age[0]
         max_age = min_max_age[1]
         self.ax_prob.clear()
         self.canvas_prob.draw()
-        self.ax_prob.plot(list(range(min_age, max_age)), prob_graph_to_draw[min_age: max_age])
+        self.ax_prob.plot(list(range(min_age, max_age)), g_prob_graph_to_draw[min_age: max_age])
         if gui_support.varShowCalc.get() == 1:
             i = 0
+            self.ax_prob.set_title(g_prob_title)
             if g_graph_settings.pdp_kde_hist == 0:
                 list_peaks = g_kde[1]
             elif g_graph_settings.pdp_kde_hist == 1:
@@ -1269,19 +1270,22 @@ class OperationWindow(Frame):
             while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], color='black')
                 i += 1
-        else:
-           pass
+        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
+        self.ax_prob.set_title(g_prob_title)
 
-    def prob_cum_plot(self, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw):
-        self.ax_cum.plot(list(range(min_age, max_age)), cum_graph_to_draw[min_age: max_age])
+
+
+    def prob_cum_plot(self, min_age, max_age):
+        global g_prob_graph_to_draw, g_cum_graph_to_draw
+        self.ax_cum.plot(list(range(min_age, max_age)), g_cum_graph_to_draw[min_age: max_age])
         self.plot_peaks() #ax_prob.plot is done here
 
 
-    def prob_cum_hist_plot(self, do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw):
+    def prob_cum_hist_plot(self, do_hist, min_age, max_age):
         if not do_hist:
-            self.prob_cum_plot(min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
+            self.prob_cum_plot(min_age, max_age)
         else:
-            self.plot_hist(min_age, max_age, prob_graph_to_draw)
+            self.plot_hist(min_age, max_age)
 
     def clear_prev_or_remove_text(self):
         # clears previous graph, if user chooses to in the cbKeepPrev, else just removes text from cum_plot
@@ -1307,13 +1311,19 @@ class OperationWindow(Frame):
         else:
             g_prev_cum = g_cpdp
 
+    def set_plot_types_and_titles(self, kde_pdp_hist):
+        global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
+        g_prob_graph_to_draw = kde_pdp_hist[0]
+        g_cum_graph_to_draw = kde_pdp_hist[1]
+        g_prob_title = kde_pdp_hist[2]
+        g_cum_title = kde_pdp_hist[3]
+
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
         global g_cpdp, g_ckde, g_kde, g_pdp
         g_filters.sample_name_filter = []
-
 
         if gui_support.varMinAgeCrop.get() == 1:
             is_editbox_float(self.entAgeMinCrop, '_Filters__minAgeCrop', 0)
@@ -1330,7 +1340,6 @@ class OperationWindow(Frame):
 
         #checks if histogram is to be drawn
         do_hist = (g_graph_settings.pdp_kde_hist == 2)
-
 
         g_kde = g_grainset.kde(g_graph_settings.bandwidth)
         g_pdp = g_grainset.pdp(gui_support.varUncType.get())
@@ -1361,14 +1370,14 @@ class OperationWindow(Frame):
 
         # choosing kde/pdp/hist
         l_kde_pdp_hist = self.kde_pdp_hist()
-        prob_graph_to_draw = l_kde_pdp_hist[0]
+        self.set_plot_types_and_titles(l_kde_pdp_hist)
+        '''prob_graph_to_draw = l_kde_pdp_hist[0]
         cum_graph_to_draw = l_kde_pdp_hist[1]
         prob_title = l_kde_pdp_hist[2]
-        cum_title = l_kde_pdp_hist[3]
+        cum_title = l_kde_pdp_hist[3]'''
 
         # set axis of all graphs
-        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, prob_title, cum_title, conc_graph_x,
-                      conc_graph_y, min_age, max_age)
+        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age)
 
         self.draw_concordia_ticks(xconc, yconc, min_age, max_age)
 
@@ -1382,7 +1391,7 @@ class OperationWindow(Frame):
 
             # plotting KDE/CKDE, PDP/CPDP or histogram
 
-            self.prob_cum_hist_plot(do_hist, min_age, max_age, prob_graph_to_draw, cum_graph_to_draw)
+            self.prob_cum_hist_plot(do_hist, min_age, max_age)
 
         #except ValueError:
         #    self.lbShowStatus.configure(text="value error", fg="red")
@@ -1485,6 +1494,7 @@ def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
+    global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
     g_dezirteer_version = '0.6.2020.04.18.02'
     g_pdp = []
     g_cpdp = []
