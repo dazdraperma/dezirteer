@@ -317,17 +317,17 @@ class OperationWindow(Frame):
         self.lbStatus = Label(self.frImport)
         self.lbStatus.grid(row=3, column=0)
         self.apply_style(self.lbStatus)
-        self.lbStatus.configure(text='''Status:''')
+        self.lbStatus.configure(text='Status:')
 
         self.lbShowStatus = Label(self.frImport)
-        self.lbShowStatus.grid(row=3, column=1, pady=5, sticky='w')
+        self.lbShowStatus.grid(row=3, column=1, pady=5, padx=5, sticky='w')
         self.apply_style(self.lbShowStatus)
         self.lbShowStatus.configure(relief=SUNKEN)
 
         self.lbUncType = Label(self.frImport)
         self.lbUncType.grid(row=4, column=0)
         self.apply_style(self.lbUncType)
-        self.lbUncType.configure(text='''Uncertainty type:''')
+        self.lbUncType.configure(text='Uncertainty type:')
 
         self.rbInternal = Radiobutton(self.frImport)
         self.rbInternal.grid(row=4, column=1, sticky='w')
@@ -363,7 +363,7 @@ class OperationWindow(Frame):
 
         scrollbar = Scrollbar(self.frSample, orient=VERTICAL)
         self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, yscrollcommand=scrollbar.set)
-        self.lboxSamples.config(height=10, width=40)
+        self.lboxSamples.config(height=10, width=10)
         scrollbar.config(command=self.lboxSamples.yview)
         scrollbar.grid(row=1, column=1, sticky="nsw")
         self.lboxSamples.grid(row=1, column=0, sticky="ew", padx=5)
@@ -1483,7 +1483,7 @@ def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
-    g_dezirteer_version = '0.5.2020.04.13.02'
+    g_dezirteer_version = '0.6.2020.04.18.01'
     g_pdp = []
     g_cpdp = []
     g_kde = []
