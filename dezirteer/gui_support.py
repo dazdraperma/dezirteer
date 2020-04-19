@@ -120,11 +120,11 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     if p_number_in_list == 1:
         pars[0].show_multiple = p_value
     elif p_number_in_list == 2:
-        pars[0].filter_by_uconc[0] = p_value
-        if p_value == True:
-            args[0].configure(state=NORMAL)
+        pars[0].filter_by_uconc[0] = True if p_value == 1 else False
+        if p_value == 1:
+            args[2].configure(state=NORMAL)
         else:
-            args[0].configure(state=DISABLED)
+            args[2].configure(state=DISABLED)
     elif p_number_in_list == 3:
         pars[0].which_age[0] = p_value
 
@@ -259,6 +259,7 @@ def set_Tk_var():
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff
     varUConc = IntVar()
+    varUConc.set(1000)
     varDiscType = IntVar()
     varConcType = IntVar()
     varConcType.set(0)
