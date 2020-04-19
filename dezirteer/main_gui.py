@@ -308,7 +308,7 @@ class OperationWindow(Frame):
         self.lbImport.configure(text="Import data")
 
         self.btnImport = Button(self.frImport, width=14, height=2)
-        self.btnImport.grid(row=2, columnspan=3, pady=10)
+        self.btnImport.grid(row=2, columnspan=3, pady=5)
         self.apply_style(self.btnImport)
         self.btnImport.configure(pady="0")
         self.btnImport.configure(text="Import")
@@ -365,7 +365,7 @@ class OperationWindow(Frame):
         self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, yscrollcommand=scrollbar.set)
         self.lboxSamples.config(height=10, width=10)
         scrollbar.config(command=self.lboxSamples.yview)
-        scrollbar.grid(row=1, column=1, sticky="nsw")
+        scrollbar.grid(row=1, column=1, padx=5, sticky="nsw")
         self.lboxSamples.grid(row=1, column=0, sticky="ew", padx=5)
         self.frSample.columnconfigure(0, weight=1)
 
@@ -1483,7 +1483,7 @@ def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
-    g_dezirteer_version = '0.6.2020.04.18.01'
+    g_dezirteer_version = '0.6.2020.04.18.02'
     g_pdp = []
     g_cpdp = []
     g_kde = []
