@@ -951,12 +951,6 @@ class OperationWindow(Frame):
         self.lbConc.configure(font=font9)
         self.lbConc.configure(text='10. Concordia')
 
-
-
-
-
-
-
         self.lbConcType = Label(self.frGraphSettings)
         self.lbConcType.grid(row=1, column=0, pady=5, sticky='w')
         self.apply_style(self.lbConcType)
@@ -972,27 +966,25 @@ class OperationWindow(Frame):
         self.cbConcType.current(0)
 
 
-        '''self.rbStdConc = Radiobutton(self.frGraphSettings)
-        self.rbStdConc.configure(variable=gui_support.varConcType, value=0)
-        self.rbStdConc.grid(row=1, column=1, pady=5, sticky='w')
-        self.apply_style(self.rbStdConc)
-        self.rbStdConc.configure(justify=LEFT)
-        self.rbStdConc.configure(text='Standard')
-        self.rbStdConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 0))
-        self.rbStdConc.select()
-
-        self.rbTerWassConc = Radiobutton(self.frGraphSettings)
-        self.rbTerWassConc.configure(variable=gui_support.varConcType, value=1)
-        self.rbTerWassConc.grid(row=1, column=2, pady=5, sticky='w')
-        self.apply_style(self.rbTerWassConc)
-        self.rbTerWassConc.configure(justify=LEFT)
-        self.rbTerWassConc.configure(text='Ter-Wass.')
-        self.rbTerWassConc.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 0, 1))'''
-
-
-
 
         self.lbEclipsesAt = Label(self.frGraphSettings)
+        self.lbEclipsesAt.grid(row=2, column=0, pady=5, sticky='w')
+        self.apply_style(self.lbEclipsesAt)
+        self.lbEclipsesAt.configure(text='Eclipses at')
+
+        self.cbEclipsesAt = ttk.Combobox(self.frGraphSettings)
+        self.cbEclipsesAt.grid(row=2, column=1, sticky='w')
+        self.cbEclipsesAt.configure(width=15)
+        self.cbEclipsesAt.configure(takefocus="")
+        self.cbEclipsesAt.configure(state=DISABLED)
+        self.cbEclipsesAt.configure(values=('1σ', '2σ'))
+        self.cbEclipsesAt.bind('<<ComboboxSelected>>',
+                             lambda event: gui_support.onGraphChange(g_graph_settings, 2, self.cbEclipsesAt.current()+1))
+        self.cbEclipsesAt.current(0)
+
+
+
+        '''self.lbEclipsesAt = Label(self.frGraphSettings)
         self.lbEclipsesAt.grid(row=3, column=0, pady=5, sticky='w')
         self.apply_style(self.lbEclipsesAt)
         self.lbEclipsesAt.configure(text='Eclipses at:')
@@ -1012,7 +1004,7 @@ class OperationWindow(Frame):
         self.apply_style(self.rbEcl2Sigma)
         self.rbEcl2Sigma.configure(justify=LEFT)
         self.rbEcl2Sigma.configure(text='2σ')
-        self.rbEcl2Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 2))
+        self.rbEcl2Sigma.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 2, 2))'''
 
         self.chbFitDiscordia = Checkbutton(self.frGraphSettings)
         self.chbFitDiscordia.grid(row=5, pady=5, sticky='w')
@@ -1314,7 +1306,8 @@ class OperationWindow(Frame):
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
                                  #self.scUconcCutoff, self.scErrFilter,
-                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter, self.entUconcCutoff, self.cbUConc, self.cbConcType,
+                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter, self.entUconcCutoff,
+                                 self.cbUConc, self.cbConcType, self.cbEclipsesAt,
                                  self.cbWhichAge, self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff] #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
@@ -1322,14 +1315,12 @@ class OperationWindow(Frame):
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
 
-            #self.rbDiscSmallest.select()
-            #self.rbAgeSmallestErr.select()
-            #self.scAgeCutoff.configure(state=DISABLED)
             self.cbWhichAge.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
             self.cbWhichConc.configure(state="readonly")
             self.cbUConc.configure(state="readonly")
             self.cbConcType.configure(state="readonly")
+            self.cbEclipsesAt.configure(state="readonly")
 
 
             self.lboxSamples.delete(0, END)
