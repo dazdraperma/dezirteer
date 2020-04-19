@@ -357,13 +357,13 @@ class OperationWindow(Frame):
         self.lbChooseSample.configure(font=font9)
         self.lbChooseSample.configure(text='''2. Choose sample''')
 
-        self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, height=25)
-        self.lboxSamples.grid(row=1, columnspan=3, sticky="ew", padx=5)
-
-        scrollbar = Scrollbar(self.lboxSamples, orient="vertical")
+        scrollbar = Scrollbar(self.frSample, orient=VERTICAL)
+        self.lboxSamples = Listbox(self.frSample, selectmode='extended', exportselection=0, yscrollcommand=scrollbar.set)
+        self.lboxSamples.config(height=5)
         scrollbar.config(command=self.lboxSamples.yview)
-        self.lboxSamples.config(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side="right", fill="y")
+        scrollbar.grid(row=1, column=1, sticky="ns")
+        self.lboxSamples.grid(row=1, column=0, sticky="ew", padx=5)
+
 
 
 
