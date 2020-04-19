@@ -137,12 +137,12 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].use_pbc = p_value
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
-        if p_value == True:
-            args[0].configure(state=NORMAL)
+        if p_value == 1:
             args[1].configure(state=NORMAL)
+            args[2].configure(state=NORMAL)
         else:
-            args[0].configure(state=DISABLED)
             args[1].configure(state=DISABLED)
+            args[2].configure(state=DISABLED)
     elif p_number_in_list == 6:
         pars[0].pos_disc_filter = p_value/100
     elif p_number_in_list == 7:
@@ -266,6 +266,7 @@ def set_Tk_var():
     varAgebased = IntVar()
     varUncorrOrPbc = IntVar()
     varErrFilter = IntVar()
+    varErrFilter.set(5)
     varShowMultiple = IntVar()
     varDrawKde = IntVar()
     varPosDiscFilter = IntVar()

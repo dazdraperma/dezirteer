@@ -677,65 +677,7 @@ class OperationWindow(Frame):
 
         '''
 
-        self.lbFilterByError = Label(self.frAgeDisc)
-        self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
-        self.apply_style(self.lbFilterByError)
-        self.lbFilterByError.configure(font=font9)
-        self.lbFilterByError.configure(state=DISABLED)
-        self.lbFilterByError.configure(text='''6. Filter by error?''')
 
-        self.rbNoErrFilter = Radiobutton(self.frAgeDisc)
-        self.rbNoErrFilter.configure(variable=gui_support.varErrFilter, value=False)
-        self.rbNoErrFilter.grid(row=10, sticky='w')
-        self.apply_style(self.rbNoErrFilter)
-        self.rbNoErrFilter.configure(justify=LEFT)
-        self.rbNoErrFilter.configure(state=DISABLED)
-        self.rbNoErrFilter.configure(command=lambda: gui_support.onChange(5, False, pars_onChange,
-                                                                          self.chbInclude207235Err, self.scErrFilter))
-        self.rbNoErrFilter.configure(text='''Don't filter''')
-        self.rbNoErrFilter.select()
-
-        self.rbUseErrFilter = Radiobutton(self.frAgeDisc)
-        self.rbUseErrFilter.configure(variable=gui_support.varErrFilter, value=True)
-        self.rbUseErrFilter.grid(row=11, column=0, sticky='sw', pady=4)
-        self.apply_style(self.rbUseErrFilter)
-        self.rbUseErrFilter.configure(justify=LEFT)
-        self.rbUseErrFilter.configure(state=DISABLED)
-        self.rbUseErrFilter.configure(text='''Cutoff 'best age' at (%): ''')
-        self.rbUseErrFilter.configure(command=lambda: gui_support.onChange(5, True, pars_onChange,
-                                                                           self.chbInclude207235Err, self.scErrFilter))
-
-        self.scErrFilter = Scale(self.frAgeDisc)
-        self.scErrFilter.grid(row=10, column=1, sticky='ews', rowspan=2)
-        self.scErrFilter.configure(activebackground="#d9d9d9")
-        self.scErrFilter.configure(sliderlength=20)
-        self.scErrFilter.configure(background="#d9d9d9")
-        self.scErrFilter.configure(font="TkTextFont")
-        self.scErrFilter.configure(foreground="#000000")
-        self.scErrFilter.configure(highlightbackground="#d9d9d9")
-        self.scErrFilter.configure(highlightcolor="black")
-        self.scErrFilter.configure(length="100")
-        self.scErrFilter.configure(orient="horizontal")
-        self.scErrFilter.configure(tickinterval="0")
-        self.scErrFilter.configure(from_="1")
-        self.scErrFilter.configure(to="50")
-        self.scErrFilter.configure(bd=2)
-        self.scErrFilter.set(10)
-        self.scErrFilter.configure(state=DISABLED)
-        self.scErrFilter.configure(troughcolor="#d9d9d9")
-        self.scErrFilter.configure(
-            command=lambda x: gui_support.onChange(20, self.scErrFilter.get(), pars_onChange, g_list_col_names))
-
-        self.chbInclude207235Err = Checkbutton(self.frAgeDisc)
-        self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
-        self.apply_style(self.chbInclude207235Err)
-        self.chbInclude207235Err.configure(text="include error in 207/235?")
-        self.chbInclude207235Err.configure(justify=LEFT)
-        self.chbInclude207235Err.configure(state=DISABLED)
-        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
-        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
-                                                                                gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange,))
 
 
         '''self.lbFiltCommPb = Label(self.frFilter)
@@ -839,6 +781,123 @@ class OperationWindow(Frame):
             ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entPosDiscFilt.configure(state=DISABLED)
         self.entPosDiscFilt.configure(width=5)
+
+        self.lbFilterByError = Label(self.frDisc)
+        self.lbFilterByError.grid(row=2, columnspan=3, pady=10, sticky='ew')
+        self.apply_style(self.lbFilterByError)
+        self.lbFilterByError.configure(font=font9)
+        self.lbFilterByError.configure(state=DISABLED)
+        self.lbFilterByError.configure(text='Filter by error:')
+
+        self.entErrFilter = Entry(self.frDisc)
+        self.entErrFilter.grid(row=3, column=1, pady=5, padx=5, sticky='w')
+        self.entErrFilter.configure(background="white")
+        self.entErrFilter.configure(disabledforeground="#a3a3a3")
+        self.entErrFilter.configure(font="TkFixedFont")
+        self.entErrFilter.configure(foreground="#000000")
+        self.entErrFilter.configure(insertbackground="black")
+        self.entErrFilter.configure(textvariable=gui_support.varErrFilter)
+        self.entErrFilter.bind('<KeyRelease>', (lambda _: gui_support.onChange(20, float(
+            ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))),
+                                                                               pars_onChange)))
+        self.entErrFilter.configure(width=5)
+        self.entErrFilter.configure(state=DISABLED)
+
+
+        self.lblErrCutoff = Label(self.frDisc)
+        self.lblErrCutoff.grid(row=3, column=2, sticky='w', pady=5)
+        self.apply_style(self.lblErrCutoff)
+        self.lblErrCutoff.configure(text="%")
+
+        self.cbWhichAge = ttk.Combobox(self.frDisc)
+        self.cbWhichAge.grid(row=3, column=0, sticky='ew')
+        self.cbWhichAge.configure(width=15)
+        self.cbWhichAge.configure(takefocus="")
+        self.cbWhichAge.configure(state=DISABLED)
+        self.cbWhichAge.configure(values=('Not used', 'Cutoff err > '))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(5, self.cbWhichAge.current(),
+                                                                                        pars_onChange,
+                                                                                        self.entErrFilter.get(),
+                                                                                        self.entErrFilter,
+                                                                                        self.chbInclude207235Err))
+        self.cbWhichAge.current(0)
+
+        self.chbInclude207235Err = Checkbutton(self.frDisc)
+        self.chbInclude207235Err.grid(row=4, column=0, sticky='w', pady=5)
+        self.apply_style(self.chbInclude207235Err)
+        self.chbInclude207235Err.configure(text="include error in 207/235?")
+        self.chbInclude207235Err.configure(justify=LEFT)
+        self.chbInclude207235Err.configure(state=DISABLED)
+        self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
+        self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
+                                                                                gui_support.varInclude207235Err.get(),
+                                                                                pars_onChange, pars_onChange,))
+
+
+        '''self.lbFilterByError = Label(self.frAgeDisc)
+                self.lbFilterByError.grid(row=9, columnspan=3, pady=10, sticky='ew')
+                self.apply_style(self.lbFilterByError)
+                self.lbFilterByError.configure(font=font9)
+                self.lbFilterByError.configure(state=DISABLED)
+                self.lbFilterByError.configure(text='6. Filter by error?')
+
+                self.rbNoErrFilter = Radiobutton(self.frAgeDisc)
+                self.rbNoErrFilter.configure(variable=gui_support.varErrFilter, value=False)
+                self.rbNoErrFilter.grid(row=10, sticky='w')
+                self.apply_style(self.rbNoErrFilter)
+                self.rbNoErrFilter.configure(justify=LEFT)
+                self.rbNoErrFilter.configure(state=DISABLED)
+                self.rbNoErrFilter.configure(command=lambda: gui_support.onChange(5, False, pars_onChange,
+                                                                                  self.chbInclude207235Err, self.scErrFilter))
+                self.rbNoErrFilter.configure(text='Don't filter')
+                self.rbNoErrFilter.select()
+
+                self.rbUseErrFilter = Radiobutton(self.frAgeDisc)
+                self.rbUseErrFilter.configure(variable=gui_support.varErrFilter, value=True)
+                self.rbUseErrFilter.grid(row=11, column=0, sticky='sw', pady=4)
+                self.apply_style(self.rbUseErrFilter)
+                self.rbUseErrFilter.configure(justify=LEFT)
+                self.rbUseErrFilter.configure(state=DISABLED)
+                self.rbUseErrFilter.configure(text='Cutoff 'best age' at (%): ')
+                self.rbUseErrFilter.configure(command=lambda: gui_support.onChange(5, True, pars_onChange,
+                                                                                   self.chbInclude207235Err, self.scErrFilter))
+
+                self.scErrFilter = Scale(self.frAgeDisc)
+                self.scErrFilter.grid(row=10, column=1, sticky='ews', rowspan=2)
+                self.scErrFilter.configure(activebackground="#d9d9d9")
+                self.scErrFilter.configure(sliderlength=20)
+                self.scErrFilter.configure(background="#d9d9d9")
+                self.scErrFilter.configure(font="TkTextFont")
+                self.scErrFilter.configure(foreground="#000000")
+                self.scErrFilter.configure(highlightbackground="#d9d9d9")
+                self.scErrFilter.configure(highlightcolor="black")
+                self.scErrFilter.configure(length="100")
+                self.scErrFilter.configure(orient="horizontal")
+                self.scErrFilter.configure(tickinterval="0")
+                self.scErrFilter.configure(from_="1")
+                self.scErrFilter.configure(to="50")
+                self.scErrFilter.configure(bd=2)
+                self.scErrFilter.set(10)
+                self.scErrFilter.configure(state=DISABLED)
+                self.scErrFilter.configure(troughcolor="#d9d9d9")
+                self.scErrFilter.configure(
+                    command=lambda x: gui_support.onChange(20, self.scErrFilter.get(), pars_onChange, g_list_col_names))
+
+                self.chbInclude207235Err = Checkbutton(self.frAgeDisc)
+                self.chbInclude207235Err.grid(row=12, column=0, sticky='w', pady=5)
+                self.apply_style(self.chbInclude207235Err)
+                self.chbInclude207235Err.configure(text="include error in 207/235?")
+                self.chbInclude207235Err.configure(justify=LEFT)
+                self.chbInclude207235Err.configure(state=DISABLED)
+                self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
+                self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
+                                                                                        gui_support.varInclude207235Err.get(),
+                                                                                        pars_onChange,))'''
+
+
+
+
+
 
         '''self.lbPosDiscFilt = Label(self.frDisc)
         self.lbPosDiscFilt.grid(row=4, columnspan=2, sticky='ew')
@@ -1365,8 +1424,8 @@ class OperationWindow(Frame):
 
     def reset_controls(self, is_data_present):
         features_custom_state = [self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia, self.chbInclude207235Err,
-                                 self.scErrFilter,self.scUconcCutoff,
-                                 self.entAgeMinCrop, self.entAgeMaxCrop,
+                                 self.scUconcCutoff, #self.scErrFilter,
+                                 self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.cbWhichAge, self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff] #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
         if is_data_present:
             for var_frame in (self.frImport, self.frAgeDisc, self.frDisc, self.frGraphSettings, self.frStatus):
@@ -1380,6 +1439,7 @@ class OperationWindow(Frame):
             self.cbWhichAge.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
             self.cbWhichConc.configure(state="readonly")
+
 
             self.lboxSamples.delete(0, END)
             for item in g_list_of_samples:
