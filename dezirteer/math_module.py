@@ -597,9 +597,6 @@ def file_to_analysis(imp_file, index):
         else:
             corr_coef_86_76 = corr_coef_86_76_calculated
 
-
-
-
         if header[7][0] != -1:
             u_conc.append(float(an[header[7][0]]))
             u_conc.append(float(an[header[7][1]]) / sigma_level)

@@ -387,7 +387,7 @@ class OperationWindow(Frame):
         self.lbWhichAge.configure(text='How to calc best age:')
         self.lbWhichAge.configure(state=DISABLED)
 
-        self.entAgeCutoff = Entry(self.frAgeDisc)
+        self.entAgeCutoff = Spinbox(self.frAgeDisc, from_=0, to=EarthAge)
         self.entAgeCutoff.grid(row=1, column=1, pady=5, padx=5, sticky='w')
         self.entAgeCutoff.configure(background="white")
         self.entAgeCutoff.configure(disabledforeground="#a3a3a3")
@@ -395,6 +395,7 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(foreground="#000000")
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
+        self.entAgeCutoff.configure(command=lambda: gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange))
         self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
                                                                               pars_onChange)))
         self.entAgeCutoff.configure(state=DISABLED)
@@ -442,7 +443,7 @@ class OperationWindow(Frame):
         self.lbCalcDisc.configure(state=DISABLED)
         self.lbCalcDisc.configure(text='How to calc discordance:')
 
-        self.entDiscAgeFixedLim = Entry(self.frAgeDisc)
+        self.entDiscAgeFixedLim = Spinbox(self.frAgeDisc, from_=0, to=EarthAge)
         self.entDiscAgeFixedLim.grid(row=8, column=1, pady=5, padx=5, sticky='w')
         self.entDiscAgeFixedLim.configure(background="white")
         self.entDiscAgeFixedLim.configure(disabledforeground="#a3a3a3")
@@ -450,6 +451,7 @@ class OperationWindow(Frame):
         self.entDiscAgeFixedLim.configure(foreground="#000000")
         self.entDiscAgeFixedLim.configure(insertbackground="black")
         self.entDiscAgeFixedLim.configure(textvariable=gui_support.varDiscCutoff)
+        self.entDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(25, float(self.entDiscAgeFixedLim.get()), pars_onChange))
         self.entDiscAgeFixedLim.bind('<KeyRelease>', (lambda _: gui_support.onChange(25, float(
             ''.join(c for c in self.entDiscAgeFixedLim.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entDiscAgeFixedLim.configure(state=DISABLED)
@@ -501,7 +503,7 @@ class OperationWindow(Frame):
         self.apply_style(self.lblPlus)
         self.lblPlus.configure(text="(+)")
 
-        self.entNegDiscFilt = Entry(self.frFilter)
+        self.entNegDiscFilt = Spinbox(self.frFilter, from_=0, to=1000)
         self.entNegDiscFilt.grid(row=2, column=0,  padx=5, sticky='ew')
         self.entNegDiscFilt.configure(background="white")
         self.entNegDiscFilt.configure(disabledforeground="#a3a3a3")
@@ -509,12 +511,13 @@ class OperationWindow(Frame):
         self.entNegDiscFilt.configure(foreground="#000000")
         self.entNegDiscFilt.configure(insertbackground="black")
         self.entNegDiscFilt.configure(textvariable=gui_support.varNegDiscFilter)
+        self.entNegDiscFilt.configure(command=lambda:gui_support.onChange(7, float(self.entNegDiscFilt.get() ), pars_onChange))
         self.entNegDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(7, float(
             ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entNegDiscFilt.configure(state=DISABLED)
         self.entNegDiscFilt.configure(width=5)
 
-        self.entPosDiscFilt = Entry(self.frFilter)
+        self.entPosDiscFilt = Spinbox(self.frFilter, from_=0, to=1000)
         self.entPosDiscFilt.grid(row=2, column=1, sticky='ew')
         self.entPosDiscFilt.configure(background="white")
         self.entPosDiscFilt.configure(disabledforeground="#a3a3a3")
@@ -522,6 +525,8 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.configure(foreground="#000000")
         self.entPosDiscFilt.configure(insertbackground="black")
         self.entPosDiscFilt.configure(textvariable=gui_support.varPosDiscFilter)
+        self.entPosDiscFilt.configure(
+            command=lambda: gui_support.onChange(6, float(self.entPosDiscFilt.get()), pars_onChange))
         self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
             ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entPosDiscFilt.configure(state=DISABLED)
@@ -704,7 +709,7 @@ class OperationWindow(Frame):
         self.apply_style(self.lbDensityPlotType)
         self.lbDensityPlotType.configure(text='Type:')
 
-        self.entKDEBandwidth = Entry(self.frGraphSettings)
+        self.entKDEBandwidth = Spinbox(self.frGraphSettings, from_=1, to=3000)
         self.entKDEBandwidth.grid(row=3, column=3, pady=5, padx=5, sticky='w')
         self.entKDEBandwidth.configure(background="white")
         self.entKDEBandwidth.configure(disabledforeground="#a3a3a3")
@@ -713,16 +718,17 @@ class OperationWindow(Frame):
         self.entKDEBandwidth.configure(insertbackground="black")
         self.entKDEBandwidth.configure(textvariable=gui_support.varKDEBandwidth)
         self.entKDEBandwidth.configure(width=5)
+        self.entKDEBandwidth.configure(state=DISABLED)
+        self.entKDEBandwidth.configure(width=5)
+        self.entKDEBandwidth.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 11, float(self.entKDEBandwidth.get())))
         self.entKDEBandwidth.bind('<KeyRelease>', (lambda _: gui_support.onGraphChange(g_graph_settings, 11,
                                                                                        float(''.join(c for c in
                                                                                                      self.entKDEBandwidth.get()
-                                                                                                     if (
-                                                                                                                 c.isdigit() or c == '.'))))))
+                                                                                                     if (c.isdigit() or c == '.'))))))
 
-        self.entKDEBandwidth.configure(state=DISABLED)
-        self.entKDEBandwidth.configure(width=5)
 
-        self.entHistBinwidth = Entry(self.frGraphSettings)
+
+        self.entHistBinwidth = Spinbox(self.frGraphSettings, from_=1, to=3000)
         self.entHistBinwidth.grid(row=4, column=3, pady=5, padx=5, sticky='w')
         self.entHistBinwidth.configure(background="white")
         self.entHistBinwidth.configure(disabledforeground="#a3a3a3")
@@ -731,14 +737,15 @@ class OperationWindow(Frame):
         self.entHistBinwidth.configure(insertbackground="black")
         self.entHistBinwidth.configure(textvariable=gui_support.varHistBinwidth)
         self.entHistBinwidth.configure(width=5)
+        self.entHistBinwidth.configure(state=DISABLED)
+        self.entHistBinwidth.configure(width=5)
+        self.entHistBinwidth.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 12, float(self.entHistBinwidth.get())))
         self.entHistBinwidth.bind('<KeyRelease>', (lambda _: gui_support.onGraphChange(g_graph_settings, 12,
                                                                                        float(''.join(c for c in
                                                                                                      self.entHistBinwidth.get()
-                                                                                                     if (
-                                                                                                             c.isdigit() or c == '.'))))))
+                                                                                                     if (c.isdigit() or c == '.'))))))
 
-        self.entHistBinwidth.configure(state=DISABLED)
-        self.entHistBinwidth.configure(width=5)
+
 
 
 
@@ -772,7 +779,7 @@ class OperationWindow(Frame):
         self.lbAgeCrop.configure(font=font9)
         self.lbAgeCrop.configure(text='Age crop:')
 
-        self.entAgeMinCrop = Entry(self.frGraphSettings)
+        self.entAgeMinCrop = Spinbox(self.frGraphSettings, from_=1, to=EarthAge)
         self.entAgeMinCrop.grid(row=6, column=1, pady=5, sticky='w')
         self.entAgeMinCrop.configure(background="white")
         self.entAgeMinCrop.configure(disabledforeground="#a3a3a3")
@@ -791,7 +798,7 @@ class OperationWindow(Frame):
         self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
                                                                           self.entAgeMinCrop))
 
-        self.entAgeMaxCrop = Entry(self.frGraphSettings)
+        self.entAgeMaxCrop = Spinbox(self.frGraphSettings, from_=1, to=EarthAge)
         self.entAgeMaxCrop.grid(row=6, column=3, pady=5, sticky='w')
         self.entAgeMaxCrop.configure(background="white")
         self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
@@ -1037,7 +1044,7 @@ class OperationWindow(Frame):
             self.cbEclipsesAt.configure(state="readonly")
             self.cbDensityPlotType.configure(state="readonly")
             self.entHistBinwidth.configure(state="disabled")
-            self.entAgeCutoff.configure(state="readonly")
+            self.entAgeCutoff.configure(state="disabled")
             self.cbErrFilter.configure(state="readonly")
 
 
