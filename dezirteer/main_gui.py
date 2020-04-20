@@ -499,12 +499,12 @@ class OperationWindow(Frame):
         self.lblMinus.configure(text="(-)")
 
         self.lblPlus = Label(self.frFilter)
-        self.lblPlus.grid(row=1, column=1, sticky='ew', pady=5)
+        self.lblPlus.grid(row=1, column=2, sticky='ew', pady=5)
         self.apply_style(self.lblPlus)
         self.lblPlus.configure(text="(+)")
 
         self.entNegDiscFilt = Spinbox(self.frFilter, from_=0, to=1000)
-        self.entNegDiscFilt.grid(row=2, column=0,  padx=5, sticky='ew')
+        self.entNegDiscFilt.grid(row=1, column=1,  sticky='w')
         self.entNegDiscFilt.configure(background="white")
         self.entNegDiscFilt.configure(disabledforeground="#a3a3a3")
         self.entNegDiscFilt.configure(font="TkFixedFont")
@@ -515,10 +515,10 @@ class OperationWindow(Frame):
         self.entNegDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(7, float(
             ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entNegDiscFilt.configure(state=DISABLED)
-        self.entNegDiscFilt.configure(width=5)
+        self.entNegDiscFilt.configure(width=3)
 
         self.entPosDiscFilt = Spinbox(self.frFilter, from_=0, to=1000)
-        self.entPosDiscFilt.grid(row=2, column=1, sticky='ew')
+        self.entPosDiscFilt.grid(row=1, column=3, sticky='w')
         self.entPosDiscFilt.configure(background="white")
         self.entPosDiscFilt.configure(disabledforeground="#a3a3a3")
         self.entPosDiscFilt.configure(font="TkFixedFont")
@@ -530,7 +530,7 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
             ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entPosDiscFilt.configure(state=DISABLED)
-        self.entPosDiscFilt.configure(width=5)
+        self.entPosDiscFilt.configure(width=3)
 
         self.lbFilterByError = Label(self.frFilter)
         self.lbFilterByError.grid(row=3, columnspan=3, pady=5, sticky='ew')
@@ -540,7 +540,7 @@ class OperationWindow(Frame):
         self.lbFilterByError.configure(text='Filter by error:')
 
         self.entErrFilter = Entry(self.frFilter)
-        self.entErrFilter.grid(row=4, column=1, padx=5, sticky='w')
+        self.entErrFilter.grid(row=4, column=3, padx=5, sticky='w')
         self.entErrFilter.configure(background="white")
         self.entErrFilter.configure(disabledforeground="#a3a3a3")
         self.entErrFilter.configure(font="TkFixedFont")
@@ -549,17 +549,17 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(textvariable=gui_support.varErrFilter)
         self.entErrFilter.bind('<KeyRelease>', (lambda _: gui_support.onChange(20, float(
             ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))), pars_onChange)))
-        self.entErrFilter.configure(width=5)
+        self.entErrFilter.configure(width=3)
         self.entErrFilter.configure(state=DISABLED)
 
 
         self.lblErrCutoff = Label(self.frFilter)
-        self.lblErrCutoff.grid(row=4, column=2, sticky='w')
+        self.lblErrCutoff.grid(row=4, column=4, sticky='w')
         self.apply_style(self.lblErrCutoff)
         self.lblErrCutoff.configure(text="%")
 
         self.cbErrFilter = ttk.Combobox(self.frFilter)
-        self.cbErrFilter.grid(row=4, column=0, sticky='w')
+        self.cbErrFilter.grid(row=4, column=1, columnspan=2, sticky='w')
         self.cbErrFilter.configure(width=15)
         self.cbErrFilter.configure(takefocus="")
         self.cbErrFilter.configure(state=DISABLED)
@@ -574,7 +574,7 @@ class OperationWindow(Frame):
 
 
         self.chbInclude207235Err = Checkbutton(self.frFilter)
-        self.chbInclude207235Err.grid(row=5, column=0, columnspan=2, sticky='w', pady=5)
+        self.chbInclude207235Err.grid(row=5, column=1, columnspan=3, sticky='w', pady=5)
         self.apply_style(self.chbInclude207235Err)
         self.chbInclude207235Err.configure(text="include 207/235 error")
         self.chbInclude207235Err.configure(justify=LEFT)
@@ -585,13 +585,13 @@ class OperationWindow(Frame):
                                                                                 pars_onChange, pars_onChange,))
 
         self.lbUConcFilter = Label(self.frFilter)
-        self.lbUConcFilter.grid(row=6, columnspan=3, pady=4, sticky='w')
+        self.lbUConcFilter.grid(row=6, column=1, columnspan=3, pady=4, sticky='w')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="Filter by Uconc:")
 
         self.entUconcCutoff = Entry(self.frFilter)
-        self.entUconcCutoff.grid(row=7, column=1, pady=5, padx=5, sticky='w')
+        self.entUconcCutoff.grid(row=7, column=3, pady=5, padx=5, sticky='w')
         self.entUconcCutoff.configure(background="white")
         self.entUconcCutoff.configure(disabledforeground="#a3a3a3")
         self.entUconcCutoff.configure(font="TkFixedFont")
@@ -605,12 +605,12 @@ class OperationWindow(Frame):
         self.entUconcCutoff.configure(state=DISABLED)
 
         self.lblUConcCutoff = Label(self.frFilter)
-        self.lblUConcCutoff.grid(row=7, column=2, sticky='w', pady=5)
+        self.lblUConcCutoff.grid(row=7, column=4, sticky='w', pady=5)
         self.apply_style(self.lblUConcCutoff)
         self.lblUConcCutoff.configure(text="ppm")
 
         self.cbUConc = ttk.Combobox(self.frFilter)
-        self.cbUConc.grid(row=7, column=0, sticky='w')
+        self.cbUConc.grid(row=7, column=1, sticky='w')
         self.cbUConc.configure(width=15)
         self.cbUConc.configure(takefocus="")
         self.cbUConc.configure(state=DISABLED)
