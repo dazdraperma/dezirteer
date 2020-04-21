@@ -79,7 +79,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
         # age errors
         #Achtung! Need to use propagated uncertainties!
-        if zir.pb206_pb204[2]<>-1 and zir.pb207_pb204[2]<>-1 and zir.pb208_pb204[2]<>-1:
+        if zir.pb206_pb204[2]!=-1 and zir.pb207_pb204[2]!=-1 and zir.pb208_pb204[2]<>-1:
             tmp64 = (zir.pb206_pb204[2] / zir.pb206_pb204[0]) ** 2
             tmp74 = (zir.pb207_pb204[2] / zir.pb207_pb204[0]) ** 2
             tmp84 = (zir.pb208_pb204[2] / zir.pb208_pb204[0]) ** 2
@@ -113,7 +113,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t = t + delta
         corr_age[0] = t
         # error
-        if zir.pb206_u238[2]<>-1 and zir.pb207_pb206[2]<>-1:
+        if zir.pb206_u238[2]!=-1 and zir.pb207_pb206[2]!=-1:
             r68er=zir.pb206_u238[2]
             r76er=zir.pb207_pb206[2]
         else:
@@ -144,7 +144,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t = t + delta  #
         corr_age[0] = t
         # error
-        if zir.pb206_u238[2]<>-1 and zir.pb207_pb206[2]<>-1:
+        if zir.pb206_u238[2]!=-1 and zir.pb207_pb206[2]!=-1:
             r68er=zir.pb206_u238[2]
             r82er=zir.pb208_th232[2]
         else:
