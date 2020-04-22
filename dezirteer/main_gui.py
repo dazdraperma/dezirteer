@@ -266,12 +266,12 @@ class OperationWindow(Frame):
         self.frCumToolbar.configure(highlightcolor="black")
         self.frCumToolbar.configure(width=100)
 
-        # ________frTable_________________________________________________________________________________________________
-        global toolbarConc, toolbarProb, toolbarCum
+        #global toolbarConc, toolbarProb, toolbarCum
         toolbarConc = NavigationToolbar2Tk(self.canvas_conc, self.frConcToolbar)
         toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
         toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
 
+        # ________frTable_________________________________________________________________________________________________
         self.frTable = Frame(master, height=100)
         self.frTable.configure(relief=GROOVE)
         self.frTable.configure(borderwidth="2")
@@ -591,7 +591,7 @@ class OperationWindow(Frame):
         self.lbUConcFilter.configure(text="Filter by Uconc:")
 
         self.entUconcCutoff = Entry(self.frFilter)
-        self.entUconcCutoff.grid(row=7, column=3, pady=5, padx=5, sticky='w')
+        self.entUconcCutoff.grid(row=7, column=3, columnspan=2, pady=5, padx=5, sticky='w')
         self.entUconcCutoff.configure(background="white")
         self.entUconcCutoff.configure(disabledforeground="#a3a3a3")
         self.entUconcCutoff.configure(font="TkFixedFont")
@@ -605,7 +605,7 @@ class OperationWindow(Frame):
         self.entUconcCutoff.configure(state=DISABLED)
 
         self.lblUConcCutoff = Label(self.frFilter)
-        self.lblUConcCutoff.grid(row=7, column=4, sticky='w', pady=5)
+        self.lblUConcCutoff.grid(row=7, column=5, sticky='w', pady=5)
         self.apply_style(self.lblUConcCutoff)
         self.lblUConcCutoff.configure(text="ppm")
 
@@ -663,7 +663,7 @@ class OperationWindow(Frame):
         self.lbEclipsesAt.configure(text='Eclipses at')
 
         self.cbEclipsesAt = ttk.Combobox(self.frGraphSettings)
-        self.cbEclipsesAt.grid(row=1, column=3, sticky='w')
+        self.cbEclipsesAt.grid(row=1, column=3, padx=5, sticky='w')
         self.cbEclipsesAt.configure(width=5)
         self.cbEclipsesAt.configure(takefocus="")
         self.cbEclipsesAt.configure(state=DISABLED)
