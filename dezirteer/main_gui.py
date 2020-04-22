@@ -1505,7 +1505,7 @@ def main():
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.04.18.02'
+    g_dezirteer_version = '0.6.2020.04.22.01'
     g_pdp = []
     g_cpdp = []
     g_kde = []
