@@ -124,6 +124,9 @@ class OperationWindow(Frame):
 
         master.columnconfigure(1, weight=1)
         master.rowconfigure(0, weight=1)
+        master.rowconfigure(2, weight=1)
+
+
 
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
@@ -279,7 +282,7 @@ class OperationWindow(Frame):
         self.frTable.configure(background="#d9d9d9")
         self.frTable.configure(highlightbackground="#d9d9d9")
         self.frTable.configure(highlightcolor="black")
-        self.frTable.grid(row=2, columnspan=3, sticky='sew')
+        self.frTable.grid(row=2, columnspan=3, sticky='nsew')
         self.style.configure('Treeview.Heading', font="TkDefaultFont")
 
         self.Table = ScrolledTreeView(self.frTable)
