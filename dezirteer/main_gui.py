@@ -1137,16 +1137,16 @@ class OperationWindow(Frame):
             conc_graph_x = [i[1] for i in concordia_table]
             conc_graph_y = [i[0] for i in concordia_table]
             conc_title = "Conventional Concordia"
-            conc_graph_xtitle = "207Pb/235U"
-            conc_graph_ytitle = "206Pb/238U"
+            conc_graph_xtitle = "207/235"
+            conc_graph_ytitle = "206/238"
             xconc = 1
             yconc = 0
         else:  # Tera-Wasserburgh
             conc_graph_x = [(1 / i[0]) for i in concordia_table]
             conc_graph_y = [i[2] for i in concordia_table]
             conc_title = "Tera-Wasserburg Concordia"
-            conc_graph_xtitle = "238U/206Pb"
-            conc_graph_ytitle = "207Pb/206Pb"
+            conc_graph_xtitle = "238/206"
+            conc_graph_ytitle = "207/206"
             xconc = 3
             yconc = 2
         return [conc_graph_x, conc_graph_y, conc_title, conc_graph_xtitle, conc_graph_ytitle, xconc, yconc]
@@ -1251,12 +1251,12 @@ class OperationWindow(Frame):
         # set axis of all graphs
         global g_prob_title, g_cum_title
         self.ax_conc.set_title(conc_title)
-        self.ax_conc.set_xlabel(conc_graph_xtitle, labelpad=-12, fontsize=8, position=(0.54, 1e6))
-        self.ax_conc.set_ylabel(conc_graph_ytitle, fontsize=8)
+        self.ax_conc.set_xlabel(conc_graph_xtitle, labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        self.ax_conc.set_ylabel(conc_graph_ytitle, labelpad=-38, fontsize=8)
         self.ax_prob.set_title(g_prob_title)
-        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
+        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_cum.set_title(g_cum_title)
-        self.ax_cum.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
+        self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
 
     def plot_peaks(self):
@@ -1280,7 +1280,7 @@ class OperationWindow(Frame):
             while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], color='black')
                 i += 1
-        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-12, fontsize=8, position=(0.54, 1e6))
+        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_prob.set_title(g_prob_title)
 
 
