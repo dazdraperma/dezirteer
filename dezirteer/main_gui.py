@@ -159,6 +159,7 @@ class OperationWindow(Frame):
         self.ax_conc.set_xlabel('207Pb/235U')
         self.ax_conc.set_ylabel('206Pb/238U')
         self.ax_conc.set_title('Concordia')
+        self.ax_conc.axes.format_coord = lambda x, y: ""
         try:
             self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
         except UnboundLocalError:
@@ -202,6 +203,7 @@ class OperationWindow(Frame):
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
         self.ax_prob = self.fig.add_subplot(111)
         self.ax_prob.axes
+        self.ax_prob.axes.format_coord = lambda x, y: ""
         self.ax_prob.set_title('KDE/PDP/Histogram')
         self.ax_prob.axes.get_yaxis().set_visible(False)
         try:
@@ -247,6 +249,7 @@ class OperationWindow(Frame):
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
         self.ax_cum = self.fig.add_subplot(111)
+        self.ax_cum.axes.format_coord = lambda x, y: ""
         self.ax_cum.set_title('Cumulative diagrams')
         self.ax_cum.axes.get_yaxis().set_visible(False)
 
@@ -1506,7 +1509,7 @@ def main():
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.04.28.01'
+    g_dezirteer_version = '0.6.2020.04.28.02'
     g_pdp = []
     g_cpdp = []
     g_kde = []
