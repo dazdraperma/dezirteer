@@ -66,8 +66,8 @@ def show_calc_frame(container):
         frContainer.configure(background="#d9d9d9")
         frContainer.configure(highlightbackground="#d9d9d9")
         frContainer.configure(highlightcolor="black")
-        frContainer.grid(row=0, column=0, sticky='NWES')
-
+        frContainer.pack(fill=BOTH, expand=1)
+        container.resizable(False, False)
         elements = ["number of good grains", "weighted average age", "±1σ", "±95% conf.", "MSWD", "max age", "min age"]
         list_of_labels = []
         counter = 0
@@ -935,6 +935,7 @@ class OperationWindow(Frame):
     def show_frame(self):#asdf
 
         winCalc = Toplevel()
+        winCalc.resizable(height=None, width=None)
         show_calc_frame(winCalc)
 
 
@@ -1505,7 +1506,7 @@ def main():
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.04.18.02'
+    g_dezirteer_version = '0.6.2020.04.28.01'
     g_pdp = []
     g_cpdp = []
     g_kde = []
