@@ -1164,12 +1164,35 @@ class AnalysesSet(object):
         self.__min_238_206 = 0
         self.__min_207_206 = 0
         self.__max_207_206 = 0
+        self.__min_age = 0
+        self.__max_age = 4500
 
     def __repr__(self):
         return str(self.analyses_list)
 
     def __len__(self):
         return len(self.analyses_list)
+
+    @property
+    def min_age(self):
+        return self.__min_age
+
+    @min_age.setter
+    def min_age(self, value):
+        self.__min_age = value
+
+    @property
+    def max_age(self):
+        return self.__max_age
+
+    @max_age.setter
+    def max_age(self, value):
+        self.__max_age = value
+
+
+
+
+
 
     @property
     def min_206_238(self):
@@ -1307,6 +1330,9 @@ class AnalysesSet(object):
         sumproduct_ages_err = 0
         number_of_good_grains = 0
         sum_of_inv_sq_err = 0
+
+        k = 3
+
         self.good_set.clear()
         self.bad_set.clear()
         while index <= len(self.analyses_list) - 1:
@@ -1316,35 +1342,35 @@ class AnalysesSet(object):
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
                 z_age = zircon.calc_age(l_is_grain_good[1])
-                z_206_238 = zircon.pb206_u238[0]
-                z_207_235 = zircon.pb207_u235[0]
-                z_238_206 = zircon.u238_pb206()[0]
-                z_207_206 = zircon.pb207_pb206[0]
+                z_206_238 = zircon.pb206_u238
+                z_207_235 = zircon.pb207_u235
+                z_238_206 = zircon.u238_pb206()
+                z_207_206 = zircon.pb207_pb206
 
                 if z_age[0] > max_age:
-                    max_age = int(z_age[0])
+                    max_age = int(z_age[0]+k*z_age[1])
                 if z_age[0] < min_age:
-                    min_age = int(z_age[0])
+                    min_age = int(z_age[0]-k*z_age[1])
 
-                if z_206_238 > max_206_238:
-                    max_206_238 = z_206_238
-                if z_206_238 < min_206_238:
-                    min_206_238 = z_206_238
+                if z_206_238[0] > max_206_238:
+                    max_206_238 = z_206_238[0]+k*z_206_238[1]
+                if z_206_238[0] < min_206_238:
+                    min_206_238 = z_206_238[0]-k*z_206_238[1]
 
-                if z_207_235 > max_207_235:
-                    max_207_235 = z_207_235
-                if z_207_235 < min_207_235:
-                    min_207_235 = z_207_235
+                if z_207_235[0] > max_207_235:
+                    max_207_235 = z_207_235[0]+k*z_207_235[1]
+                if z_207_235[0] < min_207_235:
+                    min_207_235 = z_207_235[0]-k*z_207_235[1]
 
-                if z_238_206 > max_238_206:
-                    max_238_206 = z_238_206
-                if z_238_206 < min_238_206:
-                    min_238_206 = z_238_206
+                if z_238_206[0] > max_238_206:
+                    max_238_206 = z_238_206[0]+k*z_238_206[1]
+                if z_238_206[0] < min_238_206:
+                    min_238_206 = z_238_206[0]-k*z_238_206[1]
 
-                if z_207_206 > max_207_206:
-                    max_207_206 = z_207_206
-                if z_207_206 < min_207_206:
-                    min_207_206 = z_207_206
+                if z_207_206[0] > max_207_206:
+                    max_207_206 = z_207_206[0]+k*z_207_206[1]
+                if z_207_206[0] < min_207_206:
+                    min_207_206 = z_207_206[0]-k*z_207_206[1]
 
 
                 self.__good_set.update({zircon: z_age})
@@ -1369,6 +1395,10 @@ class AnalysesSet(object):
             wa_age_err = 0
             mswd = 0
         wa_age_err_scatter = wa_age_err * sqrt(mswd) * t_student(0.05, number_of_good_grains - 1)
+
+        self.__min_age = min_age
+        self.__max_age = max_age
+
 
         self.__min_206_238 = min_206_238
         self.__max_206_238 = max_206_238
