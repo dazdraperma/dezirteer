@@ -1348,9 +1348,9 @@ class AnalysesSet(object):
                 z_207_206 = zircon.pb207_pb206
 
                 if z_age[0] > max_age:
-                    max_age = int(z_age[0]+k*z_age[1])
+                    max_age = int(z_age[0])
                 if z_age[0] < min_age:
-                    min_age = int(z_age[0]-k*z_age[1])
+                    min_age = int(z_age[0])
 
                 if z_206_238[0] > max_206_238:
                     max_206_238 = z_206_238[0]+k*z_206_238[1]

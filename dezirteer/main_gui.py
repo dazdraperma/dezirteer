@@ -1133,10 +1133,10 @@ class OperationWindow(Frame):
     def min_max_ages(self):
         # choosing age interval based on user's input
         if gui_support.varLimitAgeSpectrum.get() == 1:
-            min_age = g_grainset.min_age
-            max_age = g_grainset.max_age
-            '''min_age = g_number_of_good_grains[6]
-            max_age = g_number_of_good_grains[5]'''
+            '''min_age = g_grainset.min_age
+            max_age = g_grainset.max_age'''
+            min_age = g_number_of_good_grains[6]
+            max_age = g_number_of_good_grains[5]
 
             if self.cbConcType.current() == 0:
                 min_conc_x = g_grainset.min_207_235
@@ -1549,7 +1549,7 @@ def main():
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.04.30.01'
+    g_dezirteer_version = '0.6.2020.04.30.02'
     g_pdp = []
     g_cpdp = []
     g_kde = []
