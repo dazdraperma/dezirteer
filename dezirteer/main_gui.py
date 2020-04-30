@@ -1092,28 +1092,47 @@ class OperationWindow(Frame):
         global g_plot_txt
 
         if gui_support.varShowCalc.get() == 1:
-            text_to_show = \
-                "n={}\n" \
-                "Min age={}; " \
-                "Max age={}\n" \
-                "WA age={}±{}(2σ int.);" \
-                "±{}(95%conf)\n" \
-                "MSWD={}\n" \
-                "KS p-value={}; " \
-                "d-value={}\n" \
-                "peaks at={}".format(
-                    g_number_of_good_grains[0],
-                    int(g_number_of_good_grains[6]),
-                    int(g_number_of_good_grains[5]),
-                    round((g_number_of_good_grains[1]), 1),
-                    2 * round((g_number_of_good_grains[2]), 1),
-                    round((g_number_of_good_grains[3]), 1),
-                    int(g_number_of_good_grains[4]),
-                    round(pval, 2),
-                    round(dval, 2),
-                    peaks()
-                )
-
+            # text_to_show = \
+            #     "n={}\n" \
+            #     "Min age={}; " \
+            #     "Max age={}\n" \
+            #     "WA age={}±{}(2σ int.);\n" \
+            #     "    ±{}(95%conf)\n" \
+            #     "MSWD={}\n" \
+            #     "KS p-value={}; " \
+            #     "d-value={}\n" \
+            #     "peaks at={}".format(
+            #         g_number_of_good_grains[0],
+            #         int(g_number_of_good_grains[6]),
+            #         int(g_number_of_good_grains[5]),
+            #         round((g_number_of_good_grains[1]), 1),
+            #         2 * round((g_number_of_good_grains[2]), 1),
+            #         round((g_number_of_good_grains[3]), 1),
+            #         int(g_number_of_good_grains[4]),
+            #         round(pval, 2),
+            #         round(dval, 2),
+            #         peaks()
+            #     )
+                text_to_show = \
+                "n="+str(g_number_of_good_grains[0]) +"\n" \
+                "Min age="+str(int(g_number_of_good_grains[6]))+"; "\
+                "Max age="+str(int(g_number_of_good_grains[5]))+"\n" \
+                "WA age="+str(round((g_number_of_good_grains[1]), 1))+\
+                "±"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
+                "    ±"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
+                "MSWD="+str(int(g_number_of_good_grains[4]))+"\n" \
+                "KS p-value="+str(round(pval, 2))+"; " \
+                "d-value="+str(round(dval, 2))+"\n" \
+                "peaks at="#+str(peaks())+str(len(peaks()))
+                i=1
+                for p in peaks():
+                    if i<len(peaks()):
+                        text_to_show+=str(p)+", "
+                    else:
+                        text_to_show+=str(p)
+                    if i % 5 == 0 and i<len(peaks()):
+                        text_to_show+="\n    "
+                    i+=1
         else:
             if g_plot_txt != "":
                 g_plot_txt.remove()
