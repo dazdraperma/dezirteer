@@ -889,6 +889,7 @@ class OperationWindow(Frame):
         self.btnDraw.grid(column=9, row=0, rowspan=2, sticky='e', padx=5, pady=6)
         self.apply_style(self.btnDraw)
         self.btnDraw.configure(text="Plot")
+        self.btnDraw.configure(bg='#00ff80')
         self.btnDraw.configure(height=2)
         self.btnDraw.configure(width=20)
         self.btnDraw.configure(command=lambda: self.clear_and_plot())
