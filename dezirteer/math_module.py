@@ -1156,12 +1156,119 @@ class AnalysesSet(object):
         self.__name = name
         self.__good_set = {}
         self.__bad_set = []
+        self.__min_206_238 = 0
+        self.__max_206_238 = 0
+        self.__min_207_235 = 0
+        self.__max_207_235 = 0
+        self.__max_238_206 = 0
+        self.__min_238_206 = 0
+        self.__min_207_206 = 0
+        self.__max_207_206 = 0
+        self.__min_age = 0
+        self.__max_age = 4500
 
     def __repr__(self):
         return str(self.analyses_list)
 
     def __len__(self):
         return len(self.analyses_list)
+
+    @property
+    def min_age(self):
+        return self.__min_age
+
+    @min_age.setter
+    def min_age(self, value):
+        self.__min_age = value
+
+    @property
+    def max_age(self):
+        return self.__max_age
+
+    @max_age.setter
+    def max_age(self, value):
+        self.__max_age = value
+
+
+
+
+
+
+    @property
+    def min_206_238(self):
+        return self.__min_206_238
+
+    @min_206_238.setter
+    def min_206_238(self, value):
+        self.__min_206_238 = value
+
+    @property
+    def max_206_238(self):
+        return self.__max_206_238
+
+    @max_206_238.setter
+    def max_206_238(self, value):
+        self.__max_206_238 = value
+
+
+
+    @property
+    def min_207_235(self):
+        return self.__min_207_235
+
+    @min_207_235.setter
+    def min_207_235(self, value):
+        self.__min_207_235 = value
+
+    @property
+    def max_207_235(self):
+        return self.__max_207_235
+
+    @max_207_235.setter
+    def max_207_235(self, value):
+        self.__max_207_235 = value
+
+
+
+    @property
+    def min_238_206(self):
+        return self.__min_238_206
+
+    @min_238_206.setter
+    def min_238_206(self, value):
+        self.__min_238_206 = value
+
+    @property
+    def max_238_206(self):
+        return self.__max_238_206
+
+    @max_238_206.setter
+    def max_238_206(self, value):
+        self.__max_238_206 = value
+
+
+
+    @property
+    def min_207_206(self):
+        return self.__min_207_206
+
+    @min_207_206.setter
+    def min_207_206(self, value):
+        self.__min_207_206 = value
+
+    @property
+    def max_207_206(self):
+        return self.__max_207_206
+
+    @max_207_206.setter
+    def max_207_206(self, value):
+        self.__max_207_206 = value
+
+
+
+
+
+
 
     @property
     def name(self):
@@ -1191,12 +1298,28 @@ class AnalysesSet(object):
     def filters(self):
         return self.__filters
 
+
+
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
-    # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages
+    # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages, max and min conc values
     def good_bad_sets(self, p_filter: Filters):
         index = 0
         max_age = 0
         min_age = 5000
+
+        max_206_238 = 0
+        min_206_238 = 2
+
+        max_207_235 = 0
+        min_207_235 = 100
+
+        max_238_206 = 0
+        min_238_206 = 2000
+
+        max_207_206 = 0
+        min_207_206 = 1
+
+
         ages = []
         errs_inv_sq = []
         wa_age = 0
@@ -1207,21 +1330,49 @@ class AnalysesSet(object):
         sumproduct_ages_err = 0
         number_of_good_grains = 0
         sum_of_inv_sq_err = 0
+
+        k = 3
+
         self.good_set.clear()
         self.bad_set.clear()
         while index <= len(self.analyses_list) - 1:
             zircon = self.analyses_list[index]
 
-            #TEMP
-
             #parsed_analysis = parse_sample_analysis(str(zircon))
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
                 z_age = zircon.calc_age(l_is_grain_good[1])
+                z_206_238 = zircon.pb206_u238
+                z_207_235 = zircon.pb207_u235
+                z_238_206 = zircon.u238_pb206()
+                z_207_206 = zircon.pb207_pb206
+
                 if z_age[0] > max_age:
-                    max_age = int(z_age[0])
+                    max_age = int(z_age[0]+k*z_age[1])
                 if z_age[0] < min_age:
-                    min_age = int(z_age[0])
+                    min_age = int(z_age[0]-k*z_age[1])
+
+                if z_206_238[0] > max_206_238:
+                    max_206_238 = z_206_238[0]+k*z_206_238[1]
+                if z_206_238[0] < min_206_238:
+                    min_206_238 = z_206_238[0]-k*z_206_238[1]
+
+                if z_207_235[0] > max_207_235:
+                    max_207_235 = z_207_235[0]+k*z_207_235[1]
+                if z_207_235[0] < min_207_235:
+                    min_207_235 = z_207_235[0]-k*z_207_235[1]
+
+                if z_238_206[0] > max_238_206:
+                    max_238_206 = z_238_206[0]+k*z_238_206[1]
+                if z_238_206[0] < min_238_206:
+                    min_238_206 = z_238_206[0]-k*z_238_206[1]
+
+                if z_207_206[0] > max_207_206:
+                    max_207_206 = z_207_206[0]+k*z_207_206[1]
+                if z_207_206[0] < min_207_206:
+                    min_207_206 = z_207_206[0]-k*z_207_206[1]
+
+
                 self.__good_set.update({zircon: z_age})
                 number_of_good_grains += 1
                 ages.append(z_age[0])
@@ -1244,7 +1395,26 @@ class AnalysesSet(object):
             wa_age_err = 0
             mswd = 0
         wa_age_err_scatter = wa_age_err * sqrt(mswd) * t_student(0.05, number_of_good_grains - 1)
+
+        self.__min_age = min_age
+        self.__max_age = max_age
+
+
+        self.__min_206_238 = min_206_238
+        self.__max_206_238 = max_206_238
+
+        self.__min_207_235 = min_207_235
+        self.__max_207_235 = max_207_235
+
+        self.__min_238_206 = min_238_206
+        self.__max_238_206 = max_238_206
+
+        self.__min_207_206 = min_207_206
+        self.__max_207_206 = max_207_206
+
+
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
+
 
     # calculates probability density function for a given age
     def pdp_calc(self, p_age_needed, unc_type):
