@@ -984,11 +984,15 @@ class OperationWindow(Frame):
                     g_grainset = AnalysesSet(an_set, 'set#1')
                     g_grainset.good_bad_sets(g_filters)
 
+
+
                     pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
                     sys.stdout.flush()
                     g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                                           g_list_col_names)
+
+
 
                     g_list_of_samples = same_sample_set(g_grainset)
                     self.reset_controls(True)
@@ -1131,10 +1135,32 @@ class OperationWindow(Frame):
         if gui_support.varLimitAgeSpectrum.get() == 1:
             min_age = g_number_of_good_grains[6]
             max_age = g_number_of_good_grains[5]
+
+            if self.cbConcType.current() == 0:
+                min_conc_x = g_grainset.min_207_235
+                max_conc_x = g_grainset.max_207_235
+
+                min_conc_y = g_grainset.min_206_238
+                max_conc_y = g_grainset.max_206_238
+            else:
+                min_conc_x = g_grainset.min_238_206
+                max_conc_x = g_grainset.max_238_206
+
+                min_conc_y = g_grainset.min_207_206
+                max_conc_y = g_grainset.max_207_206
+
         else:
             min_age = 1
             max_age = EarthAge
-        return [min_age, max_age]
+            min_conc_x = 0
+            min_conc_y = 0
+            if self.cbConcType.current() == 0:
+                max_conc_x = 100
+                max_conc_y = 1
+            else:
+                max_conc_x = 60
+                max_conc_y = 0.7
+        return [min_age, max_age, min_conc_x, max_conc_x, min_conc_y, max_conc_y]
 
     def concordia_type(self):
         # choosing concordia type base on user's input
@@ -1187,7 +1213,8 @@ class OperationWindow(Frame):
         else:
             min_age = (min_age//100+1)*100
             step = 100
-        for t in range(int(min_age), int(max_age) , step):
+        for t in range(int(min_age), int(max_age), step):
+
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
             self.ax_conc.plot(x, y, 'ks', markersize=3)
@@ -1252,7 +1279,8 @@ class OperationWindow(Frame):
         self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
         self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
 
-    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age):
+    def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
+                 min_conc_x, max_conc_x, min_conc_y, max_conc_y):
         # set axis of all graphs
         global g_prob_title, g_cum_title
         self.ax_conc.set_title(conc_title)
@@ -1263,6 +1291,8 @@ class OperationWindow(Frame):
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
+        self.ax_conc.set_xlim(min_conc_x, max_conc_x)
+        self.ax_conc.set_ylim(min_conc_y, max_conc_y)
 
     def plot_peaks(self):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
@@ -1367,6 +1397,12 @@ class OperationWindow(Frame):
         age_lim = self.min_max_ages()
         min_age = age_lim[0]
         max_age = age_lim[1]
+        min_conc_x = age_lim[2]
+        max_conc_x = age_lim[3]
+        min_conc_y = age_lim[4]
+        max_conc_y = age_lim[5]
+
+        #print (str(g_grainset.min_206_238))
 
         self.clear_prev_or_remove_text()
 
@@ -1392,7 +1428,8 @@ class OperationWindow(Frame):
         cum_title = l_kde_pdp_hist[3]'''
 
         # set axis of all graphs
-        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age)
+        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
+                      min_conc_x, max_conc_x, min_conc_y, max_conc_y)
 
         self.draw_concordia_ticks(xconc, yconc, min_age, max_age)
 
