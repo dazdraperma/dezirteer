@@ -9,8 +9,9 @@ from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.patches import Rectangle
 from tkinter import filedialog
-from math import sqrt, tan, atan, degrees, cos, sin, pi
+from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
 from scipy import stats
+from numpy import log10
 
 
 try:
@@ -28,6 +29,9 @@ except ImportError:
 from math_module import *
 
 matplotlib.use("TkAgg")
+
+def truncate(f, n):
+    return floor(f * 10 ** n) / 10 ** n
 
 #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
 #sets 0 values to both variables
@@ -1204,16 +1208,28 @@ class OperationWindow(Frame):
         return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
-        if max_age-min_age > 1000 and min_age > 500:
-            min_age = (min_age//1000+0.5)*1000
+
+        if max_age-min_age > 1000:
             step = 500
-        elif max_age-min_age > 1000 and min_age < 500:
-            min_age = 500
-            step = 500
+        elif max_age-min_age < 1000 and max_age-min_age>500:
+            step = 250
+
+        elif max_age-min_age < 500 and max_age-min_age>100:
+            step = 50
+
+        elif max_age-min_age < 100 and max_age-min_age>50:
+            step = 25
         else:
-            min_age = (min_age//100+1)*100
-            step = 100
-        for t in range(int(min_age), int(max_age), step):
+            step = 10
+
+
+        if log10(min_age) < 1:
+            x = 0
+        elif log10(min_age)>=2:
+            x = -2
+        else:
+            x = -1
+        for t in range(int(truncate(min_age, x)), int(max_age), step):
 
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
