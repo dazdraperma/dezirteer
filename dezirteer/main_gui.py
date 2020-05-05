@@ -1212,7 +1212,6 @@ class OperationWindow(Frame):
         return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
-
         if max_age-min_age > 1000:
             step = 500
         elif 500 < max_age-min_age < 1000:
@@ -1223,20 +1222,18 @@ class OperationWindow(Frame):
             step = 25
         else:
             step = 10
-        if log10(min_age) < 1:
-            x = -2
-        elif log10(min_age) >= 2:
+
+        if log10(min_age) >= 2:
             x = -2
         else:
             x = -1
-        for t in range(int(truncate(min_age, x)), int(max_age), step):
+        for t in range(int(truncate(min_age, x)), int(max_age)+step, step):
             if t == 0:
                 t += 1
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
             self.ax_conc.plot(x, y, 'ks', markersize=3)
             self.ax_conc.text(x, y, str(t), style='italic')
-
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
