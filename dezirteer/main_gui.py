@@ -1112,21 +1112,24 @@ class OperationWindow(Frame):
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
                 "peaks at="
-                i=1
+                i = 1
                 for p in peaks():
-                    if i<len(peaks()):
-                        text_to_show+=str(p)+", "
+                    if len(peaks()) > 10 and i == 10:
+                        text_to_show += "\n (for more peaks click STATISTICS)"
+                        break
+                    if i < len(peaks()):
+                        text_to_show += str(p)+", "
                     else:
-                        text_to_show+=str(p)
-                    if i % 5 == 0 and i<len(peaks()):
-                        text_to_show+="\n    "
-                    i+=1
+                        text_to_show += str(p)
+                    if i % 5 == 0 and i < len(peaks()):
+                        text_to_show += "\n    "
+                    i += 1
         else:
             if g_plot_txt != "":
                 g_plot_txt.remove()
             text_to_show = ""
 
-        g_plot_txt = self.ax_cum.text(0.05, 0.40, text_to_show, transform=self.ax_cum.transAxes)
+        g_plot_txt = self.ax_cum.text(0.05, 0.10, text_to_show, transform=self.ax_cum.transAxes)
         if g_graph_settings.pdp_kde_hist != 2: #if not histogram
             self.plot_peaks()
         self.canvas_cum.draw()
