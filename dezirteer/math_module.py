@@ -79,7 +79,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
         # age errors
         #Achtung! Need to use propagated uncertainties!
-        if zir.pb206_pb204[2]!=-1 and zir.pb207_pb204[2]!=-1 and zir.pb208_pb204[2]!=-1:
+        if zir.pb206_pb204[2] !=- 1 and zir.pb207_pb204[2] !=- 1 and zir.pb208_pb204[2] !=- 1:
             tmp64 = (zir.pb206_pb204[2] / zir.pb206_pb204[0]) ** 2
             tmp74 = (zir.pb207_pb204[2] / zir.pb207_pb204[0]) ** 2
             tmp84 = (zir.pb208_pb204[2] / zir.pb208_pb204[0]) ** 2
@@ -144,12 +144,12 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t = t + delta  #
         corr_age[0] = t
         # error
-        if zir.pb206_u238[2]!=-1 and zir.pb207_pb206[2]!=-1:
-            r68er=zir.pb206_u238[2]
-            r82er=zir.pb208_th232[2]
+        if zir.pb206_u238[2] !=- 1 and zir.pb207_pb206[2] !=- 1:
+            r68er = zir.pb206_u238[2]
+            r82er = zir.pb208_th232[2]
         else:
-            r68er=zir.pb206_u238[1]
-            r82er=zir.pb208_th232[1]
+            r68er = zir.pb206_u238[1]
+            r82er = zir.pb208_th232[1]
         c1 = 0
         c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0), 2)
         n1 = 0
@@ -160,21 +160,21 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
     elif corr_type == 3:  # and
         # age
-        t2 =0  # NEED CORRECTION!!!  age of pb lost, must entered by user
+        t2 = 0  # NEED CORRECTION!!!  age of pb lost, must entered by user
         t1 = zir.pb207_u235
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
-        c7=15.628/18.7
-        c8=38.63/18.7
-        x=zir.pb207_u235[0]
-        y=zir.pb206_u238[0]
-        z=zir.pb208_th232[0]
-        u=zir.u238_pb204/zir.th232_pb204
-        k=U238_U235
+        c7 = 15.628/18.7
+        c8 = 38.63/18.7
+        x = zir.pb207_u235[0]
+        y = zir.pb206_u238[0]
+        z = zir.pb208_th232[0]
+        u = zir.u238_pb204/zir.th232_pb204
+        k = U238_U235
         corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
-        mkages=[]
-        mkfc=[]
+        mkages = []
+        mkfc = []
         #sigma errors
         for i in range(100):
             mkx=random.normalvariate(0,1)
@@ -186,9 +186,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t1=calc_age(mkx)[0]
             mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
             mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
-        ageer=np.std(mkages)
-        fcer=np.std(mkfc)
-        corr_age[1]=ageer
+        ageer = np.std(mkages)
+        fcer = np.std(mkfc)
+        corr_age[1] = ageer
 
     else:
         corr_age = [-1, -1]

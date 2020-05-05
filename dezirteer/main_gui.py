@@ -1062,6 +1062,7 @@ class OperationWindow(Frame):
             self.entHistBinwidth.configure(state="disabled")
             self.entAgeCutoff.configure(state="disabled")
             self.cbErrFilter.configure(state="readonly")
+            self.cbPbc.configure(state="disabled")
 
 
             self.lboxSamples.delete(0, END)
@@ -1214,30 +1215,28 @@ class OperationWindow(Frame):
 
         if max_age-min_age > 1000:
             step = 500
-        elif max_age-min_age < 1000 and max_age-min_age>500:
+        elif 500 < max_age-min_age < 1000:
             step = 250
-
-        elif max_age-min_age < 500 and max_age-min_age>100:
+        elif 100 < max_age-min_age < 500:
             step = 50
-
-        elif max_age-min_age < 100 and max_age-min_age>50:
+        elif 50 < max_age-min_age < 100:
             step = 25
         else:
             step = 10
-
-
         if log10(min_age) < 1:
-            x = 0
-        elif log10(min_age)>=2:
+            x = -2
+        elif log10(min_age) >= 2:
             x = -2
         else:
             x = -1
         for t in range(int(truncate(min_age, x)), int(max_age), step):
-
+            if t == 0:
+                t += 1
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
             self.ax_conc.plot(x, y, 'ks', markersize=3)
             self.ax_conc.text(x, y, str(t), style='italic')
+
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
