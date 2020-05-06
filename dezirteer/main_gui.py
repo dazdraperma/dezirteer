@@ -81,7 +81,7 @@ def show_calc_frame(container):
             list_of_labels[counter*2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
             list_of_labels[counter*2].configure(text=n)
             list_of_labels[counter*2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
-            list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 1))
+            list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 2))
             counter += 1
 
         for x in range(0, 8):
@@ -94,12 +94,12 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 2].grid(row=counter + 1, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 2].configure(text="KS p-val")
         list_of_labels[counter * 2 + 3].grid(row=counter + 1, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 3].configure(text=g_pval_dval[0])
+        list_of_labels[counter * 2 + 3].configure(text=round(g_pval_dval[0], 2))
 
         list_of_labels[counter * 2 + 4].grid(row=counter + 2, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 4].configure(text="KS d-val")
         list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 5].configure(text=g_pval_dval[1])
+        list_of_labels[counter * 2 + 5].configure(text=round(g_pval_dval[1], 2))
 
 
 
@@ -1109,7 +1109,7 @@ class OperationWindow(Frame):
                 "WA age="+str(round((g_number_of_good_grains[1]), 1))+\
                 "±"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
                 "    ±"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
-                "MSWD="+str(int(g_number_of_good_grains[4]))+"\n" \
+                "MSWD="+str(round(g_number_of_good_grains[4], 2))+"\n" \
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
                 "peaks at="
@@ -1473,10 +1473,10 @@ class OperationWindow(Frame):
 
 
             #Testing the common lead routine
-            for zircon, zircon_age in g_grainset.good_set.items():
+            '''for zircon, zircon_age in g_grainset.good_set.items():
                 for i in range(2):
                     corr_age = pbc_corr(zircon, i)
-                    print(corr_age)
+                    print(corr_age)'''
 
 
 # The following code is added to facilitate the Scrolled widgets
