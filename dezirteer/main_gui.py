@@ -1245,7 +1245,7 @@ class OperationWindow(Frame):
                 corr_coef = zir.corr_coef_75_68
                 x_conc = zir.pb207_u235[0]  # x-center of the oval
                 y_conc = zir.pb206_u238[0]  # y-center of the oval
-                x_err = zir.pb207_u235[gui_support.varUncType.get()] #asdf
+                x_err = zir.pb207_u235[gui_support.varUncType.get()]
                 y_err = zir.pb206_u238[gui_support.varUncType.get()]
             # Tera-Wasserburg concordia
             else:
@@ -1470,6 +1470,13 @@ class OperationWindow(Frame):
 
         finally:
             self.plot_conc_text_peaks()
+
+
+            #Testing the common lead routine
+            for zircon, zircon_age in g_grainset.good_set.items():
+                corr_age = pbc_corr(zircon, 0)
+                print(corr_age)
+
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):

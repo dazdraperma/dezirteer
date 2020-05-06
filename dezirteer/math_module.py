@@ -61,9 +61,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     corr_age = [-1, -1]
     if corr_type == 0:  # 204
         # parts of common lead in measured
-        f6 = compb(zir.calc_age(0), 0) / zir.pb206_pb204[0]
-        f7 = compb(zir.calc_age(0), 1) / zir.pb207_pb204[0]
-        f8 = compb(zir.calc_age(0), 2) / zir.pb208_pb204[0]
+        f6 = compb(zir.calc_age(0)[0], 0) / zir.pb206_pb204[0]
+        f7 = compb(zir.calc_age(0)[0], 1) / zir.pb207_pb204[0]
+        f8 = compb(zir.calc_age(0)[0], 2) / zir.pb208_pb204[0]
 
         # 204pb corrected ratios
         r68 = zir.pb206_u238[0] * (1 - f6)
