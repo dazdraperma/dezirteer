@@ -105,9 +105,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while delta > 0.001:
-            f = U238_U235 * compb(zir.calc_age(0), 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
+            f = U238_U235 * compb(zir.calc_age(0)[0], 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
                 calc_ratio(t)[1]
-            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (
+            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0)[0], 3) * LAMBDA_238 * (
                         calc_ratio(t)[0] + 1)
             delta = -f / deriv
             t = t + delta
@@ -122,10 +122,10 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             
         r75var = U238_U235 ** 2 * (
                     (zir.pb206_u238[0] * r76er) ** 2 + (zir.pb207_pb206[0] * r68er) ** 2)
-        denom = (U238_U235 * compb(zir.calc_age(0), 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
+        denom = (U238_U235 * compb(zir.calc_age(0)[0], 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
                     calc_ratio(t)[1] + 1)) ** 2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
-        n2 = U238_U235 ** 2 * compb(zir.calc_age(0), 3) * (compb(zir.calc_age(0), 3) - 2 * zir.pb207_pb206[0]) * \
+        n2 = U238_U235 ** 2 * compb(zir.calc_age(0)[0], 3) * (compb(zir.calc_age(0)[0], 3) - 2 * zir.pb207_pb206[0]) * \
              r68er ** 2
         n = n1 + n2 + r75var
         corr_age[1] = sqrt(n / denom)
@@ -135,9 +135,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # age
         while delta > 0.001:
             f = zir.pb206_u238[0] - (calc_ratio(t)[0] + 1) + 1 - zir.th232_pb204[0] / zir.u238_pb204[0] * compb(
-                zir.calc_age(0), 0) / \
-                compb(zir.calc_age(0), 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
-            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0),
+                zir.calc_age(0)[0], 0) / \
+                compb(zir.calc_age(0)[0], 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
+            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0)[0], 0) / compb(zir.calc_age(0)[0],
                                                                                                2) * LAMBDA_232 * \
                     (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)
             delta = -f / deriv
@@ -151,7 +151,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             r68er = zir.pb206_u238[1]
             r82er = zir.pb208_th232[1]
         c1 = 0
-        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0), 0) / compb(zir.calc_age(0), 2)
+        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0)[0], 0) / compb(zir.calc_age(0)[0], 2)
         n1 = 0
         n2 = c2 * r82er * r68er ** 2
         n = n1 + n2
