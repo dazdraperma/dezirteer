@@ -44,11 +44,11 @@ class TestGui(unittest.TestCase):
         #err filter value,
         #207/235 used (0==no, 1==yes)
         g_matrix_inputs = [
-            [4, 10, 0, 5, 1],  #test 0
-            [20, 10, 0, 5, 0], #test 1
-            [1, 1, 0, 5, 0],  #test 2
-            [20, 10, 1, 1.2, 0],  #test 3
-            [20, 10, 1, 2.5, 1]  # test 4
+            [4, 10, 0, 5, 1],   #test 0
+            [20, 10, 0, 5, 0],  #test 1
+            [1, 1, 0, 5, 0],    #test 2
+            [20, 10, 1, 1.2, 0],#test 3
+            [20, 10, 1, 2.5, 1] #test 4
         ]
 
         # Format:
@@ -58,33 +58,23 @@ class TestGui(unittest.TestCase):
         # FileN[n, WA, 1sigma, 95%, MSWD, maxage, minage]
         g_matrix_results = [
             [#file 0
-                [165, 877, 0.39, 114, 22555, 3265, 404], #file 0, test 0
-                [173, 908, 0.38, 116, 23593, 3265, 404], #file 0, test 1
+                [165, 877, 0.39, 114, 22555, 3265, 404],#file 0, test 0
+                [173, 908, 0.38, 116, 23593, 3265, 404],#file 0, test 1
                 [67, 830, 0.64, 171, 18181, 2930, 408], #file 0, test 2
-                [169, 908, 0.38, 117, 24145, 3265, 404],  # file 0, test 3
-                [122, 725, 0.41, 97, 14388, 2665, 404]  # file 0, test 4
+                [169, 908, 0.38, 117, 24145, 3265, 404],#file 0, test 3
+                [122, 725, 0.41, 97, 14388, 2665, 404]  #file 0, test 4
             ],
             [#file 1
-                [104, 267, 0.4, 31, 1604, 1081, 133],  #file 1, test 0
-                [146, 258, 0.32, 22, 1289, 2695, 133], #file 1, test 1
-                [44, 311, 0.73, 63, 1895, 1081, 177],   #file 1, test 2
-                [13, 236, 0.85, 69, 1406, 2695, 160],  # file 1, test 3
-                [15, 260, 0.87, 62, 1113, 767, 160]  # file 1, test 4
+                [104, 267, 0.4, 31, 1604, 1081, 133], #file 1, test 0
+                [146, 258, 0.32, 22, 1289, 2695, 133],#file 1, test 1
+                [44, 311, 0.73, 63, 1895, 1081, 177], #file 1, test 2
+                [13, 236, 0.85, 69, 1406, 2695, 160], #file 1, test 3
+                [15, 260, 0.87, 62, 1113, 767, 160]   #file 1, test 4
             ]
         ]
 
     def setUp(self):
-        self.zir = math_module.Analysis('test_zircon', 15, (0.2003, 0.0008, 0.0046), (2.082, 0.009, 0.07), 0.6, 0.6,
-                                   (0.0617, 0.0003, 0.0003), (0.758, 0.0003, 0.0015), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                                   (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), 1)
         self.set_vars()
-
-    def test_calc_ratio(self):
-        result = math_module.calc_ratio(1000)[0]
-        self.assertEqual(result, 0.16780392747297124)
-
-    def test_analysis(self):
-        self.assertEqual(round(self.zir.calc_age(0)[0], 0), 1177)
 
     def test_matrices_file(self):
         for file_num in range(len(g_matrix_filenames)):
@@ -108,8 +98,6 @@ class TestGui(unittest.TestCase):
                 self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[file_num][test_num][4])
                 self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[file_num][test_num][5])
                 self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[file_num][test_num][6])
-
-
 
 
 if __name__ == '__main__':
