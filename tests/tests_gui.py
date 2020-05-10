@@ -109,6 +109,7 @@ class TestGui(unittest.TestCase):
                 with open(file_name, 'a') as the_file:
                     the_file.write(str(g_matrix_inputs[test_num]) + '\n')
                     the_file.write('Output: ' + str(g_matrix_results[file_num][test_num]) + '\n')
-
+        with open(file_name, 'a') as the_file:
+                    the_file.write('Success!')
 if __name__ == '__main__':
     unittest.main()
