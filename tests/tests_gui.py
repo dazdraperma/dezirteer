@@ -78,7 +78,7 @@ class TestGui(unittest.TestCase):
         self.set_vars()
 
     def test_matrices_file(self):
-        file_name = 'logs/'+str(datetime.datetime.now())
+        file_name = 'logs/'+str(datetime.datetime.now())+'_gui'
         file_name = file_name.replace(':', '_')
         file_name = file_name + '.log'
         for file_num in range(len(g_matrix_filenames)):
@@ -89,7 +89,7 @@ class TestGui(unittest.TestCase):
 
             for test_num in range(len(g_matrix_inputs)):
                 with open(file_name, 'a') as the_file:
-                    the_file.write('Input: '+str(g_matrix_inputs[test_num]) + ': \n')
+                    the_file.write('Test #'+str(test_num)+' input: ')
                 gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange)
                 gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange)
 
@@ -107,8 +107,8 @@ class TestGui(unittest.TestCase):
                 self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[file_num][test_num][5])
                 self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[file_num][test_num][6])
                 with open(file_name, 'a') as the_file:
-                    the_file.write('Output: ')
-                    the_file.write(str(g_matrix_results[file_num][test_num]) + ': \n')
+                    the_file.write(str(g_matrix_inputs[test_num]) + '\n')
+                    the_file.write('Output: ' + str(g_matrix_results[file_num][test_num]) + '\n')
 
 if __name__ == '__main__':
     unittest.main()
