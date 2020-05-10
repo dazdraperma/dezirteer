@@ -130,8 +130,6 @@ class OperationWindow(Frame):
         master.rowconfigure(0, weight=1)
         master.rowconfigure(2, weight=1)
 
-
-
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
         self.frGraph.configure(relief=GROOVE)
@@ -145,7 +143,6 @@ class OperationWindow(Frame):
         self.frGraph.columnconfigure(1, weight=1)
         self.frGraph.columnconfigure(2, weight=1)
         self.frGraph.rowconfigure(0, weight=1)
-
 
         #______________frCon
         self.frConc = Frame(self.frGraph)
@@ -957,7 +954,7 @@ class OperationWindow(Frame):
         obj.configure(highlightbackground="#d9d9d9")
         obj.configure(highlightcolor="black")
 
-    def open_and_load_file(self):
+    def open_and_load_file(self, *args):
         try:
             try:
                 global g_plot_txt, g_directory, g_file_type, g_filters, g_list_col_names, g_list_of_samples, \
@@ -966,15 +963,24 @@ class OperationWindow(Frame):
                     g_plot_txt.remove()
                 keep_prev = False
                 g_filters.sample_name_filter = []
-                user_file = filedialog.askopenfilename(
-                    initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
+
+                #when run as a main app
+
+                # for unit test
+                if args:
+                    user_file = args[0]
+
+                # when module run directly, not imported
+                else:
+                    user_file = filedialog.askopenfilename(initialdir = g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
                                                                     ("Comma separated values files", "*.csv"),
                                                                     ("All files", "*.*")))
+
                 if user_file != '':
                     if g_grainset != []:
                         keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
                     g_directory = os.path.split(user_file)[0]
-                    root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version )
+                    root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version)
                     an_set = []
                     file = imported_file(user_file)
                     g_file_type = file[1]
@@ -1112,7 +1118,7 @@ class OperationWindow(Frame):
                 "MSWD="+str(round(g_number_of_good_grains[4], 2))+"\n" \
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
-                "peaks at="
+                "peaks at "
                 i = 1
                 for p in peaks():
                     if len(peaks()) > 10 and i == 10:
