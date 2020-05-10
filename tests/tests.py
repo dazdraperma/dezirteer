@@ -22,13 +22,14 @@ except ImportError:
 class TesGui(unittest.TestCase):
 
     def set_vars(self):
-        global g_filters, g_table, g_grainset, g_list_col_names, g_operwindow, g_pars_onChange
+        global g_filters, g_table, g_grainset, g_list_col_names, g_operwindow, g_pars_onChange, g_file_location_and_name
         g_operwindow = main_gui.OperationWindow(Tk())
         g_filters = main_gui.g_filters
         g_table = g_operwindow.Table
         g_grainset = main_gui.g_grainset
         g_list_col_names = main_gui.g_list_col_names
         g_pars_onChange = [g_filters, g_table, g_grainset, g_list_col_names]
+        g_file_location_and_name = "C:/Program Files (x86)/Dezirteer/Examples/iolite_example.txt"
 
 
     '''def verify_values(self, n, wa, sigma, ninety_five, mswd, max_age, min_age):
@@ -55,7 +56,7 @@ class TesGui(unittest.TestCase):
         self.assertEqual(round(self.zir.calc_age(0)[0], 0), 1177)
 
     def test_discordances(self):
-        g_operwindow.open_and_load_file("C:/Program Files (x86)/Dezirteer/Examples/iolite_example.txt")
+        g_operwindow.open_and_load_file(g_file_location_and_name)
         self.set_vars()
         gui_support.onChange(6, 4, g_pars_onChange)
         gui_support.onChange(7, 10, g_pars_onChange)
