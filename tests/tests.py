@@ -43,18 +43,6 @@ class TestGui(unittest.TestCase):
                             [173, 908, 0.38, 116, 23593, 3265, 404],
                             [67, 830, 0.64, 171, 18181, 2930, 408]]
 
-
-
-    '''def verify_values(self, n, wa, sigma, ninety_five, mswd, max_age, min_age):
-        is_n_good = (main_gui.g_number_of_good_grains[0] ==  n)
-        is_wa_good = (int(main_gui.g_number_of_good_grains[1]) == wa)
-        is_sigma_good = (round(main_gui.g_number_of_good_grains[2], 2) == sigma)
-        is_ninety_five_good = (int(main_gui.g_number_of_good_grains[3]) == ninety_five)
-        is_mswd_good = (int(main_gui.g_number_of_good_grains[4]) == mswd)
-        is_max_age_good = (main_gui.g_number_of_good_grains[5] == max_age)
-        is_min_age_good = (main_gui.g_number_of_good_grains[6] == min_age)
-        return [is_n_good, is_wa_good, is_sigma_good, is_ninety_five_good, is_mswd_good, is_max_age_good, is_min_age_good]'''
-
     def setUp(self):
         self.zir = math_module.Analysis('test_zircon', 15, (0.2003, 0.0008, 0.0046), (2.082, 0.009, 0.07), 0.6, 0.6,
                                    (0.0617, 0.0003, 0.0003), (0.758, 0.0003, 0.0015), (0, 0, 0), (0, 0, 0), (0, 0, 0),
@@ -68,7 +56,7 @@ class TestGui(unittest.TestCase):
     def test_analysis(self):
         self.assertEqual(round(self.zir.calc_age(0)[0], 0), 1177)
 
-    def test_discordances(self):
+    def test_matrices(self):
         g_operwindow.open_and_load_file(g_file_location_and_name)
         self.set_vars()
 
@@ -83,34 +71,6 @@ class TestGui(unittest.TestCase):
             self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[test_num][4])
             self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[test_num][5])
             self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[test_num][6])
-
-        '''test_num = 1
-        gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange)
-        gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange)
-
-        g_operwindow.clear_and_plot()
-        self.assertEqual(main_gui.g_number_of_good_grains[0], g_matrix_results[test_num][0])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), g_matrix_results[test_num][1])
-        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), g_matrix_results[test_num][2])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), g_matrix_results[test_num][3])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[test_num][4])
-        self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[test_num][5])
-        self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[test_num][6])
-
-        test_num = 2
-        gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange)
-        gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange)
-
-        g_operwindow.clear_and_plot()
-        self.assertEqual(main_gui.g_number_of_good_grains[0], g_matrix_results[test_num][0])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), g_matrix_results[test_num][1])
-        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), g_matrix_results[test_num][2])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), g_matrix_results[test_num][3])
-        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[test_num][4])
-        self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[test_num][5])
-        self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[test_num][6])'''
-
-
 
 
 if __name__ == '__main__':
