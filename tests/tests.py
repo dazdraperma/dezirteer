@@ -29,7 +29,7 @@ class TesGui(unittest.TestCase):
         g_grainset = main_gui.g_grainset
         g_list_col_names = main_gui.g_list_col_names
         g_pars_onChange = [g_filters, g_table, g_grainset, g_list_col_names]
-        g_file_location_and_name = "C:/Program Files (x86)/Dezirteer/Examples/iolite_example.txt"
+        g_file_location_and_name = "iolite_example.txt"
 
 
     '''def verify_values(self, n, wa, sigma, ninety_five, mswd, max_age, min_age):
