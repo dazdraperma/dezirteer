@@ -4,6 +4,7 @@ sys.path.append('../dezirteer')
 import math_module
 import main_gui
 import gui_support
+import datetime
 
 try:
     from Tkinter import *
@@ -77,11 +78,18 @@ class TestGui(unittest.TestCase):
         self.set_vars()
 
     def test_matrices_file(self):
+        file_name = 'logs/'+str(datetime.datetime.now())
+        file_name = file_name.replace(':', '_')
+        file_name = file_name + '.log'
         for file_num in range(len(g_matrix_filenames)):
+            with open(file_name, 'a') as the_file:
+                the_file.write(str(g_matrix_filenames[file_num])+': \n')
             g_operwindow.open_and_load_file(g_matrix_filenames[file_num], False)
             self.set_vars()
 
             for test_num in range(len(g_matrix_inputs)):
+                with open(file_name, 'a') as the_file:
+                    the_file.write('Input: '+str(g_matrix_inputs[test_num]) + ': \n')
                 gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange)
                 gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange)
 
@@ -98,7 +106,9 @@ class TestGui(unittest.TestCase):
                 self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[file_num][test_num][4])
                 self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[file_num][test_num][5])
                 self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[file_num][test_num][6])
-
+                with open(file_name, 'a') as the_file:
+                    the_file.write('Output: ')
+                    the_file.write(str(g_matrix_results[file_num][test_num]) + ': \n')
 
 if __name__ == '__main__':
     unittest.main()

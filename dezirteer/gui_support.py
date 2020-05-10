@@ -339,59 +339,6 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             i += 1
         file.write("\n")
         while j < len(p_grainset):
-            '''name = str(an_list[j])
-            
-            rat208232 = str(an_list[j].pb208_th232[0])
-            errRat208232Int = str(an_list[j].pb208_th232[1])
-            errRat208232Prop = str(an_list[j].pb208_th232[2])
-
-            rat207206 = str(an_list[j].pb207_pb206[0])
-            errRat207206Int = str(an_list[j].pb207_pb206[1])
-            errRat207206Prop = str(an_list[j].pb207_pb206[2])
-            
-            rat207235 = str(an_list[j].pb207_u235[0])
-            errRat207235Int = str(an_list[j].pb207_u235[1])
-            errRat207235Prop = str(an_list[j].pb207_u235[2])
-
-            rat206238 = str(an_list[j].pb206_u238[0])
-            errRat206238Int = str(an_list[j].pb206_u238[1])
-            errRat206238Prop = str(an_list[j].pb206_u238[2])
-
-            corr_coef_75_68 = str(an_list[j].corr_coef_75_68)
-            corr_coef_86_76 = str(an_list[j].corr_coef_86_76)
-
-            u_conc =  str(an_list[j].u_conc[0])
-            errU_concInt= str(an_list[j].u_conc[1])
-            errU_concProp = str(an_list[j].u_conc[2])
-            
-            pbc = str(an_list[j].pbc[0])
-            errPbcInt = str(an_list[j].pbc[1])
-            errPbcProp = str(an_list[j].pbc[2])
-            
-            rat206_204 = str(an_list[j].pb206_pb204[0])
-            errRat206_204Int = str(an_list[j].pb206_pb204[1])
-            errRat206_204 = str(an_list[j].pb206_pb204[2])
-
-            rat207_204 = str(an_list[j].pb207_pb204[0])
-            errRat207_204Int = str(an_list[j].pb207_pb204[1])
-            errRat207_204Prop = str(an_list[j].pb207_pb204[2])
-
-            rat208_204 = str(an_list[j].pb208_pb204[0])
-            errRat208_204Int = str(an_list[j].pb208_pb204[1])
-            errRat208_204Prop = str(an_list[j].pb208_pb204[2])
-
-            rat232_204 = str(an_list[j].th232_pb204[0])
-            errRat232_204Int = str(an_list[j].th232_pb204[1])
-            errRat232_204Prop = str(an_list[j].th232_pb204[2])
-
-            rat238_204 = str(an_list[j].u238_pb204[0])
-            errRat238_204Int = str(an_list[j].u238_pb204[1])
-            errRat238_204Prop = str(an_list[j].u238_pb204[2])
-            
-            age208_232 = str(an_list[j].calc_age(2, int_prop)[0])
-            errAge208_232Int = age208_232 = str(an_list[j].calc_age(2, int_prop)[1])
-            errAge208_232Prop =age208_232 = str(an_list[j].calc_age(2, int_prop)[2])'''
-
             l_str = ('\n' +
                        str(an_list[j]) + ',' +
                        str(an_list[j].pb208_th232[0]) + ',' +
