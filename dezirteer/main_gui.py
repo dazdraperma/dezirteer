@@ -572,7 +572,8 @@ class OperationWindow(Frame):
         self.cbErrFilter.configure(values=('Not used', 'Used'))
         self.cbErrFilter.configure(width=10)
         self.cbErrFilter.current(0)
-        self.cbErrFilter.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(5, self.cbErrFilter.current(),
+        self.cbErrFilter.bind('<<ComboboxSelected>>',
+                              lambda event: gui_support.onChange(5, self.cbErrFilter.current(),
                                                                                         pars_onChange,
                                                                                         self.entErrFilter.get(),
                                                                                         self.entErrFilter,
@@ -587,7 +588,7 @@ class OperationWindow(Frame):
         self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
         self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
                                                                                 gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange, pars_onChange,))
+                                                                                pars_onChange))
 
         self.lbUConcFilter = Label(self.frFilter)
         self.lbUConcFilter.grid(row=6, column=1, columnspan=3, pady=4, sticky='w')
