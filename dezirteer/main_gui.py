@@ -537,6 +537,7 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
             ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entPosDiscFilt.configure(state=DISABLED)
+
         self.entPosDiscFilt.configure(width=3)
 
         self.lbFilterByError = Label(self.frFilter)
