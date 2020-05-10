@@ -19,10 +19,12 @@ except ImportError:
     py3 = True
 
 
-class TesGui(unittest.TestCase):
+class TestGui(unittest.TestCase):
 
     def set_vars(self):
-        global g_filters, g_table, g_grainset, g_list_col_names, g_operwindow, g_pars_onChange, g_file_location_and_name
+        global g_filters, g_table, g_grainset, g_list_col_names, g_operwindow, g_pars_onChange, g_file_location_and_name, \
+            g_matrix_results, g_matrix_inputs
+
         g_operwindow = main_gui.OperationWindow(Tk())
         g_filters = main_gui.g_filters
         g_table = g_operwindow.Table
@@ -30,7 +32,8 @@ class TesGui(unittest.TestCase):
         g_list_col_names = main_gui.g_list_col_names
         g_pars_onChange = [g_filters, g_table, g_grainset, g_list_col_names]
         g_file_location_and_name = "iolite_example.txt"
-
+        g_matrix_inputs = [[4, 10], [20, 10]]
+        g_matrix_results = [[165, 877, 0.39, 114, 22555, 3265, 404], [173, 908, 0.38, 116, 23593, 3265, 404]]
 
     '''def verify_values(self, n, wa, sigma, ninety_five, mswd, max_age, min_age):
         is_n_good = (main_gui.g_number_of_good_grains[0] ==  n)
@@ -58,8 +61,8 @@ class TesGui(unittest.TestCase):
     def test_discordances(self):
         g_operwindow.open_and_load_file(g_file_location_and_name)
         self.set_vars()
-        gui_support.onChange(6, 4, g_pars_onChange)
-        gui_support.onChange(7, 10, g_pars_onChange)
+        gui_support.onChange(6, g_matrix_inputs[0][0], g_pars_onChange)
+        gui_support.onChange(7, g_matrix_inputs[0][1], g_pars_onChange)
         g_operwindow.clear_and_plot()
 
         #ver_values = self.verify_values(165, 877, 0.39, 114, 22555, 3265, 404)
@@ -77,24 +80,26 @@ class TesGui(unittest.TestCase):
         self.assertEqual(ver_values[6], True)'''
 
         # this is the longest and least neat code, but very easy to debug
-        self.assertEqual(main_gui.g_number_of_good_grains[0], 165)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), 877)
-        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), 0.39)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), 114)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), 22555)
-        self.assertEqual(main_gui.g_number_of_good_grains[5], 3265)
-        self.assertEqual(main_gui.g_number_of_good_grains[6], 404)
+        self.assertEqual(main_gui.g_number_of_good_grains[0], g_matrix_results[0][0])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), g_matrix_results[0][1])
+        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), g_matrix_results[0][2])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), g_matrix_results[0][3])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[0][4])
+        self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[0][5])
+        self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[0][6])
 
-        gui_support.onChange(6, 20, g_pars_onChange)
-        gui_support.onChange(7, 10, g_pars_onChange)
+
+        gui_support.onChange(6, g_matrix_inputs[1][0], g_pars_onChange)
+        gui_support.onChange(7, g_matrix_inputs[1][1], g_pars_onChange)
+
         g_operwindow.clear_and_plot()
-        self.assertEqual(main_gui.g_number_of_good_grains[0], 173)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), 908)
-        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), 0.38)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), 116)
-        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), 23593)
-        self.assertEqual(main_gui.g_number_of_good_grains[5], 3265)
-        self.assertEqual(main_gui.g_number_of_good_grains[6], 404)
+        self.assertEqual(main_gui.g_number_of_good_grains[0], g_matrix_results[1][0])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[1]), g_matrix_results[1][1])
+        self.assertEqual(round(main_gui.g_number_of_good_grains[2], 2), g_matrix_results[1][2])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[3]), g_matrix_results[1][3])
+        self.assertEqual(int(main_gui.g_number_of_good_grains[4]), g_matrix_results[1][4])
+        self.assertEqual(main_gui.g_number_of_good_grains[5], g_matrix_results[1][5])
+        self.assertEqual(main_gui.g_number_of_good_grains[6], g_matrix_results[1][6])
 
         gui_support.onChange(6, 1, g_pars_onChange)
         gui_support.onChange(7, 1, g_pars_onChange)
