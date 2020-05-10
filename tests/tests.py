@@ -1,17 +1,9 @@
 import unittest
-import os
-import gui_support
+import sys
+sys.path.append('../dezirteer')
 import math_module
 import main_gui
 import matplotlib
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.figure import Figure
-from matplotlib.patches import Ellipse
-from matplotlib.patches import Rectangle
-from tkinter import filedialog
-from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
-from scipy import stats
-from numpy import log10
 
 
 try:
