@@ -537,7 +537,6 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
             ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
         self.entPosDiscFilt.configure(state=DISABLED)
-
         self.entPosDiscFilt.configure(width=3)
 
         self.lbFilterByError = Label(self.frFilter)
@@ -560,7 +559,6 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(width=3)
         self.entErrFilter.configure(state=DISABLED)
 
-
         self.lblErrCutoff = Label(self.frFilter)
         self.lblErrCutoff.grid(row=4, column=4, sticky='w')
         self.apply_style(self.lblErrCutoff)
@@ -579,7 +577,6 @@ class OperationWindow(Frame):
                                                                                         self.entErrFilter.get(),
                                                                                         self.entErrFilter,
                                                                                         self.chbInclude207235Err))
-
 
         self.chbInclude207235Err = Checkbutton(self.frFilter)
         self.chbInclude207235Err.grid(row=5, column=1, columnspan=3, sticky='w', pady=5)
@@ -970,15 +967,17 @@ class OperationWindow(Frame):
                 # for unit test
                 if args:
                     user_file = args[0]
+                    keep_prev = args[1]
+
 
                 # when module run directly, not imported
                 else:
-                    user_file = filedialog.askopenfilename(initialdir = g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
+                    user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
                                                                     ("Comma separated values files", "*.csv"),
                                                                     ("All files", "*.*")))
 
                 if user_file != '':
-                    if g_grainset != []:
+                    if g_grainset != [] and not args:
                         keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
                     g_directory = os.path.split(user_file)[0]
                     root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version)
