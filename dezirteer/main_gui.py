@@ -1,4 +1,3 @@
-#test
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
@@ -72,7 +71,7 @@ def show_calc_frame(container):
         frContainer.configure(highlightcolor="black")
         frContainer.pack(fill=BOTH, expand=1)
         container.resizable(False, False)
-        elements = ["number of good grains", "weighted average age", "±1σ", "±95% conf.", "MSWD", "max age", "min age"]
+        elements = ["number of good grains", "weighted average age", "±1σ", "95% conf.", "MSWD", "max age", "min age"]
         list_of_labels = []
         counter = 0
         for n in elements:
@@ -1118,8 +1117,8 @@ class OperationWindow(Frame):
                 "Min age="+str(int(g_number_of_good_grains[6]))+"; "\
                 "Max age="+str(int(g_number_of_good_grains[5]))+"\n" \
                 "WA age="+str(round((g_number_of_good_grains[1]), 1))+\
-                "±"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
-                "    ±"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
+                "+-"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
+                "    +-"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
                 "MSWD="+str(round(g_number_of_good_grains[4], 2))+"\n" \
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
