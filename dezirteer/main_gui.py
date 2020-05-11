@@ -403,7 +403,8 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
         self.entAgeCutoff.configure(command=lambda: gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange))
-        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
+        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19,
+                                                                              float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
                                                                               pars_onChange)))
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
@@ -420,8 +421,11 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(state=DISABLED)
         self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
         self.cbWhichAge.current(0)
-        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
-                                                                                       pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3,
+                                                                                       self.cbWhichAge.current(),
+                                                                                       pars_onChange,
+                                                                                       self.entAgeCutoff.get(),
+                                                                                       self.entAgeCutoff))
 
 
 
