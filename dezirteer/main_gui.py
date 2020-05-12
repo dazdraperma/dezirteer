@@ -1,4 +1,3 @@
-#test
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
@@ -72,7 +71,7 @@ def show_calc_frame(container):
         frContainer.configure(highlightcolor="black")
         frContainer.pack(fill=BOTH, expand=1)
         container.resizable(False, False)
-        elements = ["number of good grains", "weighted average age", "±1σ", "±95% conf.", "MSWD", "max age", "min age"]
+        elements = ["number of good grains", "weighted average age", "±1σ", "95% conf.", "MSWD", "max age", "min age"]
         list_of_labels = []
         counter = 0
         for n in elements:
@@ -81,7 +80,7 @@ def show_calc_frame(container):
             list_of_labels[counter*2].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
             list_of_labels[counter*2].configure(text=n)
             list_of_labels[counter*2 + 1].grid(row=counter, column=1, pady=5, padx=5, sticky='w')
-            list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 1))
+            list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 2))
             counter += 1
 
         for x in range(0, 8):
@@ -94,12 +93,12 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 2].grid(row=counter + 1, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 2].configure(text="KS p-val")
         list_of_labels[counter * 2 + 3].grid(row=counter + 1, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 3].configure(text=g_pval_dval[0])
+        list_of_labels[counter * 2 + 3].configure(text=round(g_pval_dval[0], 2))
 
         list_of_labels[counter * 2 + 4].grid(row=counter + 2, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 4].configure(text="KS d-val")
         list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
-        list_of_labels[counter * 2 + 5].configure(text=g_pval_dval[1])
+        list_of_labels[counter * 2 + 5].configure(text=round(g_pval_dval[1], 2))
 
 
 
@@ -130,8 +129,6 @@ class OperationWindow(Frame):
         master.rowconfigure(0, weight=1)
         master.rowconfigure(2, weight=1)
 
-
-
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
         self.frGraph.configure(relief=GROOVE)
@@ -145,7 +142,6 @@ class OperationWindow(Frame):
         self.frGraph.columnconfigure(1, weight=1)
         self.frGraph.columnconfigure(2, weight=1)
         self.frGraph.rowconfigure(0, weight=1)
-
 
         #______________frCon
         self.frConc = Frame(self.frGraph)
@@ -406,7 +402,8 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
         self.entAgeCutoff.configure(command=lambda: gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange))
-        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19, float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
+        self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19,
+                                                                              float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
                                                                               pars_onChange)))
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
@@ -423,8 +420,11 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(state=DISABLED)
         self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
         self.cbWhichAge.current(0)
-        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3, self.cbWhichAge.current(),
-                                                                                       pars_onChange, self.entAgeCutoff.get(), self.entAgeCutoff))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3,
+                                                                                       self.cbWhichAge.current(),
+                                                                                       pars_onChange,
+                                                                                       self.entAgeCutoff.get(),
+                                                                                       self.entAgeCutoff))
 
 
 
@@ -562,7 +562,6 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(width=3)
         self.entErrFilter.configure(state=DISABLED)
 
-
         self.lblErrCutoff = Label(self.frFilter)
         self.lblErrCutoff.grid(row=4, column=4, sticky='w')
         self.apply_style(self.lblErrCutoff)
@@ -576,12 +575,12 @@ class OperationWindow(Frame):
         self.cbErrFilter.configure(values=('Not used', 'Used'))
         self.cbErrFilter.configure(width=10)
         self.cbErrFilter.current(0)
-        self.cbErrFilter.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(5, self.cbErrFilter.current(),
+        self.cbErrFilter.bind('<<ComboboxSelected>>',
+                              lambda event: gui_support.onChange(5, self.cbErrFilter.current(),
                                                                                         pars_onChange,
                                                                                         self.entErrFilter.get(),
                                                                                         self.entErrFilter,
                                                                                         self.chbInclude207235Err))
-
 
         self.chbInclude207235Err = Checkbutton(self.frFilter)
         self.chbInclude207235Err.grid(row=5, column=1, columnspan=3, sticky='w', pady=5)
@@ -592,7 +591,7 @@ class OperationWindow(Frame):
         self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
         self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
                                                                                 gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange, pars_onChange,))
+                                                                                pars_onChange))
 
         self.lbUConcFilter = Label(self.frFilter)
         self.lbUConcFilter.grid(row=6, column=1, columnspan=3, pady=4, sticky='w')
@@ -957,7 +956,7 @@ class OperationWindow(Frame):
         obj.configure(highlightbackground="#d9d9d9")
         obj.configure(highlightcolor="black")
 
-    def open_and_load_file(self):
+    def open_and_load_file(self, *args):
         try:
             try:
                 global g_plot_txt, g_directory, g_file_type, g_filters, g_list_col_names, g_list_of_samples, \
@@ -966,15 +965,26 @@ class OperationWindow(Frame):
                     g_plot_txt.remove()
                 keep_prev = False
                 g_filters.sample_name_filter = []
-                user_file = filedialog.askopenfilename(
-                    initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
+
+                #when run as a main app
+
+                # for unit test
+                if args:
+                    user_file = args[0]
+                    keep_prev = args[1]
+
+
+                # when module run directly, not imported
+                else:
+                    user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
                                                                     ("Comma separated values files", "*.csv"),
                                                                     ("All files", "*.*")))
+
                 if user_file != '':
-                    if g_grainset != []:
+                    if g_grainset != [] and not args:
                         keep_prev = messagebox.askyesno("Keep previous data?", "Keep previous data?")
                     g_directory = os.path.split(user_file)[0]
-                    root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version )
+                    root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version)
                     an_set = []
                     file = imported_file(user_file)
                     g_file_type = file[1]
@@ -1107,12 +1117,12 @@ class OperationWindow(Frame):
                 "Min age="+str(int(g_number_of_good_grains[6]))+"; "\
                 "Max age="+str(int(g_number_of_good_grains[5]))+"\n" \
                 "WA age="+str(round((g_number_of_good_grains[1]), 1))+\
-                "±"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
-                "    ±"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
-                "MSWD="+str(int(g_number_of_good_grains[4]))+"\n" \
+                "+-"+str(2 * round((g_number_of_good_grains[2]), 1))+"(2σ int.);\n" \
+                "    +-"+str(round((g_number_of_good_grains[3]), 1))+"(95%conf)\n" \
+                "MSWD="+str(round(g_number_of_good_grains[4], 2))+"\n" \
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
-                "peaks at="
+                "peaks at "
                 i = 1
                 for p in peaks():
                     if len(peaks()) > 10 and i == 10:
@@ -1473,11 +1483,19 @@ class OperationWindow(Frame):
 
 
             #Testing the common lead routine
+<<<<<<< HEAD
             for zircon, zircon_age in g_grainset.good_set.items():
             #     for i in range(2):
             #         corr_age = pbc_corr(zircon, i)
             #         print(corr_age)
                 print(pbc_corr(zircon, 1))
+=======
+            '''for zircon, zircon_age in g_grainset.good_set.items():
+                for i in range(2):
+                    corr_age = pbc_corr(zircon, i)
+                    print(corr_age)'''
+
+>>>>>>> d75b3a5143d0170f475c8fa371aec82b0299fcb9
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
@@ -1570,7 +1588,7 @@ def main():
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.04.30.02'
+    g_dezirteer_version = '0.6.2020.05.10.01'
     g_pdp = []
     g_cpdp = []
     g_kde = []
