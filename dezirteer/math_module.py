@@ -3,9 +3,9 @@ from bisect import *
 from const import *
 import operator
 import functools
-from math import sqrt, exp, log, fabs
+from math import sqrt, log, fabs
 import scipy.stats
-from scipy import std
+from scipy import std,exp
 import random
 
 pbpb_table =  []
@@ -29,10 +29,15 @@ def t_student(alpha, gl):
 
 
 def calc_ratio(age):
+    # print(age)
     pb207_u235 = exp(LAMBDA_235 * age * 1000000) - 1
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
-    pb207_pb206 = (pb207_u235 / pb206_u238) * (1 / U238_U235)
-    u238_pb206 = 1 / pb206_u238
+    if pb206_u238!=0:
+        pb207_pb206 = (pb207_u235 / pb206_u238) * (1 / U238_U235)
+        u238_pb206 = 1 / pb206_u238
+    else:
+        pb207_pb206=0
+        u238_pb206=1000
     pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206, pb208_th232]
 
@@ -55,77 +60,83 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
         elif n == 2:
             return 29.476 + 32.208 * (calc_ratio(4570)[4] - calc_ratio(age)[4])  # 8/4c
 
+def pb4cor(pb_pb4,pb_pb4_c,pb_uth,lam): #universal 204pb corr function for all measured ratios 
+    if pb_pb4[2]!=-1 and pb_uth[2]!=-1:
+        i=2
+    else:
+        i=1
+    fc = pb_pb4_c / pb_pb4[0]
+    ratio = pb_uth[0]*(1-fc)
+    tmp1 = (pb_pb4[i] / pb_pb4[0]) ** 2
+    tmp2 = (pb_uth[i] / pb_uth[0]) ** 2
+    ratio_err = sqrt((sqrt(tmp1) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2) * pb_uth[0]
+    age = pb_uth[i] / (1 + pb_uth[0]) / lam / 1000000
+    age_err = pb_uth[i] / (1 + pb_uth[0]) / lam / 1000000
+    return age, age_err,ratio,ratio_err
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     delta = 1
     corr_age = [-1, -1]
+    mr68=zir.pb206_u238
+    mr75=zir.pb207_u235
+    mr82=zir.pb208_th232
+    mr76=zir.pb207_pb206
+    mr64=zir.pb206_pb204
+    mr74=zir.pb207_pb204
+    mrp84=zir.pb208_pb204
+    mru84=zir.u238_pb204
+    mr24=zir.th232_pb204
+    ma68=zir.calc_age(0)
+
     if corr_type == 0:  # 204
-        # parts of common lead in measured
-        f6 = compb(zir.calc_age(0)[0], 0) / zir.pb206_pb204[0]
-        f7 = compb(zir.calc_age(0)[0], 1) / zir.pb207_pb204[0]
-        f8 = compb(zir.calc_age(0)[0], 2) / zir.pb208_pb204[0]
-
-        # 204pb corrected ratios
-        r68 = zir.pb206_u238[0] * (1 - f6)
-        r75 = zir.pb207_u235[0] * (1 - f7)
-        r82 = zir.pb208_th232[0] * (1 - f8)
-        r76 = r75 / r68 * 1 / U238_U235
-
-        # 204pb corrected ages
-        a68 = log(r68 + 1) / LAMBDA_238
-        a75 = log(r75 + 1) / LAMBDA_235
-        a82 = log(r82 + 1) / LAMBDA_232
-        a76 = find_age(r76)
-
-        # age errors
-        #Achtung! Need to use propagated uncertainties!
-        if zir.pb206_pb204[2] !=- 1 and zir.pb207_pb204[2] !=- 1 and zir.pb208_pb204[2] !=- 1:
-            tmp64 = (zir.pb206_pb204[2] / zir.pb206_pb204[0]) ** 2
-            tmp74 = (zir.pb207_pb204[2] / zir.pb207_pb204[0]) ** 2
-            tmp84 = (zir.pb208_pb204[2] / zir.pb208_pb204[0]) ** 2
+        if mr64[0]!=-1:
+            a68=pb4cor(mr64,compb(ma68[0], 0),mr68[0],mr68[i],LAMBDA_238)
         else:
-            tmp64 = (zir.pb206_pb204[1] / zir.pb206_pb204[0]) ** 2
-            tmp74 = (zir.pb207_pb204[1] / zir.pb207_pb204[0]) ** 2
-            tmp84 = (zir.pb208_pb204[1] / zir.pb208_pb204[0]) ** 2
-        r68er = sqrt(
-            (sqrt(tmp64) / zir.pb206_pb204[0] / (1 - f6)) ** 2 + (zir.pb206_u238[1] / zir.pb206_u238[0]) ** 2) * r68
-        r75er = sqrt(
-            (sqrt(tmp74) / zir.pb207_pb204[0] / (1 - f7)) ** 2 + (zir.pb207_u235[1] / zir.pb207_u235[0]) ** 2) * r75
-        r82er = sqrt(
-            (sqrt(tmp84) / zir.pb208_pb204[0] / (1 - f8)) ** 2 + (zir.pb208_th232[1] / zir.pb208_th232[0]) ** 2) * r82
-        a68er = r68er / (1 + r68) / LAMBDA_238 / 1000000
-        a75er = r75er / (1 + r75) / LAMBDA_235 / 1000000
-        a82er = r82er / (1 + r82) / LAMBDA_232 / 1000000
-        a76er = zir.pb207_pb206[1]
-        a4c=[a68,a75,a76,a82]
-        a4cer=[a68er,a75er,a76er,a82er]
+            a68=[-1,-1,-1,-1]
+        if mr74[0]!=-1:
+            a75=pb4cor(mr74[0],mr74[1],compb(ma68[0], 0),mr75[0],mr75[1],LAMBDA_235)
+        else:
+            a75=[-1,-1,-1,-1]
+        if mr84[0]!=-1:
+            a82=pb4cor(mr74[0],mr74[1],compb(ma68[0], 0),mr75[0],mr75[1],LAMBDA_235)
+        else:
+            a82=[-1,-1,-1,-1]
+        if a68[0]!=-1 and a75[0]!=-1:
+            r76=a75[2]/a68[2]*1/U238_U235
+            a76 = find_age(r76)
+        else:
+            r76=-1
+            a76=-1
+        if zir.calc_age(3)[2]!=-1:
+            a76er = zir.calc_age(3)[2]
+        else:
+            a76er = zir.calc_age(3)[1]
+        if a76==-1:
+            a76er=-1
+        a4c=[a68[0],a75[0],a76,a82[0]]
+        a4cer=[a68[1],a75[1],a76er,a82[1]]
         corr_age=[a4c,a4cer]
 
     elif corr_type == 1:  # 207
         t = 1000
         # age
         while delta > 0.001:
-            f = U238_U235 * compb(zir.calc_age(0)[0], 3) * (zir.pb206_u238[0] - calc_ratio(t)[0]) - zir.pb207_u235[0] + \
-                calc_ratio(t)[1]
-            deriv = LAMBDA_235 * (calc_ratio(t)[1] + 1) - U238_U235 * compb(zir.calc_age(0)[0], 3) * LAMBDA_238 * (
-                        calc_ratio(t)[0] + 1)
+            f = U238_U235 * compb(ma68[0], 3) * (mr76[0] - calc_ratio(t)[0]) - mr75[0] + calc_ratio(t)[1]
+            deriv=LAMBDA_235*(calc_ratio(t)[1]+1)-U238_U235*compb(ma68[0], 3)*LAMBDA_238*(calc_ratio(t)[0] + 1)
             delta = -f / deriv
             t = t + delta
         corr_age[0] = t
         # error
-        if zir.pb206_u238[2]!=-1 and zir.pb207_pb206[2]!=-1:
-            r68er=zir.pb206_u238[2]
-            r76er=zir.pb207_pb206[2]
+        if mr68[2]!=-1 and mr76[2]!=-1:
+            r68er=mr68[2]
+            r76er=mr76[2]
         else:
-            r68er=zir.pb206_u238[1]
-            r76er=zir.pb207_pb206[1]
-            
-        r75var = U238_U235 ** 2 * (
-                    (zir.pb206_u238[0] * r76er) ** 2 + (zir.pb207_pb206[0] * r68er) ** 2)
-        denom = (U238_U235 * compb(zir.calc_age(0)[0], 3) * LAMBDA_238 * (calc_ratio(t)[0] + 1) - LAMBDA_235 * (
-                    calc_ratio(t)[1] + 1)) ** 2
+            r68er=mr68[1]
+            r76er=mr76[1]    
+        r75var = U238_U235**2*((mr68[0]*r76er)**2+(mr76[0]*r68er)**2)
+        denom = (U238_U235*compb(ma68[0], 3)*LAMBDA_238*(calc_ratio(t)[0]+1)-LAMBDA_235*(calc_ratio(t)[1]+1))**2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
-        n2 = U238_U235 ** 2 * compb(zir.calc_age(0)[0], 3) * (compb(zir.calc_age(0)[0], 3) - 2 * zir.pb207_pb206[0]) * \
+        n2 = U238_U235 ** 2 * compb(ma68[0], 3) * (compb(ma68[0], 3) - 2 * mr76[0]) * \
              r68er ** 2
         n = n1 + n2 + r75var
         corr_age[1] = sqrt(n / denom)
@@ -134,24 +145,24 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while delta > 0.001:
-            f = zir.pb206_u238[0] - (calc_ratio(t)[0] + 1) + 1 - zir.th232_pb204[0] / zir.u238_pb204[0] * compb(
+            f = mr68[0] - (calc_ratio(t)[0] + 1) + 1 - mr82[0] / mr84[0] * compb(
                 zir.calc_age(0)[0], 0) / \
-                compb(zir.calc_age(0)[0], 2) * (zir.pb208_th232[0] - (calc_ratio(t)[4] + 1) + 1)
-            deriv = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0)[0], 0) / compb(zir.calc_age(0)[0],
+                compb(ma68[0], 2) * (mr82[0] - (calc_ratio(t)[4] + 1) + 1)
+            deriv = mr24[0] / mr84[0] * compb(ma68[0], 0) / compb(ma68[0],
                                                                                                2) * LAMBDA_232 * \
                     (calc_ratio(t)[4] + 1) - LAMBDA_238 * (calc_ratio(t)[0] + 1)
             delta = -f / deriv
             t = t + delta  #
         corr_age[0] = t
         # error
-        if zir.pb206_u238[2] !=- 1 and zir.pb207_pb206[2] !=- 1:
-            r68er = zir.pb206_u238[2]
-            r82er = zir.pb208_th232[2]
+        if mr68[2] !=- 1 and mr76[2] !=- 1:
+            r68er = mr68[2]
+            r82er = mr82[2]
         else:
-            r68er = zir.pb206_u238[1]
-            r82er = zir.pb208_th232[1]
+            r68er = mr68[1]
+            r82er = mr82[1]
         c1 = 0
-        c2 = zir.th232_pb204[0] / zir.u238_pb204[0] * compb(zir.calc_age(0)[0], 0) / compb(zir.calc_age(0)[0], 2)
+        c2 = mr24[0] / mr84[0] * compb(ma68[0], 0) / compb(ma68[0], 2)
         n1 = 0
         n2 = c2 * r82er * r68er ** 2
         n = n1 + n2
@@ -161,7 +172,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     elif corr_type == 3:  # and
         # age
         t2 = 0  # NEED CORRECTION!!!  age of pb lost, must entered by user
-        t1 = zir.pb207_u235
+        t1 = zir.pb207_u235[0]
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
@@ -170,9 +181,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         x = zir.pb207_u235[0]
         y = zir.pb206_u238[0]
         z = zir.pb208_th232[0]
-        u = zir.u238_pb204/zir.th232_pb204
+        u = zir.u238_pb204[0]/zir.th232_pb204[0]
         k = U238_U235
-        corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0]
+        corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u)[0]
         mkages = []
         mkfc = []
         #sigma errors
