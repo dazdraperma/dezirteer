@@ -472,7 +472,7 @@ def header_pos(imported_list):
         if 'ErrorCorrelation_6_38vs7_35' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_6_38vs7_35'))
         else:
-            l_list.append(0.99)
+            l_list.append(0.999)
 
         if 'Final208_232' in file_header:
             if 'Final208_232_Prop2SE' in file_header:
@@ -513,7 +513,7 @@ def header_pos(imported_list):
         if 'ErrorCorrelation_38_6vs7_6' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_38_6vs7_6'))
         else:
-            l_list.append(0.99)
+            l_list.append(0.999)
 
         if 'Final206_204' in file_header:
             if 'Final206_204_Prop2SE' in file_header:
@@ -630,12 +630,12 @@ def file_to_analysis(imp_file, index):
         corr_coef_75_68_calculated = rho[0]
         corr_coef_86_76_calculated = rho[1]
 
-        if header[4] != -1:
+        if header[4] not in [-1, 0.999]:
             corr_coef_75_68 = float(an[header[4]])
         else:
             corr_coef_75_68 = corr_coef_75_68_calculated
 
-        if header[9] != -1:
+        if header[9] not in [-1, 0.999]:
             corr_coef_86_76 = float(an[header[9]])
         else:
             corr_coef_86_76 = corr_coef_86_76_calculated
