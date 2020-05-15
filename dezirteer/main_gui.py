@@ -1483,19 +1483,19 @@ class OperationWindow(Frame):
 
 
             #Testing the common lead routine
-<<<<<<< HEAD
+# <<<<<<< HEAD
             for zircon, zircon_age in g_grainset.good_set.items():
             #     for i in range(2):
             #         corr_age = pbc_corr(zircon, i)
             #         print(corr_age)
-                print(pbc_corr(zircon, 1))
-=======
+                print(pbc_corr(zircon, 0))
+# =======
             '''for zircon, zircon_age in g_grainset.good_set.items():
                 for i in range(2):
                     corr_age = pbc_corr(zircon, i)
                     print(corr_age)'''
 
->>>>>>> d75b3a5143d0170f475c8fa371aec82b0299fcb9
+# >>>>>>> d75b3a5143d0170f475c8fa371aec82b0299fcb9
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
