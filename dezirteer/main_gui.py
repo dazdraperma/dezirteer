@@ -134,7 +134,6 @@ class OperationWindow(Frame):
 
         # _____________________frGraph___________________________________________________________________________________
         self.frGraph = Frame(master)
-
         self.frGraph.configure(relief=GROOVE)
         self.frGraph.configure(borderwidth="2")
         self.frGraph.configure(relief=GROOVE)
@@ -157,7 +156,8 @@ class OperationWindow(Frame):
         self.frConc.configure(highlightbackground="#d9d9d9")
         self.frConc.configure(highlightcolor="black")
 
-        self.fig = Figure(figsize=(2, 2.15), frameon=False)
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        # check if MacOs, then plt.figure(), otherwise won't plot
         if platform == "darwin":
             self.fig = plt.figure()
         self.ax_conc = self.fig.add_subplot(111)
@@ -206,7 +206,8 @@ class OperationWindow(Frame):
         except NameError:
             pass
 
-        self.fig = Figure(figsize=(2, 2.15), frameon=False)
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        # check if MacOs, then plt.figure(), otherwise won't plot
         if platform == "darwin":
             self.fig = plt.figure()
         self.ax_prob = self.fig.add_subplot(111)
@@ -255,7 +256,8 @@ class OperationWindow(Frame):
         except NameError:
             pass
 
-        self.fig = Figure(figsize=(2, 2.15), frameon=False)
+        self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        #check if MacOs, then plt.figure(), otherwise won't plot
         if platform == "darwin":
             self.fig = plt.figure()
         self.ax_cum = self.fig.add_subplot(111)
