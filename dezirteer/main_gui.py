@@ -3,6 +3,8 @@
 import os
 import gui_support
 import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
@@ -27,7 +29,9 @@ except ImportError:
     py3 = True
 from math_module import *
 
-matplotlib.use("TkAgg")
+
+
+
 
 def truncate(f, n):
     return floor(f * 10 ** n) / 10 ** n
@@ -71,6 +75,19 @@ def show_calc_frame(container):
         frContainer.configure(highlightcolor="black")
         frContainer.pack(fill=BOTH, expand=1)
         container.resizable(False, False)
+
+        '''fig = Figure(figsize=(4, 2.15), frameon=False)
+        ax_conc = fig.add_subplot(111)
+        plt.plot([1, 2, 3, 4])
+        plt.show()
+        ax_conc.plot([1, 2, 3, 4])
+
+        canvas_conc = FigureCanvasTkAgg(fig, frContainer)
+        canvas_conc.draw()
+        canvas_conc.get_tk_widget().pack(side='top', fill='both', expand=1)'''
+
+
+
         elements = ["number of good grains", "weighted average age", "±1σ", "95% conf.", "MSWD", "max age", "min age"]
         list_of_labels = []
         counter = 0
@@ -154,6 +171,7 @@ class OperationWindow(Frame):
         self.frConc.configure(highlightcolor="black")
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.fig = plt.figure()
         self.ax_conc = self.fig.add_subplot(111)
         self.ax_conc.axes
         self.ax_conc.set_xlabel('207Pb/235U')
@@ -201,6 +219,7 @@ class OperationWindow(Frame):
             pass
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.fig = plt.figure()
         self.ax_prob = self.fig.add_subplot(111)
         self.ax_prob.axes
         self.ax_prob.axes.format_coord = lambda x, y: ""
@@ -248,6 +267,7 @@ class OperationWindow(Frame):
             pass
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        self.fig = plt.figure()
         self.ax_cum = self.fig.add_subplot(111)
         self.ax_cum.axes.format_coord = lambda x, y: ""
         self.ax_cum.set_title('Cumulative diagrams')
@@ -1328,6 +1348,7 @@ class OperationWindow(Frame):
         self.ax_prob.clear()
         self.canvas_prob.draw()
         self.ax_prob.plot(list(range(min_age, max_age)), g_prob_graph_to_draw[min_age: max_age])
+
         if gui_support.varShowCalc.get() == 1:
             i = 0
             self.ax_prob.set_title(g_prob_title)
