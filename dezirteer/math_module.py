@@ -1059,7 +1059,7 @@ class Analysis(object):
         return self.calc_age(0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
-    def is_grain_good(self, pFilter: Filters):
+    def is_grain_good(self, pFilter):
         do_uconc = pFilter.filter_by_uconc[0]
         uconc_ppm_cutoff = pFilter.filter_by_uconc[1]
         which_age = pFilter.which_age[0]
@@ -1324,7 +1324,7 @@ class AnalysesSet(object):
 
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
     # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages, max and min conc values
-    def good_bad_sets(self, p_filter: Filters):
+    def good_bad_sets(self, p_filter):
         index = 0
         max_age = 0
         min_age = 5000
@@ -1545,7 +1545,7 @@ def p_value(d_val, n1, n2):
 
 
 # goes through the analyses names in AnalysesSet, returns list of samples
-def same_sample_set(p_set: AnalysesSet):
+def same_sample_set(p_set):
     prev_str = ""
     lset = []
     list_of_analyses_set = []
@@ -1597,7 +1597,7 @@ def parse_sample_analysis(full_name):
     analysis_number = full_name[pos+1:]
     return sample_number, analysis_number
 
-def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
+def calc_peaks_weight(peaks, an_set):
     peak_weight = dict.fromkeys(peaks, 0)
     for zircon, zircon_age in an_set.good_set.items():
         for peak in peak_weight:

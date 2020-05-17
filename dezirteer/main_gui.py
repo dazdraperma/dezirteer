@@ -6,7 +6,8 @@ from sys import platform
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.patches import Rectangle
@@ -285,9 +286,9 @@ class OperationWindow(Frame):
         self.frCumToolbar.configure(width=100)
 
         #global toolbarConc, toolbarProb, toolbarCum
-        toolbarConc = NavigationToolbar2Tk(self.canvas_conc, self.frConcToolbar)
-        toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
-        toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
+        toolbarConc = toolbar(self.canvas_conc, self.frConcToolbar)
+        toolbarProb = toolbar(self.canvas_prob, self.frProbToolbar)
+        toolbarCum = toolbar(self.canvas_cum, self.frCumToolbar)
 
         # ________frTable_________________________________________________________________________________________________
         self.frTable = Frame(master, height=100)
