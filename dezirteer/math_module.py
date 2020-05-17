@@ -5,7 +5,8 @@ import operator
 import functools
 from math import sqrt, log, fabs
 import scipy.stats
-from scipy import std,exp
+#from scipy import std, exp
+from numpy import std, exp
 import random
 
 pbpb_table =  []
@@ -208,8 +209,8 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t1=calc_age(mkx)[0]
             mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
             mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
-        ageer = np.std(mkages)
-        fcer = np.std(mkfc)
+        ageer = std(mkages)
+        fcer = std(mkfc)
         corr_age[1] = ageer
 
     else:

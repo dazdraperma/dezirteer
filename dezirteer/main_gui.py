@@ -271,7 +271,7 @@ class OperationWindow(Frame):
         except UnboundLocalError:
             pass
 
-        self.canvas_cum = FigureCanvasTkAgg(self.fig, self.frCum)
+        self.canvas_cum = FigureCanvasTkAgg(self.fig, self.fлrCum)
         self.canvas_cum.draw()
         self.canvas_cum.get_tk_widget().pack(side='top', fill='both', expand=1)
 

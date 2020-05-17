@@ -92,7 +92,7 @@ class TestGui(unittest.TestCase):
         self.set_vars()
 
     def test_matrices_file(self):
-        if not os.path.isdir("/logs"):
+        if not os.path.isdir("logs"):
             os.mkdir("logs")
         file_name = 'logs/'+str(datetime.datetime.now())+'_gui'
         file_name = file_name.replace(':', '_')
