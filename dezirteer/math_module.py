@@ -5,7 +5,8 @@ import operator
 import functools
 from math import sqrt, log, fabs
 import scipy.stats
-from scipy import std,exp
+#from scipy import std, exp
+from numpy import std, exp
 import random
 
 pbpb_table =  []
@@ -220,8 +221,8 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t1=calc_age(mkx)[0]
             mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
             mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
-        ageer = np.std(mkages)
-        fcer = np.std(mkfc)
+        ageer = std(mkages)
+        fcer = std(mkfc)
         corr_age[1] = ageer
 
     else:
@@ -484,7 +485,7 @@ def header_pos(imported_list):
         if 'ErrorCorrelation_6_38vs7_35' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_6_38vs7_35'))
         else:
-            l_list.append(0.999)
+            l_list.append(-1)
 
         if 'Final208_232' in file_header:
             if 'Final208_232_Prop2SE' in file_header:
@@ -525,7 +526,7 @@ def header_pos(imported_list):
         if 'ErrorCorrelation_38_6vs7_6' in file_header:
             l_list.append(file_header.index('ErrorCorrelation_38_6vs7_6'))
         else:
-            l_list.append(0.999)
+            l_list.append(-1)
 
         if 'Final206_204' in file_header:
             if 'Final206_204_Prop2SE' in file_header:
@@ -642,12 +643,12 @@ def file_to_analysis(imp_file, index):
         corr_coef_75_68_calculated = rho[0]
         corr_coef_86_76_calculated = rho[1]
 
-        if header[4] not in [-1, 0.999]:
+        if header[4] != -1:
             corr_coef_75_68 = float(an[header[4]])
         else:
             corr_coef_75_68 = corr_coef_75_68_calculated
 
-        if header[9] not in [-1, 0.999]:
+        if header[9] != -1:
             corr_coef_86_76 = float(an[header[9]])
         else:
             corr_coef_86_76 = corr_coef_86_76_calculated
@@ -1071,7 +1072,7 @@ class Analysis(object):
         return self.calc_age(0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
-    def is_grain_good(self, pFilter: Filters):
+    def is_grain_good(self, pFilter):
         do_uconc = pFilter.filter_by_uconc[0]
         uconc_ppm_cutoff = pFilter.filter_by_uconc[1]
         which_age = pFilter.which_age[0]
@@ -1336,7 +1337,7 @@ class AnalysesSet(object):
 
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
     # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages, max and min conc values
-    def good_bad_sets(self, p_filter: Filters):
+    def good_bad_sets(self, p_filter):
         index = 0
         max_age = 0
         min_age = 5000
@@ -1557,7 +1558,7 @@ def p_value(d_val, n1, n2):
 
 
 # goes through the analyses names in AnalysesSet, returns list of samples
-def same_sample_set(p_set: AnalysesSet):
+def same_sample_set(p_set):
     prev_str = ""
     lset = []
     list_of_analyses_set = []
@@ -1609,7 +1610,7 @@ def parse_sample_analysis(full_name):
     analysis_number = full_name[pos+1:]
     return sample_number, analysis_number
 
-def calc_peaks_weight(peaks: [], an_set: AnalysesSet):
+def calc_peaks_weight(peaks, an_set):
     peak_weight = dict.fromkeys(peaks, 0)
     for zircon, zircon_age in an_set.good_set.items():
         for peak in peak_weight:

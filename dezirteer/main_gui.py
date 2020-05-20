@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 import os
 import gui_support
+from sys import platform
 import matplotlib
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.patches import Rectangle
@@ -27,7 +31,9 @@ except ImportError:
     py3 = True
 from math_module import *
 
-matplotlib.use("TkAgg")
+
+
+
 
 def truncate(f, n):
     return floor(f * 10 ** n) / 10 ** n
@@ -101,8 +107,6 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 5].configure(text=round(g_pval_dval[1], 2))
 
 
-
-
 class OperationWindow(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
@@ -154,6 +158,9 @@ class OperationWindow(Frame):
         self.frConc.configure(highlightcolor="black")
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        # check if MacOs, then plt.figure(), otherwise won't plot
+        if platform == "darwin":
+            self.fig = plt.figure()
         self.ax_conc = self.fig.add_subplot(111)
         self.ax_conc.axes
         self.ax_conc.set_xlabel('207Pb/235U')
@@ -201,6 +208,9 @@ class OperationWindow(Frame):
             pass
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        # check if MacOs, then plt.figure(), otherwise won't plot
+        if platform == "darwin":
+            self.fig = plt.figure()
         self.ax_prob = self.fig.add_subplot(111)
         self.ax_prob.axes
         self.ax_prob.axes.format_coord = lambda x, y: ""
@@ -248,6 +258,9 @@ class OperationWindow(Frame):
             pass
 
         self.fig = Figure(figsize=(4, 2.15), frameon=False)
+        #check if MacOs, then plt.figure(), otherwise won't plot
+        if platform == "darwin":
+            self.fig = plt.figure()
         self.ax_cum = self.fig.add_subplot(111)
         self.ax_cum.axes.format_coord = lambda x, y: ""
         self.ax_cum.set_title('Cumulative diagrams')
@@ -273,9 +286,9 @@ class OperationWindow(Frame):
         self.frCumToolbar.configure(width=100)
 
         #global toolbarConc, toolbarProb, toolbarCum
-        toolbarConc = NavigationToolbar2Tk(self.canvas_conc, self.frConcToolbar)
-        toolbarProb = NavigationToolbar2Tk(self.canvas_prob, self.frProbToolbar)
-        toolbarCum = NavigationToolbar2Tk(self.canvas_cum, self.frCumToolbar)
+        toolbarConc = toolbar(self.canvas_conc, self.frConcToolbar)
+        toolbarProb = toolbar(self.canvas_prob, self.frProbToolbar)
+        toolbarCum = toolbar(self.canvas_cum, self.frCumToolbar)
 
         # ________frTable_________________________________________________________________________________________________
         self.frTable = Frame(master, height=100)
@@ -1328,6 +1341,7 @@ class OperationWindow(Frame):
         self.ax_prob.clear()
         self.canvas_prob.draw()
         self.ax_prob.plot(list(range(min_age, max_age)), g_prob_graph_to_draw[min_age: max_age])
+
         if gui_support.varShowCalc.get() == 1:
             i = 0
             self.ax_prob.set_title(g_prob_title)
@@ -1484,11 +1498,11 @@ class OperationWindow(Frame):
 
             #Testing the common lead routine
 
-            for zircon, zircon_age in g_grainset.good_set.items():
+            '''for zircon, zircon_age in g_grainset.good_set.items():
             #     for i in range(2):
             #         corr_age = pbc_corr(zircon, i)
             #         print(corr_age)
-                print(pbc_corr(zircon, 1))
+                print(pbc_corr(zircon, 1))'''
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
