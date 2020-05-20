@@ -74,9 +74,13 @@ def pb4cor(pb_pb4,pb_pb4_c,pb_uth,lam): #universal 204pb corr function for all m
     ratio = pb_uth[0]*(1-fc)
     tmp1 = (pb_pb4[i] / pb_pb4[0]) ** 2
     tmp2 = (pb_uth[i] / pb_uth[0]) ** 2
-    ratio_err = sqrt((sqrt(tmp1) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2) * pb_uth[0]
-    age = pb_uth[i] / (1 + pb_uth[0]) / lam / 1000000
-    age_err = pb_uth[i] / (1 + pb_uth[0]) / lam / 1000000
+    ratio_err = sqrt((sqrt(tmp1) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2) * ratio
+    if ratio>=0:
+        age = log(1 + ratio) / lam / 1000000
+        age_err = ratio_err / (1 + ratio) / lam / 1000000
+    else:
+        age=-1
+        age_err=-1
     return age, age_err,ratio,ratio_err
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
@@ -92,36 +96,43 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     # mr28=zir.th232_u238
     # mru84=zir.u238_pb204
     # mr24=zir.th232_pb204
-    com64=compb(zir.calc_age(0)[0],0)
-    com74=compb(zir.calc_age(0)[0],1)
-    com84=compb(zir.calc_age(0)[0],2)
-    com76=compb(zir.calc_age(0)[0],3)
+    age=zir.calc_age(0)[0]
+    com64=compb(age,0)
+    com74=compb(age,1)
+    com84=compb(age,2)
+    com76=compb(age,3)
     
     if corr_type == 0:  # 204
-        if mr64[0]!=-1:
+        if mr64[0]!=-1 and mr68[0]!=-1:
             a68=pb4cor(mr64,com64,mr68,LAMBDA_238)
         else:
             a68=[-1,-1,-1,-1]
-        if mr74[0]!=-1:
+
+        if mr74[0]!=-1 and mr75[0]!=-1:
             a75=pb4cor(mr74,com74,mr75,LAMBDA_235)
         else:
             a75=[-1,-1,-1,-1]
-        if mr84[0]!=-1:
-            a82=pb4cor(mr84,com84,mr82,LAMBDA_235)
+
+        if mr84[0]!=-1 and mr82[0]!=-1:
+            a82=pb4cor(mr84,com84,mr82,LAMBDA_232)
         else:
             a82=[-1,-1,-1,-1]
-        if a68[0]!=-1 and a75[0]!=-1:
-            r76=a75[2]/a68[2]*1/U238_U235
-            a76 = find_age(r76)
+        
+        r76=a75[2]/a68[2]/U238_U235
+        a76 = find_age(r76)
+        if a68[0]>0 and a75[0]>0 and a76>0:
+            t=a76*1000000
+            r76er=sqrt((a75[3]*a68[2])**2+(a68[3]*a75[2])**2)/(U238_U235*a68[2]**2)
+            e5=exp(LAMBDA_235*t)
+            e8=exp(LAMBDA_238*t)
+            a76er=U238_U235*r76er/(LAMBDA_235*e5/(e8-1)-LAMBDA_238*e8*(e5-1)/(e8-1)**2)
+            a76er=a76er/1000000
         else:
             r76=-1
             a76=-1
-        if zir.calc_age(3)[2]!=-1:
-            a76er = zir.calc_age(3)[2]
-        else:
-            a76er = zir.calc_age(3)[1]
-        if a76==-1:
+            r76er=-1
             a76er=-1
+        
         a4c=[a68[0],a75[0],a76,a82[0]]
         a4cer=[a68[1],a75[1],a76er,a82[1]]
         corr_age=[a4c,a4cer]
@@ -135,9 +146,10 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             e2=exp(LAMBDA_235*t)-1
             f = U238_U235 * com76 * (mr68[0] - e1) - tmp75 + e2
             d1=LAMBDA_235*(e2+1)-U238_U235*com76*LAMBDA_238*(e1 + 1)
-            d=-f / d1
-            if abs(d) > 0.001:
-                t+=d
+            if d1!=0:
+                d=-f / d1
+                if abs(d) > 0.001:
+                    t+=d
         corr_age[0] = t/1000000
         # error
         if mr68[2]!=-1 and mr76[2]!=-1:
