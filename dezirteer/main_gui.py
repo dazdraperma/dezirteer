@@ -1154,8 +1154,8 @@ class OperationWindow(Frame):
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.10, text_to_show, transform=self.ax_cum.transAxes)
-        if g_graph_settings.pdp_kde_hist != 2: #if not histogram
-            self.plot_peaks()
+        # if g_graph_settings.pdp_kde_hist != 2: #if not histogram
+        #     self.plot_peaks(min_age, max_age)
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
@@ -1181,7 +1181,7 @@ class OperationWindow(Frame):
                 max_conc_y = g_grainset.max_207_206
 
         else:
-            min_age = 0
+            min_age = 1
             max_age = EarthAge
             min_conc_x = 0
             min_conc_y = 0
@@ -1328,16 +1328,16 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
-        self.ax_conc.plot(conc_graph_x, conc_graph_y)
+        self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
 
-    def plot_peaks(self):
+    def plot_peaks(self,min_age, max_age):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
-        min_max_age = self.min_max_ages()
-        min_age = min_max_age[0]
-        max_age = min_max_age[1]
+        # min_max_age = self.min_max_ages()
+        # min_age = min_max_age[0]
+        # max_age = min_max_age[1]
         self.ax_prob.clear()
         self.canvas_prob.draw()
         self.ax_prob.plot(list(range(min_age, max_age)), g_prob_graph_to_draw[min_age: max_age])
@@ -1362,7 +1362,7 @@ class OperationWindow(Frame):
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
         self.ax_cum.plot(list(range(min_age, max_age)), g_cum_graph_to_draw[min_age: max_age])
-        self.plot_peaks() #ax_prob.plot is done here
+        self.plot_peaks(min_age, max_age) #ax_prob.plot is done here
 
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
@@ -1381,7 +1381,7 @@ class OperationWindow(Frame):
                 g_plot_txt.remove()
         g_plot_txt = ""
 
-    def plot_conc_text_peaks(self):
+    def plot_conc_text_peaks(self,min_age, max_age):
         global g_prev_n, g_prev_cum, g_pval_dval, g_ckde, g_cpdp
 
         self.plot_text(g_pval_dval[0], g_pval_dval[1])
@@ -1478,7 +1478,7 @@ class OperationWindow(Frame):
         cum_title = l_kde_pdp_hist[3]'''
 
         # set axis of all graphs
-        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x[1:EarthAge], conc_graph_y[1:EarthAge], min_age, max_age,
+        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
                       min_conc_x, max_conc_x, min_conc_y, max_conc_y)
 
         self.draw_concordia_ticks(xconc, yconc, min_age, max_age)
@@ -1504,7 +1504,7 @@ class OperationWindow(Frame):
             print("type error")
 
         finally:
-            self.plot_conc_text_peaks()
+            self.plot_conc_text_peaks(min_age, max_age)
 
 
             #Testing the common lead routine
