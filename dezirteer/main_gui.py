@@ -1181,7 +1181,7 @@ class OperationWindow(Frame):
                 max_conc_y = g_grainset.max_207_206
 
         else:
-            min_age = 1
+            min_age = 0
             max_age = EarthAge
             min_conc_x = 0
             min_conc_y = 0
@@ -1245,7 +1245,7 @@ class OperationWindow(Frame):
             step = 25
         else:
             step = 10
-
+        
         if log10(min_age) >= 2:
             x = -2
         else:
@@ -1328,7 +1328,7 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
-        self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
+        self.ax_conc.plot(conc_graph_x, conc_graph_y)
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
 
@@ -1434,12 +1434,23 @@ class OperationWindow(Frame):
 
         # cropping age interval: either full, or cropped from min_age to max_age
         age_lim = self.min_max_ages()
-        min_age = age_lim[0]
-        max_age = age_lim[1]
-        min_conc_x = age_lim[2]
-        max_conc_x = age_lim[3]
-        min_conc_y = age_lim[4]
-        max_conc_y = age_lim[5]
+        
+        if gui_support.varMinAgeCrop.get() == 1:
+            min_age = int(self.entAgeMinCrop.get())
+            min_conc_x =calc_ratio(float(self.entAgeMinCrop.get()))[1]
+            min_conc_y =calc_ratio(float(self.entAgeMinCrop.get()))[0]
+        else:
+            min_age = age_lim[0]
+            min_conc_x = age_lim[2]
+            min_conc_y = age_lim[4]
+        if gui_support.varMaxAgeCrop.get() == 1:
+            max_age = int(self.entAgeMaxCrop.get())
+            max_conc_x =calc_ratio(float(self.entAgeMaxCrop.get()))[1]
+            max_conc_y =calc_ratio(float(self.entAgeMaxCrop.get()))[0]
+        else:    
+            max_age = age_lim[1]
+            max_conc_x = age_lim[3]
+            max_conc_y = age_lim[5]
 
         #print (str(g_grainset.min_206_238))
 
@@ -1467,7 +1478,7 @@ class OperationWindow(Frame):
         cum_title = l_kde_pdp_hist[3]'''
 
         # set axis of all graphs
-        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
+        self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x[1:EarthAge], conc_graph_y[1:EarthAge], min_age, max_age,
                       min_conc_x, max_conc_x, min_conc_y, max_conc_y)
 
         self.draw_concordia_ticks(xconc, yconc, min_age, max_age)
