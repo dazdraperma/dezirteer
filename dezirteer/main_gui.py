@@ -1328,7 +1328,7 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
-        self.ax_conc.plot(conc_graph_x[min_age: max_age], conc_graph_y[min_age: max_age])
+        self.ax_conc.plot(conc_graph_x, conc_graph_y)
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
 

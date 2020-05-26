@@ -280,11 +280,14 @@ def fill_pbpb_table():  # fills the table of 207pb-206pb ages
 def fill_concordia_table():
     if len(concordia_table) == 0:
         t = 1
-        ratios = []
+        ratios = [-1,-1,-1]
         while t <= EarthAge:
-            ratios.append(exp(LAMBDA_238 * t * 1000000) - 1)
-            ratios.append(exp(LAMBDA_235 * t * 1000000) - 1)
-            pbpb_age = (1 / U238_U235) * (exp(LAMBDA_235 * t * 1000000) - 1) / (exp(LAMBDA_238 * t * 1000000) - 1)
+            mln_age=t * 1000000
+            e8=exp(LAMBDA_238 * mln_age) - 1
+            e5=exp(LAMBDA_235 * mln_age) - 1
+            ratios.append(e8)
+            ratios.append(e5)
+            pbpb_age = (1 / U238_U235) * e5 / e8
             ratios.append(pbpb_age)
             concordia_table.append(ratios)
             ratios = []
