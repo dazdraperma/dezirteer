@@ -573,6 +573,15 @@ def header_pos(imported_list):
         else:
             l_list.append([-1, -1, -1])
 
+        if 'Final_U_Th_Ratio' in file_header:
+            if 'Final_U_Th_Ratio_Prop2SE' in file_header:
+                prop = file_header.index('Final_U_Th_Ratio_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final_U_Th_Ratio'), file_header.index('Final_U_Th_Ratio_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
     elif imported_list[1] == "glitter":
         pass
     return l_list
@@ -596,6 +605,7 @@ def file_to_analysis(imp_file, index):
     pb208_pb204 = []
     th232_pb204 = []
     u238_pb204 = []
+    final_U_Th_Ratio = []
 
     if imp_file[1] == 'iolite':  # iolite routine
         #replacing Iolite NaNs and no values
@@ -737,6 +747,18 @@ def file_to_analysis(imp_file, index):
             u238_pb204.append(-1)
             u238_pb204.append(-1)
 
+        if header[15][0] != -1:
+            final_U_Th_Ratio.append(float(an[header[15][0]]))
+            final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
+            if header[15][2] != -1:
+                final_U_Th_Ratio.append(float(an[header[15][2]]) / sigma_level)
+            else:
+                final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
+        else:
+            final_U_Th_Ratio.append(-1)
+            final_U_Th_Ratio.append(-1)
+            final_U_Th_Ratio.append(-1)
+
     elif imp_file[1] == 'glitter':  # glitter routine
         file_len = imp_file[2]
         sigma_level = 1.0  # check if all glitter files have this by default
@@ -772,6 +794,7 @@ def file_to_analysis(imp_file, index):
         pb208_pb204 = [-1, -1, -1]
         th232_pb204 = [-1, -1, -1]
         u238_pb204 = [-1, -1, -1]
+        final_U_Th_Ratio = [-1, -1, -1]
 
         rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
         corr_coef_75_68 = rho[0]
@@ -832,11 +855,14 @@ def file_to_analysis(imp_file, index):
         u238_pb204.append(float(an[22]) / sigma_level)
         u238_pb204.append(float(an[22]) / sigma_level)
 
+        final_U_Th_Ratio.append(float(an[23]))
+        final_U_Th_Ratio.append(float(an[24]) / sigma_level)
+        final_U_Th_Ratio.append(float(an[24]) / sigma_level)
 
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
                           pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
-                          th232_pb204, u238_pb204, sigma_level)
+                          th232_pb204, u238_pb204, sigma_level, final_U_Th_Ratio)
     return l_analysis
 
 
@@ -845,7 +871,7 @@ class Analysis(object):
                  pb206_u238=(0, 0, 0), pb207_u235=(0, 0, 0), corr_coef_75_68=0, corr_coef_86_76=0,
                  pb208_th232=(0, 0, 0), pb207_pb206=(0, 0, 0), u_conc=(0, 0, 0), pbc=(0, 0, 0), pb206_pb204=(0, 0, 0),
                  pb207_pb204=(0, 0, 0), pb208_pb204=(0, 0, 0), th232_pb204=(0, 0, 0), u238_pb204=(0, 0, 0),
-                 sigma_level=0):
+                 sigma_level=0, final_U_Th_Ratio = (0, 0, 0)):
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
         self.__pb206_u238 = pb206_u238
@@ -862,6 +888,7 @@ class Analysis(object):
         self.__th232_pb204 = th232_pb204
         self.__u238_pb204 = u238_pb204
         self.__sigma_level = sigma_level
+        self.__final_U_Th_Ratio = final_U_Th_Ratio
 
     def __repr__(self):
         return self.analysis_name
@@ -993,6 +1020,14 @@ class Analysis(object):
     @sigma_level.setter
     def sigma_level(self, value):
         self.__sigma_level = value
+
+    @property
+    def final_U_Th_Ratio(self):
+        return self.__final_U_Th_Ratio
+
+    @final_U_Th_Ratio.setter
+    def final_U_Th_Ratio(self, value):
+        self.__final_U_Th_Ratio = value
 
     def u238_pb206(self):
         rat238206 = 1 / self.pb206_u238[0]
