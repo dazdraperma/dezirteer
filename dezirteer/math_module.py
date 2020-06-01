@@ -12,6 +12,7 @@ import random
 pbpb_table =  []
 concordia_table = []
 
+
 def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
     any_error = False
     corr_coef_75_68 = (rat68err / rat68) / (rat75err / rat75)
@@ -22,7 +23,7 @@ def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
     if corr_coef_86_76 > 1:
         corr_coef_86_76 = 1 / corr_coef_86_76
         any_error = True
-    return (corr_coef_75_68, corr_coef_86_76, any_error)
+    return corr_coef_75_68, corr_coef_86_76, any_error
 
 
 def t_student(alpha, gl):
@@ -33,12 +34,12 @@ def calc_ratio(age):
     # print(age)
     pb207_u235 = exp(LAMBDA_235 * age * 1000000) - 1
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
-    if age!=0:
+    if age != 0:
         pb207_pb206 = (pb207_u235 / pb206_u238) * (1 / U238_U235)
         u238_pb206 = 1 / pb206_u238
     else:
-        pb207_pb206=0
-        u238_pb206=1000
+        pb207_pb206 = 0
+        u238_pb206 = 1000
     pb208_th232 = exp(LAMBDA_232 * age * 1000000) - 1
     return [pb206_u238, pb207_u235, pb207_pb206, u238_pb206, pb208_th232]
 
@@ -65,99 +66,101 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
             elif n == 2:
                 return 29.476 + 32.208 * (r4570[4] - rage[4])  # 8/4c
 
-def pb4cor(pb_pb4,pb_pb4_c,pb_uth,lam): #universal 204pb corr function for all measured ratios 
-    if pb_pb4[2]!=-1 and pb_uth[2]!=-1:
-        i=2
+
+def pb4cor(pb_pb4, pb_pb4_c, pb_uth, lam):  # universal 204pb corr function for all measured ratios
+    if pb_pb4[2] != -1 and pb_uth[2] != -1:
+        i = 2
     else:
-        i=1
+        i = 1
     fc = pb_pb4_c / pb_pb4[0]
     ratio = pb_uth[0]*(1-fc)
     tmp1 = (pb_pb4[i] / pb_pb4[0]) ** 2
     tmp2 = (pb_uth[i] / pb_uth[0]) ** 2
     ratio_err = sqrt((sqrt(tmp1) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2) * ratio
-    if ratio>=0:
+    if ratio >= 0:
         age = log(1 + ratio) / lam / 1000000
         age_err = ratio_err / (1 + ratio) / lam / 1000000
     else:
-        age=-1
-        age_err=-1
-    return age, age_err,ratio,ratio_err
+        age = -1
+        age_err = -1
+    return age, age_err, ratio, ratio_err
+
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     d = 1
     corr_age = [-1, -1]
-    mr68=zir.pb206_u238
-    mr75=zir.pb207_u235
-    mr82=zir.pb208_th232
-    mr76=zir.pb207_pb206
-    mr64=zir.pb206_pb204
-    mr74=zir.pb207_pb204
-    mr84=zir.pb208_pb204
+    mr68 = zir.pb206_u238
+    mr75 = zir.pb207_u235
+    mr82 = zir.pb208_th232
+    mr76 = zir.pb207_pb206
+    mr64 = zir.pb206_pb204
+    mr74 = zir.pb207_pb204
+    mr84 = zir.pb208_pb204
     # mr28=zir.th232_u238
     # mru84=zir.u238_pb204
     # mr24=zir.th232_pb204
-    age=zir.calc_age(0)[0]
-    com64=compb(age,0)
-    com74=compb(age,1)
-    com84=compb(age,2)
-    com76=compb(age,3)
+    age = zir.calc_age(0)[0]
+    com64 = compb(age, 0)
+    com74 = compb(age, 1)
+    com84 = compb(age, 2)
+    com76 = compb(age, 3)
     
     if corr_type == 0:  # 204
-        if mr64[0]!=-1 and mr68[0]!=-1:
-            a68=pb4cor(mr64,com64,mr68,LAMBDA_238)
+        if mr64[0] != -1 and mr68[0] != -1:
+            a68 = pb4cor(mr64, com64, mr68, LAMBDA_238)
         else:
-            a68=[-1,-1,-1,-1]
+            a68 = [-1, -1 , -1, -1]
 
-        if mr74[0]!=-1 and mr75[0]!=-1:
-            a75=pb4cor(mr74,com74,mr75,LAMBDA_235)
+        if mr74[0] != -1 and mr75[0] != -1:
+            a75 = pb4cor(mr74, com74, mr75, LAMBDA_235)
         else:
-            a75=[-1,-1,-1,-1]
+            a75 = [-1, -1, -1, -1]
 
-        if mr84[0]!=-1 and mr82[0]!=-1:
-            a82=pb4cor(mr84,com84,mr82,LAMBDA_232)
+        if mr84[0] != -1 and mr82[0] != -1:
+            a82 = pb4cor(mr84, com84, mr82, LAMBDA_232)
         else:
-            a82=[-1,-1,-1,-1]
+            a82 = [-1, -1, -1, -1]
         
-        r76=a75[2]/a68[2]/U238_U235
+        r76 = a75[2]/a68[2]/U238_U235
         a76 = find_age(r76)
-        if a68[0]>0 and a75[0]>0 and a76>0:
-            t=a76*1000000
-            r76er=sqrt((a75[3]*a68[2])**2+(a68[3]*a75[2])**2)/(U238_U235*a68[2]**2)
-            e5=exp(LAMBDA_235*t)
-            e8=exp(LAMBDA_238*t)
-            a76er=U238_U235*r76er/(LAMBDA_235*e5/(e8-1)-LAMBDA_238*e8*(e5-1)/(e8-1)**2)
-            a76er=a76er/1000000
+        if a68[0] > 0 and a75[0] > 0 and a76 > 0:
+            t = a76*1000000
+            r76er = sqrt((a75[3]*a68[2])**2+(a68[3]*a75[2])**2)/(U238_U235*a68[2]**2)
+            e5 = exp(LAMBDA_235*t)
+            e8 = exp(LAMBDA_238*t)
+            a76er = U238_U235*r76er/(LAMBDA_235*e5/(e8-1)-LAMBDA_238*e8*(e5-1)/(e8-1)**2)
+            a76er = a76er/1000000
         else:
-            r76=-1
-            a76=-1
-            r76er=-1
-            a76er=-1
+            r76 = -1
+            a76 = -1
+            r76er = -1
+            a76er = -1
         
-        a4c=[a68[0],a75[0],a76,a82[0]]
-        a4cer=[a68[1],a75[1],a76er,a82[1]]
-        corr_age=[a4c,a4cer]
+        a4c = [a68[0], a75[0], a76, a82[0]]
+        a4cer = [a68[1], a75[1], a76er, a82[1]]
+        corr_age = [a4c, a4cer]
 
-    elif corr_type == 1: # 207
+    elif corr_type == 1:  # 207
         t = 1000
-        tmp75=mr76[0]*mr68[0]*U238_U235
+        tmp75 = mr76[0]*mr68[0]*U238_U235
         # age
         while abs(d) > 0.001:
-            e1=exp(LAMBDA_238*t)-1
-            e2=exp(LAMBDA_235*t)-1
+            e1 = exp(LAMBDA_238*t)-1
+            e2 = exp(LAMBDA_235*t)-1
             f = U238_U235 * com76 * (mr68[0] - e1) - tmp75 + e2
-            d1=LAMBDA_235*(e2+1)-U238_U235*com76*LAMBDA_238*(e1 + 1)
-            if d1!=0:
+            d1 = LAMBDA_235*(e2+1)-U238_U235*com76*LAMBDA_238*(e1 + 1)
+            if d1 != 0:
                 d=-f / d1
                 if abs(d) > 0.001:
-                    t+=d
+                    t += d
         corr_age[0] = t/1000000
         # error
-        if mr68[2]!=-1 and mr76[2]!=-1:
-            r68er=mr68[2]
-            r76er=mr76[2]
+        if mr68[2] != -1 and mr76[2] != -1:
+            r68er = mr68[2]
+            r76er = mr76[2]
         else:
-            r68er=mr68[1]
-            r76er=mr76[1]
+            r68er = mr68[1]
+            r76er = mr76[1]
         rv = U238_U235**2*((mr68[0]*r76er)**2+(mr76[0]*r68er)**2)
         d = (U238_U235*com76*LAMBDA_238*(e1+1)-LAMBDA_235*(e2+1))**2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
