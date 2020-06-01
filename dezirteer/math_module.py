@@ -172,15 +172,15 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while d1 > 0.001:
-            e1=exp(LAMBDA_238*t)
-            e2=exp(LAMBDA_232*t)
-            f=mr68[0]-e1+1-mr28[0]*com64/com84*(mr82[0]-e2+1)
-            d=mr28[0]*com64/com84*LAMBDA_232*e2-LAMBDA_238*e1
-            d1=-f/d
-            t+=d1
+            e1 = exp(LAMBDA_238*t)
+            e2 = exp(LAMBDA_232*t)
+            f = mr68[0]-e1+1-mr28[0]*com64/com84*(mr82[0]-e2+1)
+            d = mr28[0]*com64/com84*LAMBDA_232*e2-LAMBDA_238*e1
+            d1 = -f/d
+            t += d1
         corr_age[0] = t
         # error
-        if mr68[2] !=-1 and mr76[2] !=-1 and mr28[2]!=-1:
+        if mr68[2] !=-1 and mr76[2] != -1 and mr28[2] != -1:
             r68er = mr68[2]
             r82er = mr82[2]
             r28er = mr28[2]
