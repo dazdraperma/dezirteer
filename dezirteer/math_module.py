@@ -215,15 +215,15 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         mkfc = []
         #sigma errors
         for i in range(100):
-            mkx=random.normalvariate(0,1)
-            mky=mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0,1)
-            mkz=random.normalvariate(0,1)
-            mkx=mkx*zir.pb207_u235[1]+x
-            mky=mky*zir.pb206_u238[1]+y
-            mkz=mkz*zir.pb208_th232[1]+z
-            t1=calc_age(mkx)[0]
-            mkages.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[0])
-            mkfc.append(andersen(t1,xt2,yt2,zt2,c7,c8,mkx,mky,mkz,u)[1])
+            mkx = random.normalvariate(0, 1)
+            mky = mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0, 1)
+            mkz = random.normalvariate(0, 1)
+            mkx = mkx*zir.pb207_u235[1]+x
+            mky = mky*zir.pb206_u238[1]+y
+            mkz = mkz*zir.pb208_th232[1]+z
+            t1 = calc_age(mkx)[0]
+            mkages.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[0])
+            mkfc.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[1])
         ageer = std(mkages)
         fcer = std(mkfc)
         corr_age[1] = ageer
@@ -283,11 +283,11 @@ def fill_pbpb_table():  # fills the table of 207pb-206pb ages
 def fill_concordia_table():
     if len(concordia_table) == 0:
         t = 1
-        ratios = [-1,-1,-1]
+        ratios = [-1, -1, -1]
         while t <= EarthAge:
-            mln_age=t * 1000000
-            e8=exp(LAMBDA_238 * mln_age) - 1
-            e5=exp(LAMBDA_235 * mln_age) - 1
+            mln_age = t * 1000000
+            e8 = exp(LAMBDA_238 * mln_age) - 1
+            e5 = exp(LAMBDA_235 * mln_age) - 1
             ratios.append(e8)
             ratios.append(e5)
             pbpb_age = (1 / U238_U235) * e5 / e8
