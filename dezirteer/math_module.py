@@ -68,22 +68,27 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
 
 
 def pb4cor(pb_pb4, pb_pb4_c, pb_uth, lam):  # universal 204pb corr function for all measured ratios
-    if pb_pb4[2] != -1 and pb_uth[2] != -1:
-        i = 2
-    else:
-        i = 1
-    fc = pb_pb4_c / pb_pb4[0]
-    ratio = pb_uth[0]*(1-fc)
-    tmp1 = (pb_pb4[i] / pb_pb4[0]) ** 2
-    tmp2 = (pb_uth[i] / pb_uth[0]) ** 2
-    ratio_err = sqrt((sqrt(tmp1) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2) * ratio
-    if ratio >= 0:
+    if pb_pb4[0] > 0 and pb_uth[0] > 0:
+        fc = pb_pb4_c / pb_pb4[0]
+        ratio = pb_uth[0]*(1-fc)
+        tmp1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
+        tmp2_int = (pb_uth[1] / pb_uth[0]) ** 2
+        ratio_err_int = sqrt((sqrt(tmp1_int) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2_int) * ratio
+        if pb_pb4[2] != -1 and pb_uth[2] != -1:
+            tmp1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
+            tmp2_prop = (pb_uth[2] / pb_uth[0]) ** 2
+            ratio_err_prop = sqrt((sqrt(tmp1_prop) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2_prop) * ratio
+            age_err_prop = ratio_err_prop / (1 + ratio) / lam / 1000000
         age = log(1 + ratio) / lam / 1000000
-        age_err = ratio_err / (1 + ratio) / lam / 1000000
+        age_err_int = ratio_err_int / (1 + ratio) / lam / 1000000
     else:
         age = -1
-        age_err = -1
-    return age, age_err, ratio, ratio_err
+        age_err_int = -1
+        age_err_prop = -1
+        ratio = -1
+        ratio_err_int = -1
+        ratio_err_prop = -1
+    return age, age_err_int, age_err_prop, ratio, ratio_err_int, ratio_err_prop
 
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
@@ -109,46 +114,48 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         if mr64[0] != -1 and mr68[0] != -1:
             a68 = pb4cor(mr64, com64, mr68, LAMBDA_238)
         else:
-            a68 = [-1, -1 , -1, -1]
+            a68 = [-1, -1 , -1, -1, -1, -1]
 
         if mr74[0] != -1 and mr75[0] != -1:
             a75 = pb4cor(mr74, com74, mr75, LAMBDA_235)
         else:
-            a75 = [-1, -1, -1, -1]
+            a75 = [-1, -1, -1, -1, -1, -1]
 
         if mr84[0] != -1 and mr82[0] != -1:
             a82 = pb4cor(mr84, com84, mr82, LAMBDA_232)
         else:
-            a82 = [-1, -1, -1, -1]
-        
-        r76 = a75[2]/a68[2]/U238_U235
-        a76 = find_age(r76)
-        if a68[0] > 0 and a75[0] > 0 and a76 > 0:
-            t = a76*1000000
-            r76er = sqrt((a75[3]*a68[2])**2+(a68[3]*a75[2])**2)/(U238_U235*a68[2]**2)
-            e5 = exp(LAMBDA_235*t)
-            e8 = exp(LAMBDA_238*t)
-            a76er = U238_U235*r76er/(LAMBDA_235*e5/(e8-1)-LAMBDA_238*e8*(e5-1)/(e8-1)**2)
-            a76er = a76er/1000000
+            a82 = [-1, -1, -1, -1, -1, -1]
+        a76=[]
+        a76[3] = a75[3] / a68[3] / U238_U235
+        a76[0] = find_age(a76[3])
+        if a68[0] > 0 and a75[0] > 0 and a76[0] > 0:
+            t = a76[0] * 1000000
+            e5 = exp(LAMBDA_235 * t)
+            e8 = exp(LAMBDA_238 * t)
+            a76[4] = sqrt((a75[4] * a68[2]) ** 2 + (a68[4] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
+            a76[1] = U238_U235 * a76[4] / (LAMBDA_235 * e5/(e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1)**2)
+            a76[1] = a76[1] / 1000000
+            a76[5] = sqrt((a75[5] * a68[2]) ** 2 + (a68[5] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
+            a76[2] = U238_U235 * a76[5] / (
+                        LAMBDA_235 * e5 / (e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1) ** 2)
+            a76[2] = a76[2] / 1000000
         else:
-            r76 = -1
-            a76 = -1
-            r76er = -1
-            a76er = -1
+            a76 = [-1, -1, -1, -1, -1, -1]
         
-        a4c = [a68[0], a75[0], a76, a82[0]]
-        a4cer = [a68[1], a75[1], a76er, a82[1]]
-        corr_age = [a4c, a4cer]
+        a4c = [a68[0], a75[0], a76[0], a82[0]]
+        a4c_err_int = [a68[1], a75[1], a76[1], a82[1]]
+        a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
+        corr_age = [a4c, a4c_err_int, a4c_err_prop]
 
     elif corr_type == 1:  # 207
         t = 1000
-        tmp75 = mr76[0]*mr68[0]*U238_U235
+        tmp75 = mr76[0] * mr68[0] * U238_U235
         # age
         while abs(d) > 0.001:
-            e1 = exp(LAMBDA_238*t)-1
-            e2 = exp(LAMBDA_235*t)-1
+            e1 = exp(LAMBDA_238 * t) - 1
+            e2 = exp(LAMBDA_235 * t) - 1
             f = U238_U235 * com76 * (mr68[0] - e1) - tmp75 + e2
-            d1 = LAMBDA_235*(e2+1)-U238_U235*com76*LAMBDA_238*(e1 + 1)
+            d1 = LAMBDA_235 * (e2 + 1) - U238_U235 * com76 * LAMBDA_238 * (e1 + 1)
             if d1 != 0:
                 d=-f / d1
                 if abs(d) > 0.001:
@@ -161,8 +168,8 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             r68er = mr68[1]
             r76er = mr76[1]
-        rv = U238_U235**2*((mr68[0]*r76er)**2+(mr76[0]*r68er)**2)
-        d = (U238_U235*com76*LAMBDA_238*(e1+1)-LAMBDA_235*(e2+1))**2
+        rv = U238_U235**2 * ((mr68[0] * r76er)**2 + (mr76[0] * r68er)**2)
+        d = (U238_U235 * com76 * LAMBDA_238 * (e1 + 1) - LAMBDA_235 * (e2 + 1))**2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
         n2 = U238_U235 ** 2 * com76 * (com76 - 2 * mr76[0]) * r68er ** 2
         n = n1 + n2 + rv
@@ -172,11 +179,11 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         t = 1000
         # age
         while d1 > 0.001:
-            e1 = exp(LAMBDA_238*t)
-            e2 = exp(LAMBDA_232*t)
-            f = mr68[0]-e1+1-mr28[0]*com64/com84*(mr82[0]-e2+1)
-            d = mr28[0]*com64/com84*LAMBDA_232*e2-LAMBDA_238*e1
-            d1 = -f/d
+            e1 = exp(LAMBDA_238 * t)
+            e2 = exp(LAMBDA_232 * t)
+            f = mr68[0] - e1 + 1 - mr28[0] * com64 / com84 * (mr82[0] - e2 + 1)
+            d = mr28[0] * com64 / com84 * LAMBDA_232 * e2 - LAMBDA_238 * e1
+            d1 = -f / d
             t += d1
         corr_age[0] = t
         # error
@@ -190,11 +197,11 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             r28er = mr28[1]
         c1 = mr82[0]+1-e2
         c2 = mr28[0] * com64 / com84
-        n1 = c1**2*(com64/com84*mr28er)**2
-        n2 = c2*r82er*r68er ** 2
+        n1 = c1**2 * (com64 / com84 * mr28er)**2
+        n2 = c2 * r82er * r68er**2
         n = n1 + n2
-        d = (c2*LAMBDA_232*e2-LAMBDA_238*e1)**2
-        corr_age[1] = sqrt(n/d)/1000000
+        d = (c2 * LAMBDA_232 * e2 - LAMBDA_238 * e1)**2
+        corr_age[1] = sqrt(n / d) / 1000000
 
     elif corr_type == 3:  # and
         # age
@@ -203,12 +210,12 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         xt2 = calc_ratio(t2)[1]
         yt2 = calc_ratio(t2)[0]
         zt2 = calc_ratio(t2)[4]
-        c7 = 15.628/18.7
-        c8 = 38.63/18.7
+        c7 = 15.628 / 18.7
+        c8 = 38.63 / 18.7
         x = zir.pb207_u235[0]
         y = zir.pb206_u238[0]
         z = zir.pb208_th232[0]
-        u = zir.u238_pb204[0]/zir.th232_pb204[0]
+        u = zir.u238_pb204[0] / zir.th232_pb204[0]
         k = U238_U235
         corr_age[0] = andersen(t1, xt2, yt2, zt2, c7, c8, x, y, z, u)[0]
         mkages = []
@@ -216,11 +223,11 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         #sigma errors
         for i in range(100):
             mkx = random.normalvariate(0, 1)
-            mky = mkx*zir.corr_coef_75_68+sqrt(1-zir.corr_coef_75_68**2)*random.normalvariate(0, 1)
+            mky = mkx * zir.corr_coef_75_68 + sqrt(1 - zir.corr_coef_75_68**2) * random.normalvariate(0, 1)
             mkz = random.normalvariate(0, 1)
-            mkx = mkx*zir.pb207_u235[1]+x
-            mky = mky*zir.pb206_u238[1]+y
-            mkz = mkz*zir.pb208_th232[1]+z
+            mkx = mkx*zir.pb207_u235[1] + x
+            mky = mky*zir.pb206_u238[1] + y
+            mkz = mkz*zir.pb208_th232[1] + z
             t1 = calc_age(mkx)[0]
             mkages.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[0])
             mkfc.append(andersen(t1, xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[1])
