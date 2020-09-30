@@ -1352,7 +1352,7 @@ class OperationWindow(Frame):
             else:
                 list_peaks = []
             while i < len(list_peaks):
-                self.ax_prob.axvline(list_peaks[i], color='black')
+                self.ax_prob.axvline(list_peaks[i], ymin=0, ymax=0.03, color='red')
                 i += 1
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_prob.set_title(g_prob_title)
