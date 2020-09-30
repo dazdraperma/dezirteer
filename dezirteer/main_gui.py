@@ -1119,6 +1119,39 @@ class OperationWindow(Frame):
         item_name = self.Table.item(item, "text")
         self.clear_and_plot(item_name)
 
+    def min_max_ages(self):
+        # choosing age interval based on user's input
+        if gui_support.varLimitAgeSpectrum.get() == 1:
+            min_age = g_grainset.min_age
+            max_age = g_grainset.max_age
+            '''min_age = g_number_of_good_grains[6]
+            max_age = g_number_of_good_grains[5]'''
+
+            if self.cbConcType.current() == 0:
+                min_conc_x = g_grainset.min_207_235
+                max_conc_x = g_grainset.max_207_235
+
+                min_conc_y = g_grainset.min_206_238
+                max_conc_y = g_grainset.max_206_238
+            else:
+                min_conc_x = g_grainset.min_238_206
+                max_conc_x = g_grainset.max_238_206
+
+                min_conc_y = g_grainset.min_207_206
+                max_conc_y = g_grainset.max_207_206
+
+        else:
+            min_age = 1
+            max_age = EarthAge
+            min_conc_x = 0
+            min_conc_y = 0
+            if self.cbConcType.current() == 0:
+                max_conc_x = 100
+                max_conc_y = 1.1
+            else:
+                max_conc_x = 60
+                max_conc_y = 0.7
+        return [min_age, max_age, min_conc_x, max_conc_x, min_conc_y, max_conc_y]
 
     #adds or removes text to the cum_plot, depending on the checked state of the cbShowCalc
     def plot_text(self, pval, dval):
@@ -1154,44 +1187,12 @@ class OperationWindow(Frame):
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.10, text_to_show, transform=self.ax_cum.transAxes)
-        # if g_graph_settings.pdp_kde_hist != 2: #if not histogram
-        #     self.plot_peaks(min_age, max_age)
+        if g_graph_settings.pdp_kde_hist != 2: #if not histogram
+            self.plot_peaks(self.min_max_ages()[0], self.min_max_ages()[1])
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
-    def min_max_ages(self):
-        # choosing age interval based on user's input
-        if gui_support.varLimitAgeSpectrum.get() == 1:
-            min_age = g_grainset.min_age
-            max_age = g_grainset.max_age
-            '''min_age = g_number_of_good_grains[6]
-            max_age = g_number_of_good_grains[5]'''
 
-            if self.cbConcType.current() == 0:
-                min_conc_x = g_grainset.min_207_235
-                max_conc_x = g_grainset.max_207_235
-
-                min_conc_y = g_grainset.min_206_238
-                max_conc_y = g_grainset.max_206_238
-            else:
-                min_conc_x = g_grainset.min_238_206
-                max_conc_x = g_grainset.max_238_206
-
-                min_conc_y = g_grainset.min_207_206
-                max_conc_y = g_grainset.max_207_206
-
-        else:
-            min_age = 1
-            max_age = EarthAge
-            min_conc_x = 0
-            min_conc_y = 0
-            if self.cbConcType.current() == 0:
-                max_conc_x = 100
-                max_conc_y = 1.1
-            else:
-                max_conc_x = 60
-                max_conc_y = 0.7
-        return [min_age, max_age, min_conc_x, max_conc_x, min_conc_y, max_conc_y]
 
     def concordia_type(self):
         # choosing concordia type base on user's input
