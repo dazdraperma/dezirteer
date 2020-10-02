@@ -1615,7 +1615,8 @@ def main():
     g_pval_dval = [-1, -1]
     g_prev_cum = []
     g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
-    g_list_col_names = ['208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
+    g_list_col_names = ['232Th/238U', '232/238Err 1s(Int)', '232/238Err 1s(Prop)',
+                        '208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
                         '207Pb/206Pb', '207/206Err 1s(Int)', '207/206Err 1s(Prop)',
                         '207Pb/235U', '207/235Err 1s(Int)', '207/235Err 1s(Prop)',
                         '206Pb/238U', '206/238Err 1s(Int)', '206/238Err 1s(Prop)',
