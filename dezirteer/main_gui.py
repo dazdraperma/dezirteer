@@ -452,7 +452,6 @@ class OperationWindow(Frame):
         self.cbPbc.grid(row=6, column=0, sticky='ew')
         self.cbPbc.configure(width=15)
         self.cbPbc.configure(takefocus="")
-        self.cbPbc.configure(state=DISABLED)
         self.cbPbc.configure(values=('None', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
         self.cbPbc.current(0)
         self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(), pars_onChange))
@@ -1085,7 +1084,7 @@ class OperationWindow(Frame):
             self.entHistBinwidth.configure(state="disabled")
             self.entAgeCutoff.configure(state="disabled")
             self.cbErrFilter.configure(state="readonly")
-            self.cbPbc.configure(state="disabled")
+            self.cbPbc.configure(state="readonly")
 
 
             self.lboxSamples.delete(0, END)
@@ -1621,6 +1620,7 @@ def main():
                         '207Pb/235U', '207/235Err 1s(Int)', '207/235Err 1s(Prop)',
                         '206Pb/238U', '206/238Err 1s(Int)', '206/238Err 1s(Prop)',
                         'corr. coef.75_68', 'corr. coef.86_76',
+
                         'Uconc (approx. ppm)', 'UconcErr 1s(Int)', 'UconcErr 1s(Prop)',
                         'pbc (approx. ppm)', 'pbcErr 1s(Int)', 'pbcErr 1s(Prop)',
                         '206Pb/204Pb', '206/204Err 1s(Int)', '206/204Err 1s(Prop)',
@@ -1634,20 +1634,16 @@ def main():
                         'Age 207Pb/235U', 'Age207/235Err 1s(Int)', 'Age207/235Err 1s(Prop)',
                         'Age 206Pb/238U', 'Age206/238Err 1s(Int)', 'Age206/238Err 1s(Prop)',
 
-                        #'204-corr. age 208Pb/232Th', '204-corr. age 208Pb/232Th±1s(Int)', '204-corr. age 208Pb/232Th±1s(Prop)',
-                        #'204-corr. age 207Pb/206Pb', '204-corr. age 207Pb/206Pb±1s(Int)', '204-corr. age 207Pb/206Pb±1s(Prop)',
-                        #'204-corr. age 207Pb/235U', '204-corr. age 207Pb/235U±1s(Int)', '204-corr. age 207Pb/235U±1s(Prop)',
-                        #'204-corr. age 206Pb/238U', '204-corr. age 206Pb/238U±1s(Int)', '204-corr. age 206Pb/238U±1s(Prop)',
-
-                        #'207-corr. age', '207-corr. age±1s(Int)', '207-corr. age±1s(Prop)',
-                        #'208-corr. age', '208-corr. age±1s(Int)', '208-corr. age±1s(Prop)',
-
-                        # 'And-corr. age', 'And-corr. age±1s(Int)', 'And-corr. age±1s(Prop)',
-
+                        'Corr.type',
+                        'age corr.',
+                        'age corr.Err 1s(Int)',
+                        'age corr.Err 1s(Prop)',
 
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',
-                        'best age', 'best ageErr 1s']
+                        'best age', 'best ageErr 1s',
+
+                        ]
     fill_pbpb_table()
     fill_concordia_table()
     g_filters = Filters()

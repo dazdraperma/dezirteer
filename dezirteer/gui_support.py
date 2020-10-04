@@ -15,6 +15,7 @@ except ImportError:
     py3 = True
 
 from const import *
+from math_module import *
 
 class NoGrainsError(Exception):
     pass
@@ -264,7 +265,7 @@ def set_Tk_var():
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
-    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth,varHistBinwidth
+    global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -409,6 +410,11 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_age(0)[1]) + ',' +
                        str(an_list[j].calc_age(0)[2]) + ',' +
 
+                       "none" + ',' +
+                       str(-1) + ',' +
+                       str(-1) + ',' +
+                       str(-1) + ',' +
+
                        str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
                        str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
 
@@ -550,6 +556,11 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(an_list[j].calc_age(0)[0]),
                     int(an_list[j].calc_age(0)[1]),
                     int(an_list[j].calc_age(0)[2]),
+
+                    p_filters.use_pbc,
+                    pbc_corr(an_list[j], 0),
+                    "-1",
+                    "-1",
 
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),
