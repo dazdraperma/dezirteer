@@ -484,6 +484,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     good_grains = p_grainset.good_bad_sets(p_filters)
     grainset = p_grainset
     filters = p_filters
+    l_use_pbc = p_filters.use_pbc
     p_table.heading("#0", text="Analysis name", anchor='c')
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
@@ -557,8 +558,8 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(an_list[j].calc_age(0)[1]),
                     int(an_list[j].calc_age(0)[2]),
 
-                    p_filters.use_pbc,
-                    pbc_corr(an_list[j], 0),
+                    l_use_pbc,
+                    pbc_corr(an_list[j], l_use_pbc),
                     "-1",
                     "-1",
 

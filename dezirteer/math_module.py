@@ -147,7 +147,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     com84 = compb(age, 2)
     com76 = compb(age, 3)
     
-    if corr_type == 0:  # 204
+    if corr_type == 1:  # 204
         if mr64[0] != -1 and mr68[0] != -1:
             a68 = pb4cor(mr64, com64, mr68, LAMBDA_238)
         else:
@@ -184,7 +184,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
         corr_age = [a4c, a4c_err_int, a4c_err_prop]
 
-    elif corr_type == 1 and mr76[0] > 0 and mr68[0] > 0:  # 207
+    elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         t = 1000
         tmp75 = mr76[0] * mr68[0] * U238_U235
 
@@ -216,7 +216,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             corr_age[2] = -1
         
-    elif corr_type == 2 and mr82[0] > 0 and mr68[0] > 0:  # 208
+    elif corr_type == 3 and mr82[0] > 0 and mr68[0] > 0:  # 208
         t = 1000
         # age
         while d1 > 0.001:
@@ -244,7 +244,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             corr_age[2] = -1
 
-    elif corr_type == 3:  # and
+    elif corr_type == 4:  # and
         # age
         t2 = 0  # NEED CORRECTION!!!  age of pb lost, must entered by user
         xt2 = calc_ratio(t2)[1]
