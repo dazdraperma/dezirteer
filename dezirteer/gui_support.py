@@ -16,6 +16,8 @@ except ImportError:
 
 from const import *
 from math_module import *
+global g_corr_type
+g_corr_type = ["none", "204", "207", "208", "And."]
 
 class NoGrainsError(Exception):
     pass
@@ -128,7 +130,6 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
             args[2].configure(state=DISABLED)
     elif p_number_in_list == 3:
         pars[0].which_age[0] = p_value
-
         if p_value == 1:
             args[1].configure(state=NORMAL)
             pars[0].which_age[1] = varAgeCutoff.get()
@@ -136,6 +137,12 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
             args[1].configure(state=DISABLED)
     elif p_number_in_list == 4:
         pars[0].use_pbc = p_value
+        for i in range(len(args)):
+            if p_value in (2, 3, 4):
+                args[i].configure(state=DISABLED)
+            else:
+                args[i].configure(state="readonly")
+
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
         if p_value == 1:
@@ -484,16 +491,16 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     good_grains = p_grainset.good_bad_sets(p_filters)
     grainset = p_grainset
     filters = p_filters
-    l_use_pbc = p_filters.use_pbc
+    l_type_pbc = p_filters.use_pbc
     p_table.heading("#0", text="Analysis name", anchor='c')
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
         p_table.column(i, width="100", anchor="c")
         while j < len(grainset):
             p_table.insert('', 'end', text=(an_list[j]), values=(
-                    -1,
-                    -1,
-                    -1,
+                    round(an_list[j].th232_u238[0], 4),
+                    round(an_list[j].th232_u238[1], 4),
+                    round(an_list[j].th232_u238[2], 4),
 
                     round(an_list[j].pb208_th232[0], 4),
                     round(an_list[j].pb208_th232[1], 4),
@@ -558,10 +565,10 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(an_list[j].calc_age(0)[1]),
                     int(an_list[j].calc_age(0)[2]),
 
-                    l_use_pbc,
-                    pbc_corr(an_list[j], l_use_pbc),
-                    "-1",
-                    "-1",
+                    g_corr_type[l_type_pbc],
+                    int(pbc_corr(an_list[j], l_type_pbc)[0]),
+                    int(pbc_corr(an_list[j], l_type_pbc)[1]),
+                    int(pbc_corr(an_list[j], l_type_pbc)[2]),
 
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),

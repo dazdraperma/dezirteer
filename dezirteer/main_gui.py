@@ -454,7 +454,12 @@ class OperationWindow(Frame):
         self.cbPbc.configure(takefocus="")
         self.cbPbc.configure(values=('None', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
         self.cbPbc.current(0)
-        self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(), pars_onChange))
+        self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(),
+                                                                                   pars_onChange, self.entPosDiscFilt,
+                                                                                   self.entNegDiscFilt,self.cbWhichAge,
+                                                                                   self.entAgeCutoff,
+                                                                                   self.entDiscAgeFixedLim,
+                                                                                   self.cbWhichConc))
 
 
 

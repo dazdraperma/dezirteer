@@ -127,7 +127,6 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
     return age, fc, xr, yr, zr, fl  # corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
 
 
-
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     d = 1
     corr_age = [-1, -1, -1]
@@ -216,7 +215,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             corr_age[2] = -1
         
-    elif corr_type == 3 and mr82[0] > 0 and mr68[0] > 0:  # 208
+    elif corr_type == 3 and mr82[0] > 0 and mr68[0] > 0 and mr28[0] > 0:  # 208
         t = 1000
         # age
         while d1 > 0.001:
@@ -445,8 +444,6 @@ class Filters(object):  # describes filters that should be applied to data in An
     @maxAgeCrop.setter
     def maxAgeCrop(self, value):
         self.__maxAgeCrop = value
-
-
 
 
 #this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
@@ -1066,9 +1063,6 @@ class Analysis(object):
     def final_U_Th_Ratio(self, value):
         self.__final_U_Th_Ratio = value
 
-
-
-
     @property
     def th232_u238(self):
         return self.__th232_u238
@@ -1076,10 +1070,6 @@ class Analysis(object):
     @th232_u238.setter
     def th232_u238(self, value):
         self.__th232_u238 = value
-
-
-
-
 
     def u238_pb206(self):
         rat238206 = 1 / self.pb206_u238[0]
