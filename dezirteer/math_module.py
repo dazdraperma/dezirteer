@@ -1220,7 +1220,6 @@ class Analysis(object):
         else:
             is_age_good = False
 
-
         # filter by measurement error
         if do_err:
             if err / age < err_cutoff:  # checks whether error is within limit
@@ -1301,11 +1300,6 @@ class AnalysesSet(object):
     def max_age(self, value):
         self.__max_age = value
 
-
-
-
-
-
     @property
     def min_206_238(self):
         return self.__min_206_238
@@ -1321,8 +1315,6 @@ class AnalysesSet(object):
     @max_206_238.setter
     def max_206_238(self, value):
         self.__max_206_238 = value
-
-
 
     @property
     def min_207_235(self):
@@ -1340,8 +1332,6 @@ class AnalysesSet(object):
     def max_207_235(self, value):
         self.__max_207_235 = value
 
-
-
     @property
     def min_238_206(self):
         return self.__min_238_206
@@ -1358,8 +1348,6 @@ class AnalysesSet(object):
     def max_238_206(self, value):
         self.__max_238_206 = value
 
-
-
     @property
     def min_207_206(self):
         return self.__min_207_206
@@ -1375,12 +1363,6 @@ class AnalysesSet(object):
     @max_207_206.setter
     def max_207_206(self, value):
         self.__max_207_206 = value
-
-
-
-
-
-
 
     @property
     def name(self):
@@ -1483,7 +1465,6 @@ class AnalysesSet(object):
                     max_207_206 = z_207_206[0]+k*z_207_206[1]
                 if z_207_206[0] < min_207_206:
                     min_207_206 = z_207_206[0]-k*z_207_206[1]
-
 
                 self.__good_set.update({zircon: z_age})
                 number_of_good_grains += 1
