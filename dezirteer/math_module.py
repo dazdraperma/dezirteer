@@ -48,23 +48,25 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
     r4570=calc_ratio(4570)
     r3700=calc_ratio(3700)
     rage=calc_ratio(age)
-    if n == 3:
-        return compb(age, 1) / compb(age, 0)  # 7/6c
-    else: 
-        if age <= 3700:
-            if n == 0:
-                return 11.152 + 9.735 * (r3700[0] - rage[0])  # 6/4c
-            elif n == 1:
-                return 12.998 + 9.735 / U238_U235 * (r3700[1] - rage[1])  # 7/4c
-            elif n == 2:
-                return 31.23 + 36.837 * (r3700[4] - rage[4])  # 8/4c
-        else:
-            if n == 0:
-                return 9.307 + 7.1925 * (r4570[0] - rage[0])  # 6/4c
-            elif n == 1:
-                return 10.294 + 7.192 / U238_U235 * (r4570[1] - rage[1])  # 7/4c
-            elif n == 2:
-                return 29.476 + 32.208 * (r4570[4] - rage[4])  # 8/4c
+##    if n == 3:
+##        return compb(age, 1) / compb(age, 0)  # 7/6c
+##    elif n == 4:
+##        return compb(age, 2) / compb(age, 0)  # 8/6c
+##    else: 
+    if age <= 3700:
+        if n == 0:
+            return 11.152 + 9.735 * (r3700[0] - rage[0])  # 6/4c
+        elif n == 1:
+            return 12.998 + 9.735 / U238_U235 * (r3700[1] - rage[1])  # 7/4c
+        elif n == 2:
+            return 31.23 + 36.837 * (r3700[4] - rage[4])  # 8/4c
+    else:
+        if n == 0:
+            return 9.307 + 7.1925 * (r4570[0] - rage[0])  # 6/4c
+        elif n == 1:
+            return 10.294 + 7.192 / U238_U235 * (r4570[1] - rage[1])  # 7/4c
+        elif n == 2:
+            return 29.476 + 32.208 * (r4570[4] - rage[4])  # 8/4c
 
 
 def pb4cor(pb_pb4, pb_pb4_c, pb_uth, lam):  # universal 204pb corr function for all measured ratios
@@ -98,7 +100,7 @@ def eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
             xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
                    z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
                    zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
-    zero = fabs(zero)
+##    zero = fabs(zero)
     return zero, xt1, yt1, zt1
 
 def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
@@ -108,6 +110,7 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
     b = 4500
     c = 1000
     while dt > 0.001: # solution of equation 7 (Andersen, 2002)
+##        print(c, eq7(c, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0])
         if eq7(c, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0] < 0:
             b = c
         else:
@@ -124,7 +127,7 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
     xr = x - y * c7 * k * fc
     zr = z - y * c8 * u * fc
     fl = (yt1 - yr) / (yt1 - yt2)
-    return age, fc, xr, yr, zr, fl  # corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
+    return t1, fc, xr, yr, zr, fl  # corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
 
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
@@ -137,14 +140,16 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     mr64 = zir.pb206_pb204
     mr74 = zir.pb207_pb204
     mr84 = zir.pb208_pb204
-    mr28 = zir.th232_u238
+    mr28 = zir.th232_u238 #[0.5, 0.05, 0.1]
+    mr86 = mr82[0] * mr28[0] / mr68[0]
     #mru84 = zir.u238_pb204
     #mrth24 = zir.th232_pb204
     age = zir.calc_age(0)[0]
     com64 = compb(age, 0)
     com74 = compb(age, 1)
     com84 = compb(age, 2)
-    com76 = compb(age, 3)
+    com76 = compb(age, 1) / compb(age, 0)
+    com86 = compb(age, 2) / compb(age, 0)
     
     if corr_type == 1:  # 204
         if mr64[0] != -1 and mr68[0] != -1:
@@ -184,22 +189,25 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         corr_age = [a4c, a4c_err_int, a4c_err_prop]
 
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
-        t = 1000
-        tmp75 = mr76[0] * mr68[0] * U238_U235
-
+        a = 0
+        b = 4500
+        c = 1000
         # age
-        while abs(d) > 0.001:
-            e1 = exp(LAMBDA_238 * t) - 1
-            e2 = exp(LAMBDA_235 * t) - 1
-            f = U238_U235 * com76 * (mr68[0] - e1) - tmp75 + e2
-            d1 = LAMBDA_235 * (e2 + 1) - U238_U235 * com76 * LAMBDA_238 * (e1 + 1)
-            if d1 != 0:
-                d=-f / d1
-                if abs(d) > 0.001:
-                    t += d
-        corr_age[0] = t/1000000
+        while d > 0.001:
+            r = calc_ratio(c)
+            x1 = r[3]
+            x2 = (r[2] - com76) / (mr68[0] * (mr76[0] - com76))
+            if x2 > x1:
+                b = c
+            else:
+                a = c
+            c = (b - a) / 2 + a
+            d = b - a
+        corr_age[0] = a
 
         # error
+        e1 = exp(LAMBDA_238 * a) - 1
+        e2 = exp(LAMBDA_235 * a) - 1
         rv = U238_U235 ** 2 * ((mr68[0] * mr76[1]) ** 2 + (mr76[0] * mr68[1]) ** 2)
         d = (U238_U235 * com76 * LAMBDA_238 * (e1 + 1) - LAMBDA_235 * (e2 + 1)) ** 2
         n1 = 0  # n1=(U238_U235*(zir.pb206_u238[0]-calc_ratio(t)[0])*) #commonly it's assumed r76c_err=0 => n1=0
@@ -218,28 +226,44 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     elif corr_type == 3 and mr82[0] > 0 and mr68[0] > 0 and mr28[0] > 0:  # 208
         t = 1000
         # age
-        while d1 > 0.001:
-            e1 = exp(LAMBDA_238 * t)
-            e2 = exp(LAMBDA_232 * t)
-            f = mr68[0] - e1 + 1 - mr28[0] * com64 / com84 * (mr82[0] - e2 + 1)
-            d = mr28[0] * com64 / com84 * LAMBDA_232 * e2 - LAMBDA_238 * e1
-            d1 = -f / d
-            t += d1
-        corr_age[0] = t
-
+        a = 0
+        b = 4500
+        c = 1000
+        while d > 0.001:
+            r = calc_ratio(c)
+            x1 = r[3]
+            x2 = (r[3] * r[4] * mr28[0] - com86) / (mr68[0] * (mr86 - com86))
+            if x2 > x1:
+                b = c
+            else:
+                a = c
+            c = (b - a) / 2 + a
+            d = b - a
+##        while d > 0.001:
+##            e1 = exp(LAMBDA_238 * t)
+##            e2 = exp(LAMBDA_232 * t)
+##            f = mr68[0] - e1 + 1 - mr28[0] * com64 / com84 * (mr82[0] - e2 + 1)
+##            d1 = mr28[0] * com64 / com84 * LAMBDA_232 * e2 - LAMBDA_238 * e1
+##            d = -f / d1
+##            t += d
+        corr_age[0] = a
+        
         # error
+        e1 = exp(LAMBDA_238 * a * 10**6)
+        e2 = exp(LAMBDA_232 * a * 10**6)
         c1 = mr82[0] + 1 - e2
         c2 = mr28[0] * com64 / com84
         d = (c2 * LAMBDA_232 * e2 - LAMBDA_238 * e1) ** 2
         n1 = c1 ** 2 * (com64 / com84 * mr28[1]) ** 2
-        n2 = c2 * mr82[1] * mr68[1] ** 2
+        n2 = c2 * mr82[1] + mr68[1] ** 2
         n = n1 + n2
-        corr_age[1] = sqrt(n / d)
+        corr_age[1] = sqrt(n / d) / 1000000
+        
         if mr68[2] != -1 and mr76[2] != -1 and mr82[2] != -1:
             n1 = c1 ** 2 * (com64 / com84 * mr28[2]) ** 2
-            n2 = c2 * mr82[2] * mr68[2] ** 2
+            n2 = c2 * mr82[2] + mr68[2] ** 2
             n = n1 + n2
-            corr_age[2] = sqrt(n / d)
+            corr_age[2] = sqrt(n / d) / 1000000
         else:
             corr_age[2] = -1
 
@@ -252,28 +276,30 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         c7 = 15.628 / 18.7
         c8 = 38.63 / 18.7
         rho = zir.corr_coef_75_68
-        x = zir.pb207_u235[0]
-        y = zir.pb206_u238[0]
-        z = zir.pb208_th232[0]
-        u = zir.u238_pb204[0] / zir.th232_pb204[0]
+        x = mr75[0]
+        y = mr68[0]
+        z = mr82[0]
+        u = mr28[0]
         corr_age[0] = andersen(xt2, yt2, zt2, c7, c8, x, y, z, u)[0]
         mc_ages = []
         mc_fc = []
+        mc_ages_int = []
+        mc_ages_prop = []
 
         # sigma errors
         for i in range(1000): # Monte-Carlo statistics collection
             mkx = random.normalvariate(0, 1)
             mky = mkx * rho + sqrt(1 - rho**2) * random.normalvariate(0, 1)
             mkz = random.normalvariate(0, 1)
-            mkx_int = mkx * zir.pb207_u235[1] + x
-            mky_int = mky * zir.pb206_u238[1] + y
-            mkz_int = mkz * zir.pb208_th232[1] + z
+            mkx_int = mkx * mr75[1] + x
+            mky_int = mky * mr68[1] + y
+            mkz_int = mkz * mr82[1] + z
             mc_ages_int.append(andersen(xt2, yt2, zt2, c7, c8, mkx_int, mky_int, mkz_int, u)[0])
 
-            if zir.pb207_u235[2] != -1 and zir.pb206_u238[2] != -1 and zir.pb208_th232[2] != -1:
-                mkx_prop = mkx * zir.pb207_u235[2] + x
-                mky_prop = mky * zir.pb206_u238[2] + y
-                mkz_prop = mkz * zir.pb208_th232[2] + z
+            if mr75[2] != -1 and mr68[2] != -1 and mr82[2] != -1:
+                mkx_prop = mkx * mr75[2] + x
+                mky_prop = mky * mr68[2] + y
+                mkz_prop = mkz * mr82[2] + z
                 mc_ages_prop.append(andersen(xt2, yt2, zt2, c7, c8, mkx_prop, mky_prop, mkz_prop, u)[0])
             else:
                 mc_ages_prop = -1
