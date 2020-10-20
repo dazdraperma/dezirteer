@@ -92,34 +92,23 @@ def pb4cor(pb_pb4, pb_pb4_c, pb_uth, lam):  # universal 204pb corr function for 
         ratio_err_prop = -1
     return age, age_err_int, age_err_prop, ratio, ratio_err_int, ratio_err_prop
 
-def eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
-    xt1 = calc_ratio(t1)[1]
-    yt1 = calc_ratio(t1)[0]
-    zt1 = calc_ratio(t1)[4]
-    zero = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
-            xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
-                   z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
-                   zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
-##    zero = fabs(zero)
-    return zero, xt1, yt1, zt1
-
 def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
     k = U238_U235
     dt = 1
     a = 0
     b = 4500
     c = 1000
+
     while dt > 0.001: # solution of equation 7 (Andersen, 2002)
-##        print(c, eq7(c, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0])
-        if eq7(c, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[0] < 0:
+        if eq7(c, xt2, yt2, zt2, c7, c8, x, y, z, u, k) < 0:
             b = c
         else:
             a = c
         dt = b - a
         c = dt / 2 + a
     t1 = a
-    xt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[1]
-    yt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[2]
+    xt1 = calc_ratio(t1)[1]
+    yt1 = calc_ratio(t1)[0]
     # zt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[3]
     fc = (-y * xt1 + y * xt2 + yt2 * xt1 + x * yt1 - x * yt2 - xt2 * yt1) / (
                 -y * xt1 + y * xt2 + y * c7 * k * yt1 - y * c7 * k * yt2) * 100
@@ -129,6 +118,17 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
     fl = (yt1 - yr) / (yt1 - yt2)
     return t1, fc, xr, yr, zr, fl  # corrected age, fract. of common lead, radiogenic ratios and fratc of pb loss
 
+
+def eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):
+    xt1 = calc_ratio(t1)[1]
+    yt1 = calc_ratio(t1)[0]
+    zt1 = calc_ratio(t1)[4]
+    zero = (y * (xt1 - xt2) - yt2 * xt1 + x * (yt2 - yt1) + xt2 * yt1) / (
+            xt1 - xt2 - c7 * k * yt1 + c7 * k * yt2) - (
+                   z * (yt2 - yt1) + zt2 * yt1 + y * (zt1 - zt2) - yt2 * zt1) / (
+                   zt1 - zt2 - c8 * u * yt1 + c8 * u * yt2)
+    # zero = math.fabs(zero)
+    return zero
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     d = 1
@@ -279,28 +279,30 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         x = mr75[0]
         y = mr68[0]
         z = mr82[0]
-        u = mr28[0]
+        u = 1/mr28[0]
+
+        # print(x,y,z,eq7(500, xt2, yt2, zt2, c7, c8, x, y, z, u, U238_U235))
         corr_age[0] = andersen(xt2, yt2, zt2, c7, c8, x, y, z, u)[0]
-        mc_ages = []
-        mc_fc = []
+
+        # mc_fc = []
         mc_ages_int = []
         mc_ages_prop = []
-
+        # print(x,y,z,corr_age[0])
         # sigma errors
         for i in range(1000): # Monte-Carlo statistics collection
-            mkx = random.normalvariate(0, 1)
-            mky = mkx * rho + sqrt(1 - rho**2) * random.normalvariate(0, 1)
-            mkz = random.normalvariate(0, 1)
-            mkx_int = mkx * mr75[1] + x
-            mky_int = mky * mr68[1] + y
-            mkz_int = mkz * mr82[1] + z
-            mc_ages_int.append(andersen(xt2, yt2, zt2, c7, c8, mkx_int, mky_int, mkz_int, u)[0])
+            mcx = random.normalvariate(0, 1)
+            mcy = mcx * rho + sqrt(1 - rho**2) * random.normalvariate(0, 1)
+            mcz = random.normalvariate(0, 1)
+            mcx_int = mcx * mr75[1] + x
+            mcy_int = mcy * mr68[1] + y
+            mcz_int = mcz * mr82[1] + z
+            mc_ages_int.append(andersen(xt2, yt2, zt2, c7, c8, mcx_int, mcy_int, mcz_int, u)[0])
 
             if mr75[2] != -1 and mr68[2] != -1 and mr82[2] != -1:
-                mkx_prop = mkx * mr75[2] + x
-                mky_prop = mky * mr68[2] + y
-                mkz_prop = mkz * mr82[2] + z
-                mc_ages_prop.append(andersen(xt2, yt2, zt2, c7, c8, mkx_prop, mky_prop, mkz_prop, u)[0])
+                mcx_prop = mcx * mr75[2] + x
+                mcy_prop = mcy * mr68[2] + y
+                mcz_prop = mcz * mr82[2] + z
+                mc_ages_prop.append(andersen(xt2, yt2, zt2, c7, c8, mcx_prop, mcy_prop, mcz_prop, u)[0])
             else:
                 mc_ages_prop = -1
             # mc_fc.append(andersen(xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[1])
