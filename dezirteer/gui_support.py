@@ -340,6 +340,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
         j = 0
         unc_type = int(p_filters.unc_type)
         an_list = p_grainset.analyses_list
+        l_type_pbc = p_filters.use_pbc
         p_grainset.good_bad_sets(p_filters)
         file.write("Analysis name"+',')
         while i < len(p_colnames):
@@ -417,12 +418,12 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_age(0)[1]) + ',' +
                        str(an_list[j].calc_age(0)[2]) + ',' +
 
-                       "none" + ',' +
-                       str(-1) + ',' +
-                       str(-1) + ',' +
-                       str(-1) + ',' +
+                       g_corr_type[l_type_pbc],
+                       int(pbc_corr(an_list[j], l_type_pbc)[0]),
+                       int(pbc_corr(an_list[j], l_type_pbc)[1]),
+                       int(pbc_corr(an_list[j], l_type_pbc)[2]),
 
-                       str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
+                     str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
                        str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
 
                        str(an_list[j].is_grain_good(p_filters)[0]) + ',' +

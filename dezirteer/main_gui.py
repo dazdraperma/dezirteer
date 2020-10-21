@@ -30,10 +30,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 from math_module import *
-
-
-
-
+from import_export import *
 
 def truncate(f, n):
     return floor(f * 10 ** n) / 10 ** n
@@ -929,20 +926,19 @@ class OperationWindow(Frame):
         mFile.add_command(label="New Session", underline=0, accelerator="Ctrl+N",
                           command=lambda: self.reset_controls(False))
 
+        mFile.add_command(label="Load Session", underline=0, accelerator="Ctrl+O",
+                          command=lambda: self.load_session())
 
-        mFile.add_command(label="Open Session", underline=0, accelerator="Ctrl+O",
-                          command=lambda: filedialog.askopenfilename(initialdir="/", title="Select File",
-                                                                     filetypes=(("Text files", "*.txt"),
-                                                              ("Comma separated values files", "*.csv"),
-                                                                                 ("All files", "*.*"))))
 
-        mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S")
+                          #command=lambda: filedialog.askopenfilename(initialdir="/", title="Select File",
+                          #                                           filetypes=(("Text files", "*.txt"),
+                          #                                    ("Comma separated values files", "*.csv"),
+                          #                                                       ("All files", "*.*"))))
+
+        mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S",
+                          command=lambda: self.save_session())
 
         mFile.add_separator()
-
-        mFile.add_command(label="Import Data", underline=0, accelerator="Ctrl+I", command=lambda:
-                                  self.open_and_load_file(g_filters, self.Table, g_list_col_names))
-
 
         mFile.add_command(label="Export Table", underline=7, accelerator="Ctrl+E+T")
         mFile.add_command(label="Export Graph", underline=7, accelerator="Ctrl+E+G")
@@ -1196,8 +1192,6 @@ class OperationWindow(Frame):
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
-
-
     def concordia_type(self):
         # choosing concordia type base on user's input
         if g_graph_settings.conc_type == 0:  # if conventional concordia
@@ -1362,13 +1356,10 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_prob.set_title(g_prob_title)
 
-
-
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
         self.ax_cum.plot(list(range(min_age, max_age)), g_cum_graph_to_draw[min_age: max_age])
         self.plot_peaks(min_age, max_age) #ax_prob.plot is done here
-
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
         if not do_hist:
@@ -1510,7 +1501,10 @@ class OperationWindow(Frame):
 
         finally:
             self.plot_conc_text_peaks(min_age, max_age)
-
+            g_filename="C:\@\object_export_test.txt"
+            save_object(g_grainset, g_filename)
+            g_new_grainset = load_object(g_filename)
+            g_new_grainset == g_grainset
 
             #Testing the common lead routine
 
