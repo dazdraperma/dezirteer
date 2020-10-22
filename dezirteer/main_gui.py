@@ -430,7 +430,7 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(state=DISABLED)
         self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
         self.cbWhichAge.current(0)
-        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event:gui_support.onChange(3,
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(3,
                                                                                        self.cbWhichAge.current(),
                                                                                        pars_onChange,
                                                                                        self.entAgeCutoff.get(),
@@ -769,10 +769,6 @@ class OperationWindow(Frame):
                                                                                                      if (c.isdigit() or c == '.'))))))
 
 
-
-
-
-
         self.cbDensityPlotType = ttk.Combobox(self.frGraphSettings)
         self.cbDensityPlotType.grid(row=3, column=1, sticky='w')
         self.cbDensityPlotType.configure(takefocus="")
@@ -874,33 +870,33 @@ class OperationWindow(Frame):
         self.btnExport.configure(height=2)
         self.btnExport.configure(command=lambda: self.export_dialog())
 
-        self.cbShowCalc = Checkbutton(self.frStatus)
-        self.cbShowCalc.grid(row=0, column=5, padx=5, sticky='w')
-        self.apply_style(self.cbShowCalc)
-        self.cbShowCalc.configure(justify=LEFT)
-        self.cbShowCalc.configure(text='Show peaks and stat.')
-        self.cbShowCalc.configure(variable=gui_support.varShowCalc)
-        self.cbShowCalc.configure(command=lambda: self.plot_text(g_pval_dval[0], g_pval_dval[1]))
+        self.chbShowCalc = Checkbutton(self.frStatus)
+        self.chbShowCalc.grid(row=0, column=5, padx=5, sticky='w')
+        self.apply_style(self.chbShowCalc)
+        self.chbShowCalc.configure(justify=LEFT)
+        self.chbShowCalc.configure(text='Show peaks and stat.')
+        self.chbShowCalc.configure(variable=gui_support.varShowCalc)
+        self.chbShowCalc.configure(command=lambda: self.plot_text(g_pval_dval[0], g_pval_dval[1]))
 
-        self.cbKeepPrev = Checkbutton(self.frStatus)
-        self.cbKeepPrev.grid(row=0, column=6, padx=5, sticky='w')
-        self.apply_style(self.cbKeepPrev)
-        self.cbKeepPrev.configure(justify=LEFT)
-        self.cbKeepPrev.configure(text='Keep prev.')
-        self.cbKeepPrev.configure(variable=gui_support.varKeepPrev)
-        self.cbKeepPrev.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
+        self.chbKeepPrev = Checkbutton(self.frStatus)
+        self.chbKeepPrev.grid(row=0, column=6, padx=5, sticky='w')
+        self.apply_style(self.chbKeepPrev)
+        self.chbKeepPrev.configure(justify=LEFT)
+        self.chbKeepPrev.configure(text='Keep prev.')
+        self.chbKeepPrev.configure(variable=gui_support.varKeepPrev)
+        self.chbKeepPrev.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
                                                                             gui_support.varKeepPrev,
-                                                                            self.cbLimitAgeSpectrum))
+                                                                            self.chbLimitAgeSpectrum))
 
-        self.cbLimitAgeSpectrum = Checkbutton(self.frStatus)
-        self.cbLimitAgeSpectrum.grid(row=0, column=7, pady=5, columnspan=2, sticky='w')
-        self.apply_style(self.cbLimitAgeSpectrum)
-        self.cbLimitAgeSpectrum.configure(justify=LEFT)
-        self.cbLimitAgeSpectrum.configure(text='Zoom to ages')
-        self.cbLimitAgeSpectrum.configure(variable=gui_support.varLimitAgeSpectrum)
-        self.cbLimitAgeSpectrum.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
+        self.chbLimitAgeSpectrum = Checkbutton(self.frStatus)
+        self.chbLimitAgeSpectrum.grid(row=0, column=7, pady=5, columnspan=2, sticky='w')
+        self.apply_style(self.chbLimitAgeSpectrum)
+        self.chbLimitAgeSpectrum.configure(justify=LEFT)
+        self.chbLimitAgeSpectrum.configure(text='Zoom to ages')
+        self.chbLimitAgeSpectrum.configure(variable=gui_support.varLimitAgeSpectrum)
+        self.chbLimitAgeSpectrum.configure(command=lambda: gui_support.onGraphChange(g_graph_settings, 13,
                                                                                     gui_support.varLimitAgeSpectrum,
-                                                                                    self.cbKeepPrev))
+                                                                                    self.chbKeepPrev))
 
         self.btnDraw = Button(self.frStatus)
         self.btnDraw.grid(column=9, row=0, rowspan=2, sticky='e', padx=5, pady=6)
@@ -952,8 +948,99 @@ class OperationWindow(Frame):
         self.reset_controls(False)
 
     #_____________Class Methods_________________________________________________________________________________________
-    def show_frame(self):#asdf
+    def enable_all_ui_elements(self):
+        for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
+            for child in var_frame.winfo_children():
+                child.configure(state=NORMAL)
 
+    def get_ui_values(self):
+        gui_elements = []
+        gui_elements.append(self.lbShowStatus.cget("text"))
+        gui_elements.append(gui_support.varUncType.get())
+        gui_elements.append(self.cbWhichAge.get())
+        gui_elements.append(self.entAgeCutoff.get())
+        gui_elements.append(self.cbPbc.get())
+        gui_elements.append(self.cbWhichConc.get())
+        gui_elements.append(self.entDiscAgeFixedLim.get())
+        gui_elements.append(self.entNegDiscFilt.get())
+        gui_elements.append(self.entPosDiscFilt.get())
+        gui_elements.append(self.cbErrFilter.get())
+        gui_elements.append(self.entErrFilter.get())
+        gui_elements.append(gui_support.varInclude207235Err.get())
+        gui_elements.append(self.entUconcCutoff.get())
+        gui_elements.append(self.cbUConc.get())
+        gui_elements.append(self.cbConcType.get())
+        gui_elements.append(self.cbEclipsesAt.get())
+        gui_elements.append(self.cbDensityPlotType.get())
+        gui_elements.append(self.entHistBinwidth.get())
+        gui_elements.append(self.entKDEBandwidth.get())
+        gui_elements.append(self.entAgeMinCrop.get())
+        gui_elements.append(gui_support.varMinAgeCrop.get())
+        gui_elements.append(self.entAgeMaxCrop.get())
+        gui_elements.append(gui_support.varShowCalc.get())
+        gui_elements.append(gui_support.varKeepPrev.get())
+        gui_elements.append(gui_support.varKeepPrev.get())
+        return gui_elements
+
+    def set_ui_values(self, args):
+        self.enable_all_ui_elements()
+
+        self.lbShowStatus.configure(text=args[0])
+        gui_support.varUncType.set(args[1])
+        self.cbWhichAge.set(args[2])
+
+        self.entAgeCutoff.delete(0, END)
+        self.entAgeCutoff.insert(0, args[3])
+
+        self.cbPbc.set(args[4])
+        self.cbWhichConc.set(args[5])
+
+        self.entDiscAgeFixedLim.delete(0, END)
+        self.entDiscAgeFixedLim.insert(0, args[6])
+
+        self.entNegDiscFilt.delete(0, END)
+        self.entNegDiscFilt.insert(0, args[7])
+
+        self.entPosDiscFilt.delete(0, END)
+        self.entPosDiscFilt.insert(0, args[8])
+
+        self.cbErrFilter.set(args[9])
+
+        self.entErrFilter.delete(0, END)
+        self.entErrFilter.insert(0, args[10])
+
+        gui_support.varInclude207235Err.set(args[11])
+
+        self.entUconcCutoff.delete(0, END)
+        self.entUconcCutoff.insert(0, args[12])
+
+        self.cbUConc.set(args[13])
+        self.cbConcType.set(args[14])
+        self.cbEclipsesAt.set(args[15])
+        self.cbDensityPlotType.set(args[16])
+
+        self.entHistBinwidth.delete(0, END)
+        self.entHistBinwidth.insert(0, args[17])
+
+        self.entKDEBandwidth.delete(0, END)
+        self.entKDEBandwidth.insert(0, args[18])
+
+        self.entAgeMinCrop.delete(0, END)
+        self.entAgeMinCrop.insert(0, args[19])
+
+        gui_support.varMinAgeCrop.set(args[20])
+
+        self.entAgeMaxCrop.delete(0, END)
+        self.entAgeMaxCrop.insert(0, args[21])
+
+        gui_support.varShowCalc.set(args[22])
+
+        gui_support.varKeepPrev.set(args[23])
+        gui_support.varKeepPrev.set(args[24])
+
+        #self.chbMaxAgeCrop.select()
+
+    def show_frame(self):
         winCalc = Toplevel()
         winCalc.resizable(height=None, width=None)
         show_calc_frame(winCalc)
@@ -1037,7 +1124,6 @@ class OperationWindow(Frame):
         except FileNotFoundError:
             pass
 
-
     #clears the graph after user presses the btClear
     def clear_graph(self):
         global g_plot_txt, g_prev_n, g_prev_cum
@@ -1062,7 +1148,67 @@ class OperationWindow(Frame):
 
         gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
 
+    def save_session(self):
+
+        filename = filedialog.asksaveasfile(mode='w', defaultextension=".dzr", initialdir=g_directory,
+                                             filetypes=(("Dezirteer session", "*.dzr"),
+                                                        ("All files", "*.*")))
+        '''self.lbShowStatus
+        self.rbInternal
+        self.rbPropagated
+        self.cbWhichAge
+        self.entAgeCutoff
+        self.cbPbc
+        self.cbWhichConc
+        self.entDiscAgeFixedLim
+        self.entNegDiscFilt
+        self.entPosDiscFilt
+        self.cbErrFilter
+        self.entErrFilter
+        self.chbInclude207235Err
+        self.entUconcCutoff
+        self.cbUConc
+        self.cbConcType
+        self.cbEclipsesAt
+        self.cbDensityPlotType
+        self.entHistBinwidth
+        self.entKDEBandwidth
+        self.entAgeMinCrop
+        self.chbMinAgeCrop
+        self.entAgeMaxCrop
+        self.chbShowCalc
+        self.chbKeepPrev
+        self.chbLimitAgeSpectrum'''
+
+        l_ui_values = self.get_ui_values()
+        save_object([g_grainset, g_graph_settings, g_filters, l_ui_values], filename.name)
+
+    def fill_listbox(self):
+        global g_list_of_samples
+        self.lboxSamples.delete(0, END)
+        for item in g_list_of_samples:
+            self.lboxSamples.insert(END, item.name)
+
+    def load_session(self):
+        global g_grainset, g_graph_settings, g_filters, g_list_of_samples, g_number_of_good_grains, g_list_col_names
+        user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file",
+                                               filetypes=(("Dezirteer session", "*.dzr"),
+                                                          ("All files", "*.*")))
+        loaded_object = load_object(user_file)
+
+        g_grainset = loaded_object[0]
+        g_graph_settings = loaded_object[1]
+        g_filters = loaded_object[2]
+        g_list_of_samples = same_sample_set(g_grainset)
+
+        g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
+                                                              g_list_col_names)
+        self.fill_listbox()
+        self.set_ui_values(loaded_object[3])
+
     def reset_controls(self, is_data_present):
+
+
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
@@ -1087,10 +1233,8 @@ class OperationWindow(Frame):
             self.cbErrFilter.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
 
+            self.fill_listbox()
 
-            self.lboxSamples.delete(0, END)
-            for item in g_list_of_samples:
-                self.lboxSamples.insert(END, item.name)
             if self.lboxSamples.get(0) == '':
                 status_text = ' data, bad divider'
                 status_color = 'red'
@@ -1109,8 +1253,7 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
                 self.Table.delete(i)
-        #self.entAgeMinCrop.configure(state=NORMAL)
-        #self.entAgeMaxCrop.configure(state=NORMAL)
+
         global g_plot_txt
         g_plot_txt = ""
 
@@ -1153,7 +1296,7 @@ class OperationWindow(Frame):
                 max_conc_y = 0.7
         return [min_age, max_age, min_conc_x, max_conc_x, min_conc_y, max_conc_y]
 
-    #adds or removes text to the cum_plot, depending on the checked state of the cbShowCalc
+    #adds or removes text to the cum_plot, depending on the checked state of the chbShowCalc
     def plot_text(self, pval, dval):
         global g_plot_txt
 
@@ -1368,7 +1511,7 @@ class OperationWindow(Frame):
             self.plot_hist(min_age, max_age)
 
     def clear_prev_or_remove_text(self):
-        # clears previous graph, if user chooses to in the cbKeepPrev, else just removes text from cum_plot
+        # clears previous graph, if user chooses to in the chbKeepPrev, else just removes text from cum_plot
         global g_plot_txt
         if gui_support.varKeepPrev.get() == 0:
             self.clear_graph()
@@ -1505,6 +1648,7 @@ class OperationWindow(Frame):
             save_object(g_grainset, g_filename)
             g_new_grainset = load_object(g_filename)
             g_new_grainset == g_grainset
+            #self.set_ui_values()
 
             #Testing the common lead routine
 

@@ -474,8 +474,6 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__maxAgeCrop = value
 
 
-
-
 class Analysis(object):
     def __init__(self, analysis_name="", exposure_time="",
                  pb206_u238=(0, 0, 0), pb207_u235=(0, 0, 0), corr_coef_75_68=0, corr_coef_86_76=0,

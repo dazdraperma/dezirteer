@@ -203,7 +203,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].disc_type[1] = p_value
 
     elif p_number_in_list == 26:
-        if varMinAgeCrop.get() == 0: #12345
+        if varMinAgeCrop.get() == 0:
             pars[0].minAgeCrop = 0
             args[0].configure(state=DISABLED)
         else:
@@ -213,7 +213,6 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
             except ValueError:
                 pars[0].minAgeCrop = 0
                 args[0].insert(0, '0')
-
 
     elif p_number_in_list == 27:
         if varMaxAgeCrop.get() == 0:
@@ -226,8 +225,6 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
             except ValueError:
                 pars[0].maxAgeCrop = 0
                 args[0].insert(0, EarthAge)
-
-
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
