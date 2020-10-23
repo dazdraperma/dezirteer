@@ -69,20 +69,24 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
             return 29.476 + 32.208 * (r4570[4] - rage[4])  # 8/4c
 
 
-def pb4cor(pb_pb4, pb_pb4_c, pb_uth, lam):  # universal 204pb corr function for all measured ratios
+def pb4cor(fc, pb_pb4, pb_uth, lam):  # universal 204pb corr function for all measured ratios
     if pb_pb4[0] > 0 and pb_uth[0] > 0:
-        fc = pb_pb4_c / pb_pb4[0]
+        # fc = pb_pb4_c / pb_pb4[0]
         ratio = pb_uth[0]*(1-fc)
         tmp1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
         tmp2_int = (pb_uth[1] / pb_uth[0]) ** 2
-        ratio_err_int = sqrt((sqrt(tmp1_int) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2_int) * ratio
+        ratio_err_int = sqrt(tmp1_int / (pb_pb4[0] * (1 - fc)) ** 2 + tmp2_int) * ratio
         if pb_pb4[2] != -1 and pb_uth[2] != -1:
             tmp1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
             tmp2_prop = (pb_uth[2] / pb_uth[0]) ** 2
             ratio_err_prop = sqrt((sqrt(tmp1_prop) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2_prop) * ratio
             age_err_prop = ratio_err_prop / (1 + ratio) / lam / 1000000
-        age = log(1 + ratio) / lam / 1000000
-        age_err_int = ratio_err_int / (1 + ratio) / lam / 1000000
+        if ratio > 0:
+            age = log(1 + ratio) / lam / 1000000
+            age_err_int = ratio_err_int / (1 + ratio) / lam / 1000000
+        else:
+            age = -1
+            age_err_int = -1
     else:
         age = -1
         age_err_int = -1
@@ -148,25 +152,23 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     com64 = compb(age, 0)
     com74 = compb(age, 1)
     com84 = compb(age, 2)
-    com76 = compb(age, 1) / compb(age, 0)
-    com86 = compb(age, 2) / compb(age, 0)
-    
+    com76 = com74 / com64
+    com86 = com84 / com64
     if corr_type == 1:  # 204
         if mr64[0] != -1 and mr68[0] != -1:
-            a68 = pb4cor(mr64, com64, mr68, LAMBDA_238)
+            a68 = pb4cor(com64/mr64[0], mr64, mr68, LAMBDA_238)
         else:
-            a68 = [-1, -1 , -1, -1, -1, -1]
-
+            a68 = [-1, -1, -1, -1, -1, -1]
         if mr74[0] != -1 and mr75[0] != -1:
-            a75 = pb4cor(mr74, com74, mr75, LAMBDA_235)
+            a75 = pb4cor(com76/mr76[0]*com64/mr64[0], mr74, mr75, LAMBDA_235)
         else:
             a75 = [-1, -1, -1, -1, -1, -1]
 
         if mr84[0] != -1 and mr82[0] != -1:
-            a82 = pb4cor(mr84, com84, mr82, LAMBDA_232)
+            a82 = pb4cor(com86/mr86*com64/mr64[0], mr84, mr82, LAMBDA_232)
         else:
             a82 = [-1, -1, -1, -1, -1, -1]
-        a76 = [None] * 6
+        a76 = [-1, -1, -1, -1, -1, -1]
         a76[3] = a75[3] / a68[3] / U238_U235
         a76[0] = find_age(a76[3])
         if a68[0] > 0 and a75[0] > 0 and a76[0] > 0:
@@ -176,6 +178,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             a76[4] = sqrt((a75[4] * a68[2]) ** 2 + (a68[4] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
             a76[1] = U238_U235 * a76[4] / (LAMBDA_235 * e5/(e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1)**2)
             a76[1] = a76[1] / 1000000
+
             a76[5] = sqrt((a75[5] * a68[2]) ** 2 + (a68[5] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
             a76[2] = U238_U235 * a76[5] / (
                         LAMBDA_235 * e5 / (e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1) ** 2)
@@ -183,11 +186,12 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             a76 = [-1, -1, -1, -1, -1, -1]
         
-        a4c = [a68[0], a75[0], a76[0], a82[0]]
-        a4c_err_int = [a68[1], a75[1], a76[1], a82[1]]
-        a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
-        corr_age = [a4c, a4c_err_int, a4c_err_prop]
-
+        # a4c = [a68[0], a75[0], a76[0], a82[0]]
+        # a4c_err_int = [a68[1], a75[1], a76[1], a82[1]]
+        # a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
+        # corr_age = [a4c, a4c_err_int, a4c_err_prop]
+        corr_age = [a68[0], a68[1], a68[2]]
+        print(corr_age)
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
         b = 4500
@@ -254,7 +258,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         c1 = mr82[0] + 1 - e2
         c2 = mr28[0] * com64 / com84
         d = (c2 * LAMBDA_232 * e2 - LAMBDA_238 * e1) ** 2
-        n1 = c1 ** 2 * (com64 / com84 * mr28[1]) ** 2
+        n1 = c1 ** 2 * (mr28[1]/com86) ** 2
         n2 = c2 * mr82[1] + mr68[1] ** 2
         n = n1 + n2
         corr_age[1] = sqrt(n / d) / 1000000
