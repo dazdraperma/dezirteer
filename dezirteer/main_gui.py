@@ -436,8 +436,6 @@ class OperationWindow(Frame):
                                                                                        self.entAgeCutoff.get(),
                                                                                        self.entAgeCutoff))
 
-
-
         self.lbPbc = Label(self.frAgeDisc)
         self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
         self.apply_style(self.lbPbc)
@@ -916,34 +914,28 @@ class OperationWindow(Frame):
         mAbout = Menu(self.menubar, tearoff=False)
 
         self.menubar.add_cascade(label="File", menu=mFile, underline=0)
-        self.menubar.add_cascade(label="Edit", menu=mEdit, underline=0)
+#        self.menubar.add_cascade(label="Edit", menu=mEdit, underline=0)
         self.menubar.add_cascade(label="About", menu=mAbout, underline=0)
 
-        mFile.add_command(label="New Session", underline=0, accelerator="Ctrl+N",
-                          command=lambda: self.reset_controls(False))
+        #mFile.add_command(label="New Session", underline=0, accelerator="Ctrl+N",
+        #                  command=lambda: self.reset_controls(False))
 
         mFile.add_command(label="Load Session", underline=0, accelerator="Ctrl+O",
                           command=lambda: self.load_session())
-
-
-                          #command=lambda: filedialog.askopenfilename(initialdir="/", title="Select File",
-                          #                                           filetypes=(("Text files", "*.txt"),
-                          #                                    ("Comma separated values files", "*.csv"),
-                          #                                                       ("All files", "*.*"))))
 
         mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S",
                           command=lambda: self.save_session())
 
         mFile.add_separator()
 
-        mFile.add_command(label="Export Table", underline=7, accelerator="Ctrl+E+T")
-        mFile.add_command(label="Export Graph", underline=7, accelerator="Ctrl+E+G")
-        mFile.add_separator()
+        #mFile.add_command(label="Export Table", underline=7, accelerator="Ctrl+E+T")
+        #mFile.add_command(label="Export Graph", underline=7, accelerator="Ctrl+E+G")
+        #mFile.add_separator()
         mFile.add_command(label="Exit", underline=1, command=root.quit, accelerator="Ctrl+Q")
-        mEdit.add_command(label="Undo", accelerator="Ctrl+Z")
-        mEdit.add_command(label="Redo", accelerator="Ctrl+Shift+Z")
-        mEdit.add_separator()
-        mEdit.add_command(label="Settings")
+#        mEdit.add_command(label="Undo", accelerator="Ctrl+Z")
+#        mEdit.add_command(label="Redo", accelerator="Ctrl+Shift+Z")
+#        mEdit.add_separator()
+#        mEdit.add_command(label="Settings")
 
         self.reset_controls(False)
 
@@ -953,33 +945,118 @@ class OperationWindow(Frame):
             for child in var_frame.winfo_children():
                 child.configure(state=NORMAL)
 
+    def set_all_ui_elements(self):
+
+        '''features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
+                                 self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter,
+                                 self.cbEclipsesAt, self.cbWhichAge,
+                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
+                                 self.entHistBinwidth, self.cbDensityPlotType]
+
+        for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
+            for child in var_frame.winfo_children():
+                if child not in features_custom_state:
+                    child.configure(state=NORMAL)
+        self.cbWhichAge.configure(state="readonly")
+        self.cbPbc.configure(state="readonly")
+        self.cbWhichConc.configure(state="readonly")
+        self.cbUConc.configure(state="readonly")
+        self.cbConcType.configure(state="readonly")
+        self.cbEclipsesAt.configure(state="readonly")
+        self.cbDensityPlotType.configure(state="readonly")
+        self.entHistBinwidth.configure(state="disabled")
+        self.entAgeCutoff.configure(state="disabled")
+        self.cbErrFilter.configure(state="readonly")
+        self.cbPbc.configure(state="readonly")'''
+
+        self.cbWhichAge.configure(state="readonly")
+        self.cbPbc.configure(state="readonly")
+        self.cbWhichConc.configure(state="readonly")
+        self.cbErrFilter.configure(state="readonly")
+        self.cbDensityPlotType.configure(state="readonly")
+        self.cbEclipsesAt.configure(state="readonly")
+        self.cbUConc.configure(state="readonly")
+        self.cbConcType.configure(state="readonly")
+        self.entNegDiscFilt.configure(state=NORMAL)
+        self.entPosDiscFilt.configure(state=NORMAL)
+
+        if self.cbWhichAge.current() == 1:
+                self.entAgeCutoff.configure(state=NORMAL)
+        else:
+            self.entAgeCutoff.configure(state=DISABLED)
+
+        if self.cbWhichConc.current() == 0:
+                self.entDiscAgeFixedLim.configure(state=NORMAL)
+        else:
+            self.entDiscAgeFixedLim.configure(state=DISABLED)
+
+        if self.cbErrFilter.current() == 1:
+            self.entErrFilter.configure(state=NORMAL)
+            self.chbInclude207235Err.configure(state=NORMAL)
+        else:
+            self.entErrFilter.configure(state=DISABLED)
+            self.chbInclude207235Err.configure(state=DISABLED)
+
+        if self.cbDensityPlotType.current() == 0:
+            self.entKDEBandwidth.configure(state=NORMAL)
+            self.entHistBinwidth.configure(state=DISABLED)
+        elif self.cbDensityPlotType.current() == 1:
+            self.entKDEBandwidth.configure(state=DISABLED)
+            self.entHistBinwidth.configure(state=DISABLED)
+        else:
+            self.entKDEBandwidth.configure(state=DISABLED)
+            self.entHistBinwidth.configure(state=NORMAL)
+
+        if self.cbUConc.current() == 1:
+            self.entUconcCutoff.configure(state=NORMAL)
+        else:
+            self.entUconcCutoff.configure(state=DISABLED)
+
+        if gui_support.varMinAgeCrop.get() == 1:
+            self.entAgeMinCrop.configure(state=NORMAL)
+        else:
+            self.entAgeMinCrop.configure(state=DISABLED)
+
+        if gui_support.varMaxAgeCrop.get() == 1:
+            self.entAgeMaxCrop.configure(state=NORMAL)
+        else:
+            self.entAgeMaxCrop.configure(state=DISABLED)
+
+
+
+
     def get_ui_values(self):
         gui_elements = []
-        gui_elements.append(self.lbShowStatus.cget("text"))
-        gui_elements.append(gui_support.varUncType.get())
-        gui_elements.append(self.cbWhichAge.get())
-        gui_elements.append(self.entAgeCutoff.get())
-        gui_elements.append(self.cbPbc.get())
-        gui_elements.append(self.cbWhichConc.get())
-        gui_elements.append(self.entDiscAgeFixedLim.get())
-        gui_elements.append(self.entNegDiscFilt.get())
-        gui_elements.append(self.entPosDiscFilt.get())
-        gui_elements.append(self.cbErrFilter.get())
-        gui_elements.append(self.entErrFilter.get())
-        gui_elements.append(gui_support.varInclude207235Err.get())
-        gui_elements.append(self.entUconcCutoff.get())
-        gui_elements.append(self.cbUConc.get())
-        gui_elements.append(self.cbConcType.get())
-        gui_elements.append(self.cbEclipsesAt.get())
-        gui_elements.append(self.cbDensityPlotType.get())
-        gui_elements.append(self.entHistBinwidth.get())
-        gui_elements.append(self.entKDEBandwidth.get())
-        gui_elements.append(self.entAgeMinCrop.get())
-        gui_elements.append(gui_support.varMinAgeCrop.get())
-        gui_elements.append(self.entAgeMaxCrop.get())
-        gui_elements.append(gui_support.varShowCalc.get())
-        gui_elements.append(gui_support.varKeepPrev.get())
-        gui_elements.append(gui_support.varKeepPrev.get())
+
+        gui_elements.append(self.lbShowStatus.cget("text")) #0
+        gui_elements.append(gui_support.varUncType.get())   #1
+        gui_elements.append(self.cbWhichAge.get())          #2
+        gui_elements.append(self.entAgeCutoff.get())        #3
+        gui_elements.append(self.cbPbc.get())               #4
+        gui_elements.append(self.cbWhichConc.get())         #5
+        gui_elements.append(self.entDiscAgeFixedLim.get())  #6
+        gui_elements.append(self.entNegDiscFilt.get())      #7
+        gui_elements.append(self.entPosDiscFilt.get())      #8
+        gui_elements.append(self.cbErrFilter.get())         #9
+        gui_elements.append(self.entErrFilter.get())        #10
+        gui_elements.append(gui_support.varInclude207235Err.get())  #11
+        gui_elements.append(self.entUconcCutoff.get())      #12
+        gui_elements.append(self.cbUConc.get())             #13
+        gui_elements.append(self.cbConcType.get())          #14
+        gui_elements.append(self.cbEclipsesAt.get())        #15
+        gui_elements.append(self.cbDensityPlotType.get())   #16
+        gui_elements.append(self.entHistBinwidth.get())     #17
+        gui_elements.append(self.entKDEBandwidth.get())     #18
+        gui_elements.append(self.entAgeMinCrop.get())       #19
+        gui_elements.append(gui_support.varMinAgeCrop.get())  #20
+        gui_elements.append(self.entAgeMaxCrop.get())       #21
+        gui_elements.append(gui_support.varShowCalc.get())  #22
+        gui_elements.append(gui_support.varKeepPrev.get())  #23
+        gui_elements.append(gui_support.varMaxAgeCrop.get())    #24
+        gui_elements.append(self.lboxSamples.curselection()) #25
+        gui_elements.append(gui_support.varLimitAgeSpectrum.get()) #26
+
+
         return gui_elements
 
     def set_ui_values(self, args):
@@ -1025,10 +1102,11 @@ class OperationWindow(Frame):
         self.entKDEBandwidth.delete(0, END)
         self.entKDEBandwidth.insert(0, args[18])
 
+        gui_support.varMinAgeCrop.set(args[20])
+        gui_support.varMaxAgeCrop.set(args[24])
+
         self.entAgeMinCrop.delete(0, END)
         self.entAgeMinCrop.insert(0, args[19])
-
-        gui_support.varMinAgeCrop.set(args[20])
 
         self.entAgeMaxCrop.delete(0, END)
         self.entAgeMaxCrop.insert(0, args[21])
@@ -1036,7 +1114,14 @@ class OperationWindow(Frame):
         gui_support.varShowCalc.set(args[22])
 
         gui_support.varKeepPrev.set(args[23])
-        gui_support.varKeepPrev.set(args[24])
+
+        self.fill_listbox()
+
+        for index in args[25]:
+            self.lboxSamples.selection_set(index)
+
+        gui_support.varLimitAgeSpectrum.set(args[26])
+
 
         #self.chbMaxAgeCrop.select()
 
@@ -1044,8 +1129,6 @@ class OperationWindow(Frame):
         winCalc = Toplevel()
         winCalc.resizable(height=None, width=None)
         show_calc_frame(winCalc)
-
-
 
     def apply_style(self, obj):
         obj.configure(activebackground="#f9f9f9")
@@ -1151,8 +1234,7 @@ class OperationWindow(Frame):
     def save_session(self):
 
         filename = filedialog.asksaveasfile(mode='w', defaultextension=".dzr", initialdir=g_directory,
-                                             filetypes=(("Dezirteer session", "*.dzr"),
-                                                        ("All files", "*.*")))
+                                             filetypes=[("Dezirteer session", "*.dzr")])
         '''self.lbShowStatus
         self.rbInternal
         self.rbPropagated
@@ -1190,10 +1272,10 @@ class OperationWindow(Frame):
             self.lboxSamples.insert(END, item.name)
 
     def load_session(self):
-        global g_grainset, g_graph_settings, g_filters, g_list_of_samples, g_number_of_good_grains, g_list_col_names
+        global g_grainset, g_graph_settings, g_filters, g_list_of_samples, g_number_of_good_grains, g_list_col_names, \
+            pars_onChange
         user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file",
-                                               filetypes=(("Dezirteer session", "*.dzr"),
-                                                          ("All files", "*.*")))
+                                               filetypes=[("Dezirteer session", "*.dzr")])
         loaded_object = load_object(user_file)
 
         g_grainset = loaded_object[0]
@@ -1203,12 +1285,13 @@ class OperationWindow(Frame):
 
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                               g_list_col_names)
-        self.fill_listbox()
+
         self.set_ui_values(loaded_object[3])
 
+        self.set_all_ui_elements()
+        pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
+
     def reset_controls(self, is_data_present):
-
-
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
@@ -1220,7 +1303,6 @@ class OperationWindow(Frame):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
-
             self.cbWhichAge.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
             self.cbWhichConc.configure(state="readonly")
@@ -1232,9 +1314,7 @@ class OperationWindow(Frame):
             self.entAgeCutoff.configure(state="disabled")
             self.cbErrFilter.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
-
             self.fill_listbox()
-
             if self.lboxSamples.get(0) == '':
                 status_text = ' data, bad divider'
                 status_color = 'red'
@@ -1253,7 +1333,6 @@ class OperationWindow(Frame):
             self.lbShowStatus.configure(text="No Data", fg="red")
             for i in self.Table.get_children():
                 self.Table.delete(i)
-
         global g_plot_txt
         g_plot_txt = ""
 
