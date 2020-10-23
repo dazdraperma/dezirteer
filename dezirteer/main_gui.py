@@ -947,7 +947,7 @@ class OperationWindow(Frame):
 
     def set_all_ui_elements(self):
 
-        '''features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
+        features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter,
                                  self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
@@ -967,9 +967,9 @@ class OperationWindow(Frame):
         self.entHistBinwidth.configure(state="disabled")
         self.entAgeCutoff.configure(state="disabled")
         self.cbErrFilter.configure(state="readonly")
-        self.cbPbc.configure(state="readonly")'''
+        self.cbPbc.configure(state="readonly")
 
-        self.cbWhichAge.configure(state="readonly")
+        '''self.cbWhichAge.configure(state="readonly")
         self.cbPbc.configure(state="readonly")
         self.cbWhichConc.configure(state="readonly")
         self.cbErrFilter.configure(state="readonly")
@@ -978,7 +978,7 @@ class OperationWindow(Frame):
         self.cbUConc.configure(state="readonly")
         self.cbConcType.configure(state="readonly")
         self.entNegDiscFilt.configure(state=NORMAL)
-        self.entPosDiscFilt.configure(state=NORMAL)
+        self.entPosDiscFilt.configure(state=NORMAL)'''
 
         if self.cbWhichAge.current() == 1:
                 self.entAgeCutoff.configure(state=NORMAL)
@@ -1055,6 +1055,7 @@ class OperationWindow(Frame):
         gui_elements.append(gui_support.varMaxAgeCrop.get())    #24
         gui_elements.append(self.lboxSamples.curselection()) #25
         gui_elements.append(gui_support.varLimitAgeSpectrum.get()) #26
+        gui_elements.append(self.lbShowStatus.cget("fg"))
 
 
         return gui_elements
@@ -1121,6 +1122,8 @@ class OperationWindow(Frame):
             self.lboxSamples.selection_set(index)
 
         gui_support.varLimitAgeSpectrum.set(args[26])
+
+        self.lbShowStatus.configure(fg=args[27])
 
 
         #self.chbMaxAgeCrop.select()
