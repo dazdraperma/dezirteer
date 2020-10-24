@@ -1279,7 +1279,7 @@ class OperationWindow(Frame):
 
     def load_session(self):
         global g_grainset, g_graph_settings, g_filters, g_list_of_samples, g_number_of_good_grains, g_list_col_names, \
-            pars_onChange
+            pars_onChange, mFile
         user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file",
                                                filetypes=[("Dezirteer session", "*.dzr")])
         loaded_object = load_object(user_file)
@@ -1296,6 +1296,7 @@ class OperationWindow(Frame):
 
         self.set_all_ui_elements()
         pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
+        mFile.entryconfig(1, state=NORMAL)
 
     def reset_controls(self, is_data_present):
         global mFile
