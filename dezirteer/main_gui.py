@@ -909,6 +909,7 @@ class OperationWindow(Frame):
         #________________Menu___________________________________________________________________________________________
         self.menubar = Menu(master, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
         master.configure(menu=self.menubar)
+        global mFile
         mFile = Menu(self.menubar, tearoff=False)
         mEdit = Menu(self.menubar, tearoff=False)
         mAbout = Menu(self.menubar, tearoff=False)
@@ -925,6 +926,8 @@ class OperationWindow(Frame):
 
         mFile.add_command(label="Save Session", underline=0, accelerator="Ctrl+S",
                           command=lambda: self.save_session())
+
+        mFile.entryconfig(1, state=DISABLED)
 
         mFile.add_separator()
 
@@ -1295,6 +1298,7 @@ class OperationWindow(Frame):
         pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
     def reset_controls(self, is_data_present):
+        global mFile
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
@@ -1302,6 +1306,8 @@ class OperationWindow(Frame):
                                  #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
                                  # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
         if is_data_present:
+            mFile.entryconfig(1, state=NORMAL)
+
             for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
@@ -1326,6 +1332,7 @@ class OperationWindow(Frame):
                 status_color = 'green'
             self.lbShowStatus.configure(text=g_file_type+status_text, fg=status_color)
         else:
+            mFile.entryconfig(1, state=DISABLED)
             self.lboxSamples.delete(0, END)
             for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
