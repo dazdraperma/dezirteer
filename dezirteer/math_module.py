@@ -111,8 +111,9 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
         dt = b - a
         c = dt / 2 + a
     t1 = a
-    xt1 = calc_ratio(t1)[1]
-    yt1 = calc_ratio(t1)[0]
+    t1_ratios = calc_ratio(t1)
+    xt1 = t1_ratios[1]
+    yt1 = t1_ratios[0]
     # zt1 = eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k)[3]
     fc = (-y * xt1 + y * xt2 + yt2 * xt1 + x * yt1 - x * yt2 - xt2 * yt1) / (
                 -y * xt1 + y * xt2 + y * c7 * k * yt1 - y * c7 * k * yt2) * 100
@@ -191,7 +192,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
         # corr_age = [a4c, a4c_err_int, a4c_err_prop]
         corr_age = [a68[0], a68[1], a68[2]]
-        print(corr_age)
+        # print(corr_age)
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
         b = 4500
@@ -243,13 +244,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
                 a = c
             c = (b - a) / 2 + a
             d = b - a
-##        while d > 0.001:
-##            e1 = exp(LAMBDA_238 * t)
-##            e2 = exp(LAMBDA_232 * t)
-##            f = mr68[0] - e1 + 1 - mr28[0] * com64 / com84 * (mr82[0] - e2 + 1)
-##            d1 = mr28[0] * com64 / com84 * LAMBDA_232 * e2 - LAMBDA_238 * e1
-##            d = -f / d1
-##            t += d
+
         corr_age[0] = a
         
         # error
@@ -274,9 +269,10 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     elif corr_type == 4:  # and
         # age
         t2 = 0  # NEED CORRECTION!!!  age of pb lost, must entered by user
-        xt2 = calc_ratio(t2)[1]
-        yt2 = calc_ratio(t2)[0]
-        zt2 = calc_ratio(t2)[4]
+        t2_ratios = calc_ratio(t2)
+        xt2 = t2_ratios[1]
+        yt2 = t2_ratios[0]
+        zt2 = t2_ratios[4]
         c7 = 15.628 / 18.7
         c8 = 38.63 / 18.7
         rho = zir.corr_coef_75_68
@@ -286,7 +282,8 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         u = 1/mr28[0]
 
         # print(x,y,z,eq7(500, xt2, yt2, zt2, c7, c8, x, y, z, u, U238_U235))
-        corr_age[0] = andersen(xt2, yt2, zt2, c7, c8, x, y, z, u)[0]
+        corr_data = andersen(xt2, yt2, zt2, c7, c8, x, y, z, u)
+        corr_age[0] = corr_data[0]
 
         # mc_fc = []
         mc_ages_int = []
