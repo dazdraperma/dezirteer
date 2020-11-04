@@ -140,8 +140,11 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         for i in range(len(args)):
             if p_value in (2, 3, 4):
                 args[i].configure(state=DISABLED)
+                if p_value == 4:
+                    args[6].configure(state=NORMAL)
             else:
                 args[i].configure(state="readonly")
+
 
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
@@ -226,6 +229,10 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
                 pars[0].maxAgeCrop = 0
                 args[0].insert(0, EarthAge)
 
+
+    elif p_number_in_list == 28:
+        pass
+
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
 #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
@@ -270,6 +277,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
+    global varAgeAndersen
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -314,6 +322,7 @@ def set_Tk_var():
     varKDEBandwidth.set(50)
     varHistBinwidth = IntVar()
     varHistBinwidth.set(50)
+    varAgeAndersen = IntVar()
 
 
 def init(pTop, pGui, *args, **kwargs):

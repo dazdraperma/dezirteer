@@ -451,11 +451,34 @@ class OperationWindow(Frame):
         self.cbPbc.current(0)
         self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(),
                                                                                    pars_onChange, self.entPosDiscFilt,
-                                                                                   self.entNegDiscFilt,self.cbWhichAge,
+                                                                                   self.entNegDiscFilt, self.cbWhichAge,
                                                                                    self.entAgeCutoff,
                                                                                    self.entDiscAgeFixedLim,
-                                                                                   self.cbWhichConc))
+                                                                                   self.cbWhichConc, self.entAgeAndersen))
 
+        self.entAgeAndersen = Spinbox(self.frAgeDisc, from_=0, to=EarthAge)
+        self.entAgeAndersen.grid(row=6, column=1, pady=5, padx=5, sticky='w')
+        self.entAgeAndersen.configure(background="white")
+        self.entAgeAndersen.configure(disabledforeground="#a3a3a3")
+        self.entAgeAndersen.configure(font="TkFixedFont")
+        self.entAgeAndersen.configure(foreground="#000000")
+        self.entAgeAndersen.configure(insertbackground="black")
+        self.entAgeAndersen.configure(textvariable=gui_support.varAgeAndersen)
+        self.entAgeAndersen.configure(
+            command=lambda: gui_support.onChange(28, float(self.entAgeAndersen.get()), pars_onChange))
+        self.entAgeAndersen.bind('<KeyRelease>', (lambda _: gui_support.onChange(28,
+                                                                               float(''.join(
+                                                                                   c for c in self.entAgeAndersen.get() if
+                                                                                   (c.isdigit() or c == '.'))),
+                                                                               pars_onChange)))
+        self.entAgeAndersen.configure(state=DISABLED)
+        self.entAgeAndersen.configure(width=5)
+
+
+        self.lblAgeAndersen = Label(self.frAgeDisc)
+        self.lblAgeAndersen.grid(row=6, column=2, sticky='w', pady=5)
+        self.apply_style(self.lblAgeAndersen)
+        self.lblAgeAndersen.configure(text="And.Ma")
 
 
         self.lbCalcDisc = Label(self.frAgeDisc)
@@ -972,6 +995,7 @@ class OperationWindow(Frame):
         self.cbErrFilter.configure(state="readonly")
         self.cbPbc.configure(state="readonly")
 
+
         '''self.cbWhichAge.configure(state="readonly")
         self.cbPbc.configure(state="readonly")
         self.cbWhichConc.configure(state="readonly")
@@ -1024,6 +1048,11 @@ class OperationWindow(Frame):
             self.entAgeMaxCrop.configure(state=NORMAL)
         else:
             self.entAgeMaxCrop.configure(state=DISABLED)
+
+        if self.cbPbc.current() == 4:
+            self.entAgeAndersen.configure(state=NORMAL)
+        else:
+            self.entAgeAndersen.configure(state=DISABLED)
 
 
 
@@ -1303,7 +1332,7 @@ class OperationWindow(Frame):
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
-                                 self.entHistBinwidth, self.cbDensityPlotType]
+                                 self.entHistBinwidth, self.cbDensityPlotType, self.entAgeAndersen]
                                  #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
                                  # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
         if is_data_present:
