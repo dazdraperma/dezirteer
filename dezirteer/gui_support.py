@@ -348,9 +348,14 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             l_str = ('\n' +
                        str(an_list[j]) + ',' +
 
-                       str(-1) + ',' +
-                       str(-1) + ',' +
-                       str(-1) + ',' +
+                       #str(-1) + ',' +
+                       #str(-1) + ',' +
+                       #str(-1) + ',' +
+
+                       str(an_list[j].th232_u238[0]) + ',' +
+                       str(an_list[j].th232_u238[1]) + ',' +
+                       str(an_list[j].th232_u238[2]) + ',' +
+
 
                        str(an_list[j].pb208_th232[0]) + ',' +
                        str(an_list[j].pb208_th232[1]) + ',' +
@@ -414,10 +419,12 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_age(0)[0]) + ',' +
                        str(an_list[j].calc_age(0)[1]) + ',' +
                        str(an_list[j].calc_age(0)[2]) + ',' +
+
                        g_corr_type[l_type_pbc] + ',' +
                        str(int(pbc_corr(an_list[j], l_type_pbc)[0])) + ',' +
                        str(int(pbc_corr(an_list[j], l_type_pbc)[1])) + ',' +
                        str(int(pbc_corr(an_list[j], l_type_pbc)[2])) + ',' +
+
                        str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
                        str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
 
