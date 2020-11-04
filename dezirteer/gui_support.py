@@ -345,17 +345,13 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             i += 1
         file.write("\n")
         while j < len(p_grainset):
+            pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
             l_str = ('\n' +
                        str(an_list[j]) + ',' +
 
-                       #str(-1) + ',' +
-                       #str(-1) + ',' +
-                       #str(-1) + ',' +
-
-                       str(an_list[j].th232_u238[0]) + ',' +
-                       str(an_list[j].th232_u238[1]) + ',' +
-                       str(an_list[j].th232_u238[2]) + ',' +
-
+                       str(-1) + ',' +
+                       str(-1) + ',' +
+                       str(-1) + ',' +
 
                        str(an_list[j].pb208_th232[0]) + ',' +
                        str(an_list[j].pb208_th232[1]) + ',' +
@@ -419,12 +415,10 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].calc_age(0)[0]) + ',' +
                        str(an_list[j].calc_age(0)[1]) + ',' +
                        str(an_list[j].calc_age(0)[2]) + ',' +
-
                        g_corr_type[l_type_pbc] + ',' +
-                       str(int(pbc_corr(an_list[j], l_type_pbc)[0])) + ',' +
-                       str(int(pbc_corr(an_list[j], l_type_pbc)[1])) + ',' +
-                       str(int(pbc_corr(an_list[j], l_type_pbc)[2])) + ',' +
-
+                       str(int(pbc_corr_buff[0])) + ',' +
+                       str(int(pbc_corr_buff[1])) + ',' +
+                       str(int(pbc_corr_buff[2])) + ',' +
                        str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
                        str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
 
@@ -500,6 +494,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
         p_table.column(i, width="100", anchor="c")
         while j < len(grainset):
+            pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
             p_table.insert('', 'end', text=(an_list[j]), values=(
                     round(an_list[j].th232_u238[0], 4),
                     round(an_list[j].th232_u238[1], 4),
@@ -569,9 +564,9 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(an_list[j].calc_age(0)[2]),
 
                     g_corr_type[l_type_pbc],
-                    int(pbc_corr(an_list[j], l_type_pbc)[0]),
-                    int(pbc_corr(an_list[j], l_type_pbc)[1]),
-                    int(pbc_corr(an_list[j], l_type_pbc)[2]),
+                    int(pbc_corr_buff[0]),
+                    int(pbc_corr_buff[1]),
+                    int(pbc_corr_buff[2]),
 
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),

@@ -138,6 +138,7 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
 
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
+
     d = 1
     corr_age = [-1, -1, -1]
     mr68 = zir.pb206_u238
@@ -157,7 +158,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     com84 = compb(age, 2)
     com76 = com74 / com64
     com86 = com84 / com64
-    
+
     if corr_type == 1:  # 204
         if mr64[0] != -1 and mr68[0] != -1:
             a68 = pb4cor(com64/mr64, mr64, mr68, LAMBDA_238)
@@ -212,7 +213,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             c = (b - a) / 2 + a
             d = b - a
         corr_age[0] = a
-
+        print(age)
         # error
         e1 = exp(LAMBDA_238 * a) - 1
         e2 = exp(LAMBDA_235 * a) - 1
