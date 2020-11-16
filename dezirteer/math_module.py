@@ -161,7 +161,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
 
     if corr_type == 1:  # 204
         if mr64[0] != -1 and mr68[0] != -1:
-            a68 = pb4cor(com64/mr64, mr64, mr68, LAMBDA_238)
+            a68 = pb4cor(com64/mr64[0], mr64, mr68, LAMBDA_238)
         else:
             a68 = [-1, -1, -1, -1, -1, -1]
 
@@ -213,7 +213,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             c = (b - a) / 2 + a
             d = b - a
         corr_age[0] = a
-        print(age)
+
         # error
         e1 = exp(LAMBDA_238 * a) - 1
         e2 = exp(LAMBDA_235 * a) - 1

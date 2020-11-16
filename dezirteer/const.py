@@ -1,4 +1,5 @@
-LAMBDA_232 = 4.934E-11#Amelin and Zaitsev, 2002.
+# LAMBDA_232 = 4.934E-11#Amelin and Zaitsev, 2002.
+LAMBDA_232 = 4.9475E-11 #old value, used in isoplot
 ERR_LAMBDA_232 = 0.015E-11#Amelin and Zaitsev, 2002.
 
 LAMBDA_235 = 9.8485E-10
@@ -7,7 +8,8 @@ LAMBDA_235 = 9.8485E-10
 LAMBDA_238 = 1.55125E-10
 #ERR_LAMBDA_238 =
 
-U238_U235 = 137.817 #https://doi.org/10.1016/j.gca.2018.06.014
+# U238_U235 = 137.817 #https://doi.org/10.1016/j.gca.2018.06.014
+U238_U235 = 137.88 #old value, used in isoplot
 
 ERR_U238_U235 = 0.031 ##https://doi.org/10.1016/j.gca.2018.06.014
 

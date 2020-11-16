@@ -473,7 +473,7 @@ class OperationWindow(Frame):
                                                                                pars_onChange)))
         self.entAgeAndersen.configure(state=DISABLED)
         self.entAgeAndersen.configure(width=5)
-
+        # print(self.entAgeAndersen.get())
 
         self.lblAgeAndersen = Label(self.frAgeDisc)
         self.lblAgeAndersen.grid(row=6, column=2, sticky='w', pady=5)
