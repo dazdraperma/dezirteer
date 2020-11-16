@@ -355,7 +355,8 @@ class Filters(object):  # describes filters that should be applied to data in An
     def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=0,
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
-                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge):
+                 sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge,
+                 andersenAge=1000):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -369,6 +370,7 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__filter_by_commPb = filter_by_commPb
         self.__minAgeCrop = minAgeCrop
         self.__maxAgeCrop = maxAgeCrop
+        self.__andersenAge = andersenAge
 
 
     @property
@@ -474,6 +476,14 @@ class Filters(object):  # describes filters that should be applied to data in An
     @maxAgeCrop.setter
     def maxAgeCrop(self, value):
         self.__maxAgeCrop = value
+
+    @property
+    def andersenAge(self):
+        return self.__andersenAge
+
+    @andersenAge.setter
+    def andersenAge(self, value):
+        self.__andersenAge = value
 
 
 #this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;

@@ -229,9 +229,8 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
                 pars[0].maxAgeCrop = 0
                 args[0].insert(0, EarthAge)
 
-
     elif p_number_in_list == 28:
-        pass
+        pars[0].andersenAge = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
@@ -323,6 +322,7 @@ def set_Tk_var():
     varHistBinwidth = IntVar()
     varHistBinwidth.set(50)
     varAgeAndersen = IntVar()
+    varAgeAndersen.set(1000)
 
 
 def init(pTop, pGui, *args, **kwargs):
