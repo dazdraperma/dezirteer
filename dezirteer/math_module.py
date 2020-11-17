@@ -73,13 +73,13 @@ def pb4cor(fc, pb_pb4, pb_uth, lam):  # universal 204pb corr function for all me
     if pb_pb4[0] > 0 and pb_uth[0] > 0:
         # fc = pb_pb4_c / pb_pb4[0]
         ratio = pb_uth[0]*(1-fc)
-        tmp1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
-        tmp2_int = (pb_uth[1] / pb_uth[0]) ** 2
-        ratio_err_int = sqrt(tmp1_int / (pb_pb4[0] * (1 - fc)) ** 2 + tmp2_int) * ratio
+        rel1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
+        rel2_int = (pb_uth[1] / pb_uth[0]) ** 2
+        ratio_err_int = sqrt(rel1_int / (pb_pb4[0] * (1 - fc)) ** 2 + rel2_int) * ratio
         if pb_pb4[2] != -1 and pb_uth[2] != -1:
-            tmp1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
-            tmp2_prop = (pb_uth[2] / pb_uth[0]) ** 2
-            ratio_err_prop = sqrt((sqrt(tmp1_prop) / pb_pb4[0] / (1 - fc)) ** 2 + tmp2_prop) * ratio
+            rel1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
+            rel2_prop = (pb_uth[2] / pb_uth[0]) ** 2
+            ratio_err_prop = sqrt((sqrt(rel1_prop) / pb_pb4[0] / (1 - fc)) ** 2 + rel2_prop) * ratio
             age_err_prop = ratio_err_prop / (1 + ratio) / lam / 1000000
         if ratio > 0:
             age = log(1 + ratio) / lam / 1000000
@@ -181,13 +181,17 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             t = a76[0] * 1000000
             e5 = exp(LAMBDA_235 * t)
             e8 = exp(LAMBDA_238 * t)
-            a76[4] = sqrt((a75[4] * a68[2]) ** 2 + (a68[4] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
+            a76[4] = sqrt((a75[4] * a68[3]) ** 2 + (a68[4] * a75[3]) ** 2) / (U238_U235 * a68[3] ** 2)
             a76[1] = U238_U235 * a76[4] / (LAMBDA_235 * e5/(e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1)**2)
             a76[1] = a76[1] / 1000000
-            a76[5] = sqrt((a75[5] * a68[2]) ** 2 + (a68[5] * a75[2]) ** 2) / (U238_U235 * a68[3] ** 2)
-            a76[2] = U238_U235 * a76[5] / (
-                        LAMBDA_235 * e5 / (e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1) ** 2)
-            a76[2] = a76[2] / 1000000
+            if a75[2] != a75[1] and a68[2] != a68[1]:
+                a76[5] = sqrt((a75[5] * a68[3]) ** 2 + (a68[5] * a75[3]) ** 2) / (U238_U235 * a68[3] ** 2)
+                a76[2] = U238_U235 * a76[5] / (
+                            LAMBDA_235 * e5 / (e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1) ** 2)
+                a76[2] = a76[2] / 1000000
+            else:
+                a76[2] = a76[1]
+                a76[5] = a76[4]
         else:
             a76 = [-1, -1, -1, -1, -1, -1]
 
@@ -196,6 +200,9 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
         # corr_age = [a4c, a4c_err_int, a4c_err_prop]
         corr_age = [a68[0], a68[1], a68[2]]
+        # corr_age = [a75[0], a75[1], a75[2]]
+        # corr_age = [a76[0], a76[1], a76[2]]
+        # corr_age = [a82[0], a82[1], a82[2]]
 
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
@@ -224,13 +231,13 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         n = n1 + n2 + rv
         corr_age[1] = sqrt(n / d) / 1000000
 
-        if mr68[2] != -1 and mr76[2] != -1:
+        if mr68[2] != mr68[1] and mr76[2] != mr76[1]:
             rv = U238_U235 ** 2 * ((mr68[0] * mr76[2]) ** 2 + (mr76[0] * mr68[2]) ** 2)
             n2 = U238_U235 ** 2 * com76 * (com76 - 2 * mr76[0]) * mr68[2] ** 2
             n = n1 + n2 + rv
             corr_age[2] = sqrt(n / d) / 1000000
         else:
-            corr_age[2] = -1
+            corr_age[2] = corr_age[1]
         
     elif corr_type == 3 and mr82[0] > 0 and mr68[0] > 0 and mr28[0] > 0:  # 208
         t = 1000
@@ -262,13 +269,13 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         n = n1 + n2
         corr_age[1] = sqrt(n / d) / 1000000
         
-        if mr68[2] != -1 and mr76[2] != -1 and mr82[2] != -1:
+        if mr68[2] != mr68[1] and mr82[2] != mr82[1]:
             n1 = c1 ** 2 * (mr28[2]/com86) ** 2
             n2 = c2 * mr82[2] + mr68[2] ** 2
             n = n1 + n2
             corr_age[2] = sqrt(n / d) / 1000000
         else:
-            corr_age[2] = -1
+            corr_age[2] = corr_age[1]
 
     elif corr_type == 4:  # and
         # age
@@ -300,13 +307,13 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
             mcz_int = mcz * mr82[1] + z
             mc_ages_int.append(andersen(xt2, yt2, zt2, c7, c8, mcx_int, mcy_int, mcz_int, u)[0])
 
-            if mr75[2] != -1 and mr68[2] != -1 and mr82[2] != -1:
+            if mr75[2] != mr75[1] and mr68[2] != mr68[1] and mr82[2] != mr82[1]:
                 mcx_prop = mcx * mr75[2] + x
                 mcy_prop = mcy * mr68[2] + y
                 mcz_prop = mcz * mr82[2] + z
                 mc_ages_prop.append(andersen(xt2, yt2, zt2, c7, c8, mcx_prop, mcy_prop, mcz_prop, u)[0])
             else:
-                mc_ages_prop = -1
+                mc_ages_prop = mc_ages_int
             # mc_fc.append(andersen(xt2, yt2, zt2, c7, c8, mkx, mky, mkz, u)[1])
 
         corr_age[1] = std(mc_ages_int)
