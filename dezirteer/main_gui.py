@@ -1918,7 +1918,7 @@ def main():
     g_prev_n = 0
     g_graph_settings = gui_support.GraphSettings()
     root = Tk()
-    root.title('Dezirteer: v' + g_dezirteer_version + ', * ' + str(g_days_since_release) + " days ago")
+    root.title('Dezirteer: ' + g_dezirteer_version + ', * ' + str(g_days_since_release) + " days ago")
     root.wm_resizable(1, 1)
     gui_support.set_Tk_var()
     master = OperationWindow(root)
