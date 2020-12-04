@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main_gui.py'],
-             pathex=['c:\\odrive\\Amazon Cloud Drive\\cloud\\Developing\\dezirteer\\dezirteer'],
+             pathex=['c:\\Dev\\dezirteer\\dezirteer'],
              binaries=[],
              datas=[],
              hiddenimports=[],

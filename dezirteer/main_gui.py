@@ -6,6 +6,8 @@ from sys import platform
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+from _version import __version__, __release_year__, __release_month__, __release_date__
+import datetime
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
 from matplotlib.figure import Figure
@@ -1866,9 +1868,13 @@ def is_editbox_float(edit_box, to_assign_to, to_replace_with):
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
-    global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version
+    global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version, g_release_date, g_current_date, g_days_since_release
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
-    g_dezirteer_version = '0.6.2020.05.10.01'
+    g_dezirteer_version = __version__
+    g_release_date = datetime.date(__release_year__, __release_month__, __release_date__)
+    g_current_date = datetime.date.today()
+    g_days_since_release = (g_current_date - g_release_date).total_seconds()
+    g_days_since_release = int(divmod(g_days_since_release, 86400)[0])
     g_pdp = []
     g_cpdp = []
     g_kde = []
@@ -1912,7 +1918,7 @@ def main():
     g_prev_n = 0
     g_graph_settings = gui_support.GraphSettings()
     root = Tk()
-    root.title('Dezirteer: ' + g_dezirteer_version)
+    root.title('Dezirteer: v' + g_dezirteer_version + ', * ' + str(g_days_since_release) + " days ago")
     root.wm_resizable(1, 1)
     gui_support.set_Tk_var()
     master = OperationWindow(root)
