@@ -120,6 +120,7 @@ class GraphSettings(object):
 
 def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
+
     if p_number_in_list == 1:
         pars[0].show_multiple = p_value
     elif p_number_in_list == 2:
@@ -136,15 +137,19 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         else:
             args[1].configure(state=DISABLED)
     elif p_number_in_list == 4:
-        pars[0].use_pbc = p_value
         for i in range(len(args)):
             if p_value in (2, 3, 4):
+                l_use_pbc = True
                 args[i].configure(state=DISABLED)
                 if p_value == 4:
                     args[6].configure(state=NORMAL)
-            else:
+            elif p_value == 1:
+                l_use_pbc = True
                 args[i].configure(state="readonly")
-
+            else:
+                l_use_pbc = False
+                args[i].configure(state="readonly")
+        pars[0].use_pbc = [l_use_pbc, p_value, args[6].get()]
 
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
@@ -346,7 +351,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
         j = 0
         unc_type = int(p_filters.unc_type)
         an_list = p_grainset.analyses_list
-        l_type_pbc = p_filters.use_pbc
+        l_type_pbc = p_filters.use_pbc[1]
         p_grainset.good_bad_sets(p_filters)
         file.write("Analysis name"+',')
         while i < len(p_colnames):
@@ -497,7 +502,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     good_grains = p_grainset.good_bad_sets(p_filters)
     grainset = p_grainset
     filters = p_filters
-    l_type_pbc = p_filters.use_pbc
+    l_type_pbc = p_filters.use_pbc[1]
     p_table.heading("#0", text="Analysis name", anchor='c')
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')

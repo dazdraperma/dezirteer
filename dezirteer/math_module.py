@@ -359,7 +359,7 @@ def find_age(pLeadRatio):
 
 
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
-    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=0,
+    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=[False, 0, 1000],
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge,
