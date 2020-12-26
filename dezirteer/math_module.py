@@ -1263,6 +1263,16 @@ class Analysis(object):
     def use_206_238(self, age_cutoff):
         return self.calc_age(0, 0)[0] < age_cutoff
 
+    #checks if necessary channels for pbc are present
+    def channels_for_pbc(self):
+        for_204pbc = (self.pb206_pb204[0] > 0) and (self.pb206_u238[0]> 0) and (self.pb207_pb204[0] > 0) \
+                     and (self.pb207_u235[0] > 0) and (self.pb208_pb204[0] > 0) and (self.pb208_th232[0] > 0)
+        for_207pbc = (self.pb206_u238[0] > 0) and (self.pb207_pb206[0] > .04605)
+        for_208pbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0)
+        for_Andpbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0) and \
+                     (self.pb207_u235[0] > 0)
+        return [for_204pbc, for_207pbc, for_208pbc, for_Andpbc]
+
     # checks if a grain passes user-defined Filters
     def is_grain_good(self, pFilter):
         do_uconc = pFilter.filter_by_uconc[0]

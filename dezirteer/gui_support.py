@@ -576,9 +576,9 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 
                     g_corr_type[l_type_pbc],
 
-                    int(pbc_corr(an_list[j], 1, 3)[0]),
-                    int(pbc_corr(an_list[j], 1, 3)[1]),
-                    int(pbc_corr(an_list[j], 1, 3)[2]),
+                    int(pbc_corr(an_list[j], 1, 0)[0]),
+                    int(pbc_corr(an_list[j], 1, 0)[1]),
+                    int(pbc_corr(an_list[j], 1, 0)[2]),
 
                     int(pbc_corr(an_list[j], 2)[0]),
                     int(pbc_corr(an_list[j], 2)[1]),
