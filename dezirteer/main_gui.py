@@ -1898,14 +1898,24 @@ def main():
                         '238U/204Pb', '238/204Err 1s(Int)', '238/204Err 1s(Prop)',
 
                         'Age 208Pb/232Th', 'Age208/232Err 1s(Int)', 'Age208/232Err 1s(Prop)',
-                        'Age 207Pb/206Pb',  'Age207/206Err 1s(Int)', 'Age207/206Err 1s(Prop)',
+                        'Age 207Pb/206Pb', 'Age207/206Err 1s(Int)', 'Age207/206Err 1s(Prop)',
                         'Age 207Pb/235U', 'Age207/235Err 1s(Int)', 'Age207/235Err 1s(Prop)',
                         'Age 206Pb/238U', 'Age206/238Err 1s(Int)', 'Age206/238Err 1s(Prop)',
 
                         'Corr.type',
-                        'age corr.',
-                        'age corr.Err 1s(Int)',
-                        'age corr.Err 1s(Prop)',
+
+                        'Pb204 age corr.',
+                        'Pb204 age corr.Err 1s(Int)',
+                        'Pb204 age corr.Err 1s(Prop)',
+
+                        'Pb207 age corr.',
+                        'Pb207 age corr.Err 1s(Int)',
+                        'Pb207 age corr.Err 1s(Prop)',
+
+                        'Pb208 age corr.',
+                        'Pb208 age corr.Err 1s(Int)',
+                        'Pb208 age corr.Err 1s(Prop)',
+
 
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',

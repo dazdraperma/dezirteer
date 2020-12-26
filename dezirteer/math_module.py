@@ -31,7 +31,6 @@ def t_student(alpha, gl):
 
 
 def calc_ratio(age):
-    # print(age)
     pb207_u235 = exp(LAMBDA_235 * age * 1000000) - 1
     pb206_u238 = exp(LAMBDA_238 * age * 1000000) - 1
     if age != 0:
@@ -359,7 +358,7 @@ def find_age(pLeadRatio):
 
 
 class Filters(object):  # describes filters that should be applied to data in Analysis_set object
-    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=[False, 0, 1000],
+    def __init__(self, filter_by_uconc=[False, 1000], which_age=[0, 1000], use_pbc=[0, 1000],
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge,
@@ -1124,49 +1123,110 @@ class Analysis(object):
                 rat238206 * (self.pb206_u238[2] / self.pb206_u238[0])]
 
     # calculates age ± error from isotopic value and uncertainty
-    def calc_age(self, isotopic_system):
+    def calc_age(self, isotopic_system, *args):
         age_err_int = -1
         age_err_prop = -1
+
+        if not args:
+            do_correction = [False, 0]
+        elif len(args[0]) == 0:
+            do_correction = [False, 0]
+        else:
+            if args[0][0] == 0:
+                do_correction = [False, 0]
+            elif args[0][0] == 1:
+                do_correction = [True, 1]
+            elif args[0][0] == 2:
+                do_correction = [True, 2]
+            elif args[0][0] == 3:
+                do_correction = [True, 3]
+            elif args[0][0] == 4:
+                do_correction = [True, 4]
+            else:
+                do_correction = [False, 0]
+
         try:
-            if isotopic_system == 0 and self.pb206_u238[0] > 0:
-                age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
-                age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
-                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
+            if not do_correction[0]:
+                if isotopic_system == 0 and self.pb206_u238[0] > 0:
+                    age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
+                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
+                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
 
-            elif isotopic_system == 1 and self.pb207_u235[0] > 0:
-                age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
-                age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
-                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
+                elif isotopic_system == 1 and self.pb207_u235[0] > 0:
+                    age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
+                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
+                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
 
-            elif isotopic_system == 2 and self.pb208_th232[0] > 0:
-                age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
-                age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
-                age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
+                elif isotopic_system == 2 and self.pb208_th232[0] > 0:
+                    age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
+                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
+                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
 
-            elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
-                # .04605 corresponds to age67 ~ 0
-                age = find_age(self.pb207_pb206[0]) * 1000000
-                C1 = 1 / U238_U235
-                C2 = LAMBDA_235
-                C3 = LAMBDA_238
-                df_int = self.pb207_pb206[1]
-                df_prop = self.pb207_pb206[2]
-                dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
-                             (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                age_err_int = abs(df_int / dfdt / 1000000)
-                age_err_prop = abs(df_prop / dfdt / 1000000)
-                age = age / 1000000
+                elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
+                    # .04605 corresponds to age67 ~ 0
+                    age = find_age(self.pb207_pb206[0]) * 1000000
+                    C1 = 1 / U238_U235
+                    C2 = LAMBDA_235
+                    C3 = LAMBDA_238
+                    df_int = self.pb207_pb206[1]
+                    df_prop = self.pb207_pb206[2]
+                    dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
+                                 (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
+                    age_err_int = abs(df_int / dfdt / 1000000)
+                    age_err_prop = abs(df_prop / dfdt / 1000000)
+                    age = age / 1000000
+                else:
+                    age = -1
+                    age_err_int = -1
+                    age_err_prop = -1
+
+            #elif use_pbc == 1: #204Pbc
+            #    if self.pb206_pb204[0] > 0 and self.pb206_u238[0] > 0 and self.pb207_pb204[0] > 0 and \
+            #            self.pb207_u235[0] > 0 and self.pb208_pb204[0] > 0 and self.pb208_th232[0] > 0:
+            #        age =  pbc_corr(self, 2)[0]
+            #        age_err_int = pbc_corr(self, 2)[1]
+            #        age_err_prop = pbc_corr(self, 2)[2]
+            #    else:
+            #        age = -1
+            #        age_err_int = -1
+            #        age_err_prop = -1
+
+            elif do_correction[1]==2: #207Pbc
+                if self.pb206_u238[0] > 0 and self.pb207_pb206[0] > .04605:
+                    age = pbc_corr(self, 2)[0]
+                    age_err_int = pbc_corr(self, 2)[1]
+                    age_err_prop = pbc_corr(self, 2)[2]
+                else:
+                    age = -1
+                    age_err_int = -1
+                    age_err_prop = -1
+
+            elif do_correction[1] == 3: #208Pbc
+                if self.th232_u238[0] > 0 and self.pb206_u238[0] > 0 and self.pb208_th232[0] > 0:
+                    age = pbc_corr(self, 3)[0]
+                    age_err_int = pbc_corr(self, 3)[1]
+                    age_err_prop = pbc_corr(self, 3)[2]
+                else:
+                    age = -1
+                    age_err_int = -1
+                    age_err_prop = -1
+
+            elif do_correction[1] == 4: #And
+                pass
+
             else:
                 age = -1
+                age_err_int = -1
+                age_err_prop = -1
             return [age, age_err_int, age_err_prop]
         except ValueError:
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, disc_type, age_cutoff): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
-        age_206_238 = self.calc_age(0)[0]
-        age_207_235 = self.calc_age(1)[0]
-        age_207_206 = self.calc_age(3)[0]
+    def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+        age_206_238 = self.calc_age(0, args)[0]
+        age_207_235 = self.calc_age(1, args)[0]
+        age_207_206 = self.calc_age(3, args)[0]
         disc_68_57 = age_207_235 / age_206_238 - 1
         disc_68_76 = 1 - age_206_238 / age_207_206
 
@@ -1193,7 +1253,7 @@ class Analysis(object):
 
     # true if should use U238/Pb206, false if should use Pb206/Pb207
     def use_206_238(self, age_cutoff):
-        return self.calc_age(0)[0] < age_cutoff
+        return self.calc_age(0, 0)[0] < age_cutoff
 
     # checks if a grain passes user-defined Filters
     def is_grain_good(self, pFilter):
@@ -1210,10 +1270,11 @@ class Analysis(object):
         sample_name_filter = pFilter.sample_name_filter
         min_age_crop = pFilter.minAgeCrop
         max_age_crop = pFilter.maxAgeCrop
+        use_pbc = pFilter.use_pbc
         is_grain_in_chosen_sample = True
         is_age_good = True
-        age_206_238 = self.calc_age(0)
-        age_207_206 = self.calc_age(3)
+        age_206_238 = self.calc_age(0, pFilter.use_pbc)
+        age_207_206 = self.calc_age(3, pFilter.use_pbc)
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
@@ -1287,17 +1348,7 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-        disc = self.calc_discordance(type_disc, pFilter.disc_type[1]) #22222
-        '''if type_disc == 0:
-            disc = -1  # this is for future implementation of 'based on Uconc' algorithm
-        elif type_disc == 1:
-            disc = self.calc_discordance(1, )
-        elif type_disc == 2:
-            disc = self.calc_discordance(2)
-        elif type_disc == 3:
-            disc = self.calc_discordance(3)  #11111
-        else: #if 4
-            disc = self.calc_discordance(4)  # 11111'''
+        disc = self.calc_discordance(type_disc, pFilter.use_pbc) #22222
 
         if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
             is_disc_good = True
@@ -1482,7 +1533,7 @@ class AnalysesSet(object):
             #parsed_analysis = parse_sample_analysis(str(zircon))
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
-                z_age = zircon.calc_age(l_is_grain_good[1])
+                z_age = zircon.calc_age(l_is_grain_good[1], p_filter.use_pbc)
                 z_206_238 = zircon.pb206_u238
                 z_207_235 = zircon.pb207_u235
                 z_238_206 = zircon.u238_pb206()

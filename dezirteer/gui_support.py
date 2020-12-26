@@ -139,17 +139,14 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 4:
         for i in range(len(args)):
             if p_value in (2, 3, 4):
-                l_use_pbc = True
                 args[i].configure(state=DISABLED)
                 if p_value == 4:
                     args[6].configure(state=NORMAL)
             elif p_value == 1:
-                l_use_pbc = True
                 args[i].configure(state="readonly")
             else:
-                l_use_pbc = False
                 args[i].configure(state="readonly")
-        pars[0].use_pbc = [l_use_pbc, p_value, args[6].get()]
+        pars[0].use_pbc = [p_value, args[6].get()]
 
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
@@ -351,7 +348,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
         j = 0
         unc_type = int(p_filters.unc_type)
         an_list = p_grainset.analyses_list
-        l_type_pbc = p_filters.use_pbc[1]
+        l_type_pbc = p_filters.use_pbc[0]
         p_grainset.good_bad_sets(p_filters)
         file.write("Analysis name"+',')
         while i < len(p_colnames):
@@ -414,21 +411,21 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].u238_pb204[1]) + ',' +
                        str(an_list[j].u238_pb204[2]) + ',' +
 
-                       str(an_list[j].calc_age(2)[0]) + ',' +
-                       str(an_list[j].calc_age(2)[1]) + ',' +
-                       str(an_list[j].calc_age(2)[2]) + ',' +
+                       str(an_list[j].calc_age(2, p_filters.use_pbc)[0]) + ',' +
+                       str(an_list[j].calc_age(2, p_filters.use_pbc)[1]) + ',' +
+                       str(an_list[j].calc_age(2, p_filters.use_pbc)[2]) + ',' +
 
-                       str(an_list[j].calc_age(3)[0]) + ',' +
-                       str(an_list[j].calc_age(3)[1]) + ',' +
-                       str(an_list[j].calc_age(3)[2]) + ',' +
+                       str(an_list[j].calc_age(3, p_filters.use_pbc)[0]) + ',' +
+                       str(an_list[j].calc_age(3, p_filters.use_pbc)[1]) + ',' +
+                       str(an_list[j].calc_age(3, p_filters.use_pbc)[2]) + ',' +
 
-                       str(an_list[j].calc_age(1)[0]) + ',' +
-                       str(an_list[j].calc_age(1)[1]) + ',' +
-                       str(an_list[j].calc_age(1)[2]) + ',' +
+                       str(an_list[j].calc_age(1, p_filters.use_pbc)[0]) + ',' +
+                       str(an_list[j].calc_age(1, p_filters.use_pbc)[1]) + ',' +
+                       str(an_list[j].calc_age(1, p_filters.use_pbc)[2]) + ',' +
 
-                       str(an_list[j].calc_age(0)[0]) + ',' +
-                       str(an_list[j].calc_age(0)[1]) + ',' +
-                       str(an_list[j].calc_age(0)[2]) + ',' +
+                       str(an_list[j].calc_age(0, p_filters.use_pbc)[0]) + ',' +
+                       str(an_list[j].calc_age(0, p_filters.use_pbc)[1]) + ',' +
+                       str(an_list[j].calc_age(0, p_filters.use_pbc)[2]) + ',' +
                        g_corr_type[l_type_pbc] + ',' +
                        str(int(pbc_corr_buff[0])) + ',' +
                        str(int(pbc_corr_buff[1])) + ',' +
@@ -439,8 +436,8 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].is_grain_good(p_filters)[0]) + ',' +
                        str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
 
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[0]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1])[unc_type]))
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[0]) + ',' +
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[unc_type]))
             file.write(l_str)
             j += 1
         file.write("\n" * 2)
@@ -502,7 +499,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     good_grains = p_grainset.good_bad_sets(p_filters)
     grainset = p_grainset
     filters = p_filters
-    l_type_pbc = p_filters.use_pbc[1]
+    l_type_pbc = p_filters.use_pbc[0]
     p_table.heading("#0", text="Analysis name", anchor='c')
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
@@ -561,33 +558,42 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     round(an_list[j].u238_pb204[1], 1),
                     round(an_list[j].u238_pb204[2], 1),
 
-                    int(an_list[j].calc_age(2)[0]),
-                    int(an_list[j].calc_age(2)[1]),
-                    int(an_list[j].calc_age(2)[2]),
+                    int(an_list[j].calc_age(2, p_filters.use_pbc)[0]),
+                    int(an_list[j].calc_age(2, p_filters.use_pbc)[1]),
+                    int(an_list[j].calc_age(2, p_filters.use_pbc)[2]),
 
-                    int(an_list[j].calc_age(3)[0]),
-                    int(an_list[j].calc_age(3)[1]),
-                    int(an_list[j].calc_age(3)[2]),
+                    int(an_list[j].calc_age(3, p_filters.use_pbc)[0]),
+                    int(an_list[j].calc_age(3, p_filters.use_pbc)[1]),
+                    int(an_list[j].calc_age(3, p_filters.use_pbc)[2]),
 
-                    int(an_list[j].calc_age(1)[0]),
-                    int(an_list[j].calc_age(1)[1]),
-                    int(an_list[j].calc_age(1)[2]),
+                    int(an_list[j].calc_age(1, p_filters.use_pbc)[0]),
+                    int(an_list[j].calc_age(1, p_filters.use_pbc)[1]),
+                    int(an_list[j].calc_age(1, p_filters.use_pbc)[2]),
 
-                    int(an_list[j].calc_age(0)[0]),
-                    int(an_list[j].calc_age(0)[1]),
-                    int(an_list[j].calc_age(0)[2]),
+                    int(an_list[j].calc_age(0, p_filters.use_pbc)[0]),
+                    int(an_list[j].calc_age(0, p_filters.use_pbc)[1]),
+                    int(an_list[j].calc_age(0, p_filters.use_pbc)[2]),
 
                     g_corr_type[l_type_pbc],
-                    int(pbc_corr_buff[0]),
-                    int(pbc_corr_buff[1]),
-                    int(pbc_corr_buff[2]),
+
+                    int(pbc_corr(an_list[j], 1)[0]),
+                    int(pbc_corr(an_list[j], 1)[1]),
+                    int(pbc_corr(an_list[j], 1)[2]),
+
+                    int(pbc_corr(an_list[j], 2)[0]),
+                    int(pbc_corr(an_list[j], 2)[1]),
+                    int(pbc_corr(an_list[j], 2)[2]),
+
+                    int(pbc_corr(an_list[j], 3)[0]),
+                    int(pbc_corr(an_list[j], 3)[1]),
+                    int(pbc_corr(an_list[j], 3)[2]),
 
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),
                     str(an_list[j].is_grain_good(filters)[0]),
                     str(an_list[j].is_grain_good(filters)[1]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[0]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1])[unc_type])
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], p_filters.use_pbc)[0]),
+                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], p_filters.use_pbc)[unc_type])
                     ),
                     tags=str(an_list[j].is_grain_good(filters)[0]))
 
