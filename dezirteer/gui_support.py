@@ -576,9 +576,9 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 
                     g_corr_type[l_type_pbc],
 
-                    int(pbc_corr(an_list[j], 1)[0]),
-                    int(pbc_corr(an_list[j], 1)[1]),
-                    int(pbc_corr(an_list[j], 1)[2]),
+                    int(pbc_corr(an_list[j], 1, 3)[0]),
+                    int(pbc_corr(an_list[j], 1, 3)[1]),
+                    int(pbc_corr(an_list[j], 1, 3)[2]),
 
                     int(pbc_corr(an_list[j], 2)[0]),
                     int(pbc_corr(an_list[j], 2)[1]),
@@ -587,6 +587,12 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(pbc_corr(an_list[j], 3)[0]),
                     int(pbc_corr(an_list[j], 3)[1]),
                     int(pbc_corr(an_list[j], 3)[2]),
+
+                    "-1", "-1", "-1",
+
+                    #int(pbc_corr(an_list[j], 4)[0]),
+                    #int(pbc_corr(an_list[j], 4)[1]),
+                    #int(pbc_corr(an_list[j], 4)[2]),
 
                     int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
                     int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),

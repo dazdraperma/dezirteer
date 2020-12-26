@@ -1916,6 +1916,10 @@ def main():
                         'Pb208 age corr.Err 1s(Int)',
                         'Pb208 age corr.Err 1s(Prop)',
 
+                        'And age corr.',
+                        'And age corr.Err 1s(Int)',
+                        'And age corr.Err 1s(Prop)',
+
 
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
                         'is grain good?', 'best age system',

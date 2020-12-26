@@ -198,10 +198,18 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         # a4c_err_int = [a68[1], a75[1], a76[1], a82[1]]
         # a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
         # corr_age = [a4c, a4c_err_int, a4c_err_prop]
-        corr_age = [a68[0], a68[1], a68[2]]
-        # corr_age = [a75[0], a75[1], a75[2]]
-        # corr_age = [a76[0], a76[1], a76[2]]
-        # corr_age = [a82[0], a82[1], a82[2]]
+        if not args:
+            corr_age = [a68[0], a68[1], a68[2]]
+        else:
+            if args[0] == 0:
+                corr_age = [a68[0], a68[1], a68[2]]
+            elif args[0] == 1:
+                corr_age = [a75[0], a75[1], a75[2]]
+            elif args[0] == 2:
+                corr_age = [a82[0], a82[1], a82[2]]
+            elif args[0] == 3:
+                corr_age = [a76[0], a76[1], a76[2]]
+
 
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
