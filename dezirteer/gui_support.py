@@ -488,6 +488,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
 
 
 def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
+    global varAgeAndersen
     if p_grainset.analyses_list == []:
         pass
     for ch in p_table.get_children():
@@ -601,7 +602,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(pbc_corr(an_list[j], 3)[2]),
 
                     "-1", "-1", "-1",
-                    "-1",
+                    str(varAgeAndersen.get()),
 
                     #int(pbc_corr(an_list[j], 4)[0]),
                     #int(pbc_corr(an_list[j], 4)[1]),

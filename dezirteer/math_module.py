@@ -1220,7 +1220,9 @@ class Analysis(object):
                     age_err_prop = -1
 
             elif do_correction[1] == 4: #And
-                pass
+                age = -1
+                age_err_int = -1
+                age_err_prop = -1
 
             else:
                 age = -1
