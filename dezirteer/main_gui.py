@@ -1904,21 +1904,34 @@ def main():
 
                         'Corr.type',
 
-                        'Pb204 age corr.',
-                        'Pb204 age corr.Err 1s(Int)',
-                        'Pb204 age corr.Err 1s(Prop)',
+                        'Pb204-corr. 68 age',
+                        'Pb204-corr. 68 age Err 1s(Int)',
+                        'Pb204-corr. 68 age Err 1s(Prop)',
 
-                        'Pb207 age corr.',
-                        'Pb207 age corr.Err 1s(Int)',
+                        'Pb204-corr. 75 age',
+                        'Pb204-corr. 75 age Err 1s(Int)',
+                        'Pb204-corr. 75 age Err 1s(Prop)',
+
+                        'Pb204-corr. 82 age',
+                        'Pb204-corr. 82 age Err 1s(Int)',
+                        'Pb204-corr. 82 age Err 1s(Prop)',
+
+                        'Pb204-corr. 76 age',
+                        'Pb204-corr. 76 age Err 1s(Int)',
+                        'Pb204-corr. 76 age Err 1s(Prop)',
+
+                        'Pb207-corr. age',
+                        'Pb207-corr. age Err 1s(Int)',
                         'Pb207 age corr.Err 1s(Prop)',
 
-                        'Pb208 age corr.',
-                        'Pb208 age corr.Err 1s(Int)',
-                        'Pb208 age corr.Err 1s(Prop)',
+                        'Pb208-corr. age',
+                        'Pb208-corr. age Err 1s(Int)',
+                        'Pb208-corr. age Err 1s(Prop)',
 
-                        'And age corr.',
-                        'And age corr.Err 1s(Int)',
-                        'And age corr.Err 1s(Prop)',
+                        'And-corr. age',
+                        'And-corr. age Err 1s(Int)',
+                        'And-corr. age Err 1s(Prop)',
+                        'And. intercept age',
 
 
                         'disc. 207/206-206/238', 'disc. 207/235-206/238',
