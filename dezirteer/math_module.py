@@ -129,7 +129,6 @@ def andersen(xt2, yt2, zt2, c7, c8, x, y, z, u):
 
 
 def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
-
     d = 1
     corr_age = [-1, -1, -1]
     mr68 = zir.pb206_u238
@@ -187,10 +186,6 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             a76 = [-1, -1, -1, -1, -1, -1]
 
-        # a4c = [a68[0], a75[0], a76[0], a82[0]]
-        # a4c_err_int = [a68[1], a75[1], a76[1], a82[1]]
-        # a4c_err_prop = [a68[2], a75[2], a76[2], a82[2]]
-        # corr_age = [a4c, a4c_err_int, a4c_err_prop]
         if not args:
             corr_age = [a68[0], a68[1], a68[2]]
         else:
@@ -202,7 +197,6 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
                 corr_age = [a82[0], a82[1], a82[2]]
             elif args[0] == 3:
                 corr_age = [a76[0], a76[1], a76[2]]
-
 
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
@@ -277,9 +271,12 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
         else:
             corr_age[2] = corr_age[1]
 
-    elif corr_type == 4:  # and
+    elif corr_type == 4:  # Andersen
         # age
-        t2 = 0  # NEED CORRECTION!!!  age of pb lost, must entered by user
+        if len(args) > 1 and args[1] >= 0:
+            t2 = args[1]
+        else:
+            t2 = 0
         t2_ratios = calc_ratio(t2)
         xt2 = t2_ratios[1]
         yt2 = t2_ratios[0]
@@ -324,6 +321,7 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
     else:
         corr_age = [-1, -1, -1]
     return corr_age
+
 
 def sumproduct(*lists):
     return sum(functools.reduce(operator.mul, data) for data in zip(*lists))
@@ -1129,73 +1127,89 @@ class Analysis(object):
     def calc_age(self, isotopic_system, *args):
         age_err_int = -1
         age_err_prop = -1
-
         if not args:
-            do_correction = [False, 0]
-        elif len(args[0]) == 0:
-            do_correction = [False, 0]
-        else:
-            if args[0][0] == 0:
-                do_correction = [False, 0]
-            elif args[0][0] == 1:
-                do_correction = [True, 1]
-            elif args[0][0] == 2:
-                do_correction = [True, 2]
-            elif args[0][0] == 3:
-                do_correction = [True, 3]
-            elif args[0][0] == 4:
-                do_correction = [True, 4]
+            do_correction = 0
+        elif args:
+            if args[0] == 0:
+                do_correction = 0
+            elif len(args[0]) == 0:
+                do_correction = 0
             else:
-                do_correction = [False, 0]
+                do_correction = args[0][0]
 
         try:
-            if not do_correction[0]:
+            if do_correction in (0, 1):
+                if do_correction == 0:
+                    pass
                 if isotopic_system == 0 and self.pb206_u238[0] > 0:
-                    age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
-                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
-                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
+                    if do_correction == 0:
+                        age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
+                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
+                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
+                    else:
+                        temp_age = pbc_corr(self, 1, 0)
+                        age = temp_age[0]
+                        age_err_int = temp_age[1]
+                        age_err_prop = temp_age[2]
 
                 elif isotopic_system == 1 and self.pb207_u235[0] > 0:
-                    age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
-                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
-                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
+                    if do_correction == 0:
+                        age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
+                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
+                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
+                    else:
+                        temp_age = pbc_corr(self, 1, 1)
+                        age = temp_age[0]
+                        age_err_int = temp_age[1]
+                        age_err_prop = temp_age[2]
 
                 elif isotopic_system == 2 and self.pb208_th232[0] > 0:
-                    age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
-                    age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
-                    age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
+                    if do_correction == 0:
+                        age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
+                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
+                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
+                    else:
+                        temp_age = pbc_corr(self, 1, 2)
+                        age = temp_age[0]
+                        age_err_int = temp_age[1]
+                        age_err_prop = temp_age[2]
 
                 elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
-                    # .04605 corresponds to age67 ~ 0
-                    age = find_age(self.pb207_pb206[0]) * 1000000
-                    C1 = 1 / U238_U235
-                    C2 = LAMBDA_235
-                    C3 = LAMBDA_238
-                    df_int = self.pb207_pb206[1]
-                    df_prop = self.pb207_pb206[2]
-                    dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
-                                 (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                    age_err_int = abs(df_int / dfdt / 1000000)
-                    age_err_prop = abs(df_prop / dfdt / 1000000)
-                    age = age / 1000000
+                    if do_correction == 0:
+                        # .04605 corresponds to age67 ~ 0
+                        age = find_age(self.pb207_pb206[0]) * 1000000
+                        C1 = 1 / U238_U235
+                        C2 = LAMBDA_235
+                        C3 = LAMBDA_238
+                        df_int = self.pb207_pb206[1]
+                        df_prop = self.pb207_pb206[2]
+                        dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
+                                     (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
+                        age_err_int = abs(df_int / dfdt / 1000000)
+                        age_err_prop = abs(df_prop / dfdt / 1000000)
+                        age = age / 1000000
+                    else:
+                        temp_age = pbc_corr(self, 1, 3)
+                        age = temp_age[0]
+                        age_err_int = temp_age[1]
+                        age_err_prop = temp_age[2]
                 else:
                     age = -1
                     age_err_int = -1
                     age_err_prop = -1
 
-            #elif use_pbc == 1: #204Pbc
-            #    if self.pb206_pb204[0] > 0 and self.pb206_u238[0] > 0 and self.pb207_pb204[0] > 0 and \
-            #            self.pb207_u235[0] > 0 and self.pb208_pb204[0] > 0 and self.pb208_th232[0] > 0:
-            #        age =  pbc_corr(self, 2)[0]
-            #        age_err_int = pbc_corr(self, 2)[1]
-            #        age_err_prop = pbc_corr(self, 2)[2]
-            #    else:
-            #        age = -1
-            #        age_err_int = -1
-            #        age_err_prop = -1
+            else:
+                if self.channels_for_pbc()[do_correction-1]:
+                    age = pbc_corr(self, do_correction)[0]
+                    age_err_int = pbc_corr(self, do_correction)[1]
+                    age_err_prop = pbc_corr(self, do_correction)[2]
+                else:
+                    age = -1
+                    age_err_int = -1
+                    age_err_prop = -1
 
-            elif do_correction[1]==2: #207Pbc
-                if self.pb206_u238[0] > 0 and self.pb207_pb206[0] > .04605:
+            '''elif do_correction[1]==2: #207Pbc
+                if self.channels_for_pbc()[1]:
                     age = pbc_corr(self, 2)[0]
                     age_err_int = pbc_corr(self, 2)[1]
                     age_err_prop = pbc_corr(self, 2)[2]
@@ -1205,7 +1219,7 @@ class Analysis(object):
                     age_err_prop = -1
 
             elif do_correction[1] == 3: #208Pbc
-                if self.th232_u238[0] > 0 and self.pb206_u238[0] > 0 and self.pb208_th232[0] > 0:
+                if self.channels_for_pbc()[2]:
                     age = pbc_corr(self, 3)[0]
                     age_err_int = pbc_corr(self, 3)[1]
                     age_err_prop = pbc_corr(self, 3)[2]
@@ -1215,14 +1229,19 @@ class Analysis(object):
                     age_err_prop = -1
 
             elif do_correction[1] == 4: #And
-                age = -1
-                age_err_int = -1
-                age_err_prop = -1
+                if self.channels_for_pbc()[3]:
+                    age = pbc_corr(self, 4)[0]
+                    age_err_int = pbc_corr(self, 4)[1]
+                    age_err_prop = pbc_corr(self, 4)[2]
+                else:
+                    age = -1
+                    age_err_int = -1
+                    age_err_prop = -1
 
             else:
                 age = -1
                 age_err_int = -1
-                age_err_prop = -1
+                age_err_prop = -1'''
             return [age, age_err_int, age_err_prop]
         except ValueError:
             pass
@@ -1262,8 +1281,10 @@ class Analysis(object):
 
     #checks if necessary channels for pbc are present
     def channels_for_pbc(self):
-        for_204pbc = (self.pb206_pb204[0] > 0) and (self.pb206_u238[0]> 0) and (self.pb207_pb204[0] > 0) \
-                     and (self.pb207_u235[0] > 0) and (self.pb208_pb204[0] > 0) and (self.pb208_th232[0] > 0)
+        for_204pbc = (self.pb206_pb204[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb207_pb204[0] > 0) \
+                     and (self.pb207_u235[0] > 0)
+        #for_204pbc_optional = (self.pb208_pb204[0] > 0) and (self.pb208_th232[0] > 0)
+        #for_204pbc = [for_204pbc_mandatory, for_204pbc_optional]
         for_207pbc = (self.pb206_u238[0] > 0) and (self.pb207_pb206[0] > .04605)
         for_208pbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0)
         for_Andpbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0) and \
@@ -1305,11 +1326,17 @@ class Analysis(object):
 
         # filter by sample name
         if sample_name_filter != []:
-            if parse_sample_analysis(self.analysis_name)[0] in sample_name_filter:#str(self.analysis_name).rpartition(p_divider)[0] in sample_name_filter:
+            if parse_sample_analysis(self.analysis_name)[0] in sample_name_filter:
                 is_grain_in_chosen_sample = True
             else:
                 is_grain_in_chosen_sample = False
 
+        # filter by necessary channels if pbc is req'd
+        if use_pbc:
+            pass
+
+
+        #----------------------------------------------------------------------------------
         # decide on the default age system
         if which_age == 0:  # from the lesser error
             if age_206_238[int(pFilter.unc_type)] > age_207_206[int(pFilter.unc_type)]:
@@ -1334,10 +1361,9 @@ class Analysis(object):
             age = age_207_206[0]
             err = age_207_206[int(pFilter.unc_type)]
 
-        # filter by minimum and maximum age crops
-        if min_age_crop > 0: # TEMP TO BE DELETED
-            pass
+        # ----------------------------------------------------------------------------------
 
+        # filter by minimum and maximum age crops
         if (age > min_age_crop) and (age < max_age_crop):
             is_age_good = True
         else:

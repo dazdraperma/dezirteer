@@ -507,113 +507,67 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
         p_table.column(i, width="100", anchor="c")
         while j < len(grainset):
             pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
+            th232_u238 = an_list[j].th232_u238
+            pb208_th232 = an_list[j].pb208_th232
+            pb207_pb206 = an_list[j].pb207_pb206
+            pb207_u235 = an_list[j].pb207_u235
+            pb206_u238 = an_list[j].pb206_u238
+            corr_coef_75_68 = an_list[j].corr_coef_75_68
+            corr_coef_86_76 = an_list[j].corr_coef_86_76
+            u_conc = an_list[j].u_conc
+            pbc = an_list[j].pbc
+            pb206_pb204 = an_list[j].pb206_pb204
+            pb207_pb204 = an_list[j].pb207_pb204
+            pb208_pb204 = an_list[j].pb208_pb204
+            th232_pb204 = an_list[j].th232_pb204
+            u238_pb204 = an_list[j].u238_pb204
+            age_208_232 = an_list[j].calc_age(2, p_filters.use_pbc)
+            age_207_206 = an_list[j].calc_age(3, p_filters.use_pbc)
+            age_207_235 = an_list[j].calc_age(1, p_filters.use_pbc)
+            age_206_238 = an_list[j].calc_age(0, p_filters.use_pbc)
+            pbc204_age_206_238 = an_list[j].calc_age(0, [1, varAgeAndersen.get()])
+            pbc204_age_207_235 = an_list[j].calc_age(1, [1, varAgeAndersen.get()])
+            pbc204_age_208_232 = an_list[j].calc_age(2, [1, varAgeAndersen.get()])
+            pbc204_age_207_206 = an_list[j].calc_age(3, [1, varAgeAndersen.get()])
+            pbc207_age = pbc_corr(an_list[j], 2)
+            pbc208_age = pbc_corr(an_list[j], 3)
+            disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1])
+            disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1])
+            is_grain_good = an_list[j].is_grain_good(filters)
+            best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
             p_table.insert('', 'end', text=(an_list[j]), values=(
-                    round(an_list[j].th232_u238[0], 4),
-                    round(an_list[j].th232_u238[1], 4),
-                    round(an_list[j].th232_u238[2], 4),
-
-                    round(an_list[j].pb208_th232[0], 4),
-                    round(an_list[j].pb208_th232[1], 4),
-                    round(an_list[j].pb208_th232[2], 4),
-
-                    round(an_list[j].pb207_pb206[0], 4),
-                    round(an_list[j].pb207_pb206[1], 4),
-                    round(an_list[j].pb207_pb206[2], 4),
-
-                    round(an_list[j].pb207_u235[0], 4),
-                    round(an_list[j].pb207_u235[1], 4),
-                    round(an_list[j].pb207_u235[2], 4),
-
-                    round(an_list[j].pb206_u238[0], 4),
-                    round(an_list[j].pb206_u238[1], 4),
-                    round(an_list[j].pb206_u238[2], 4),
-
-                    round(an_list[j].corr_coef_75_68, 2),
-                    round(an_list[j].corr_coef_86_76, 2),
-
-                    round(an_list[j].u_conc[0], 4),
-                    round(an_list[j].u_conc[1], 4),
-                    round(an_list[j].u_conc[2], 4),
-
-                    round(an_list[j].pbc[0], 4),
-                    round(an_list[j].pbc[1], 4),
-                    round(an_list[j].pbc[2], 4),
-
-                    round(an_list[j].pb206_pb204[0], 1),
-                    round(an_list[j].pb206_pb204[1], 1),
-                    round(an_list[j].pb206_pb204[2], 1),
-
-                    round(an_list[j].pb207_pb204[0], 1),
-                    round(an_list[j].pb207_pb204[1], 1),
-                    round(an_list[j].pb207_pb204[2], 1),
-
-                    round(an_list[j].pb208_pb204[0], 1),
-                    round(an_list[j].pb208_pb204[1], 1),
-                    round(an_list[j].pb208_pb204[2], 1),
-
-                    round(an_list[j].th232_pb204[0], 1),
-                    round(an_list[j].th232_pb204[1], 1),
-                    round(an_list[j].th232_pb204[2], 1),
-
-                    round(an_list[j].u238_pb204[0], 1),
-                    round(an_list[j].u238_pb204[1], 1),
-                    round(an_list[j].u238_pb204[2], 1),
-
-                    int(an_list[j].calc_age(2, p_filters.use_pbc)[0]),
-                    int(an_list[j].calc_age(2, p_filters.use_pbc)[1]),
-                    int(an_list[j].calc_age(2, p_filters.use_pbc)[2]),
-
-                    int(an_list[j].calc_age(3, p_filters.use_pbc)[0]),
-                    int(an_list[j].calc_age(3, p_filters.use_pbc)[1]),
-                    int(an_list[j].calc_age(3, p_filters.use_pbc)[2]),
-
-                    int(an_list[j].calc_age(1, p_filters.use_pbc)[0]),
-                    int(an_list[j].calc_age(1, p_filters.use_pbc)[1]),
-                    int(an_list[j].calc_age(1, p_filters.use_pbc)[2]),
-
-                    int(an_list[j].calc_age(0, p_filters.use_pbc)[0]),
-                    int(an_list[j].calc_age(0, p_filters.use_pbc)[1]),
-                    int(an_list[j].calc_age(0, p_filters.use_pbc)[2]),
-
+                    round(th232_u238[0], 4), round(th232_u238[1], 4), round(th232_u238[2], 4),
+                    round(pb208_th232[0], 4), round(pb208_th232[1], 4), round(pb208_th232[2], 4),
+                    round(pb207_pb206[0], 4), round(pb207_pb206[1], 4), round(pb207_pb206[2], 4),
+                    round(pb207_u235[0], 4), round(pb207_u235[1], 4), round(pb207_u235[2], 4),
+                    round(pb206_u238[0], 4), round(pb206_u238[1], 4), round(pb206_u238[2], 4),
+                    round(corr_coef_75_68, 2), round(corr_coef_86_76, 2),
+                    round(u_conc[0], 4), round(u_conc[1], 4), round(u_conc[2], 4),
+                    round(pbc[0], 4), round(pbc[1], 4), round(pbc[2], 4),
+                    round(pb206_pb204[0], 1), round(pb206_pb204[1], 1), round(pb206_pb204[2], 1),
+                    round(pb207_pb204[0], 1), round(pb207_pb204[1], 1), round(pb207_pb204[2], 1),
+                    round(pb208_pb204[0], 1), round(pb208_pb204[1], 1), round(pb208_pb204[2], 1),
+                    round(th232_pb204[0], 1), round(th232_pb204[1], 1), round(th232_pb204[2], 1),
+                    round(u238_pb204[0], 1), round(u238_pb204[1], 1), round(u238_pb204[2], 1),
+                    int(age_208_232[0]), int(age_208_232[1]), int(age_208_232[2]),
+                    int(age_207_206[0]), int(age_207_206[1]), int(age_207_206[2]),
+                    int(age_207_235[0]), int(age_207_235[1]), int(age_207_235[2]),
+                    int(age_206_238[0]), int(age_206_238[1]), int(age_206_238[2]),
                     g_corr_type[l_type_pbc],
-
-                    int(pbc_corr(an_list[j], 1, 0)[0]),
-                    int(pbc_corr(an_list[j], 1, 0)[1]),
-                    int(pbc_corr(an_list[j], 1, 0)[2]),
-
-                    int(pbc_corr(an_list[j], 1, 1)[0]),
-                    int(pbc_corr(an_list[j], 1, 1)[1]),
-                    int(pbc_corr(an_list[j], 1, 1)[2]),
-
-                    int(pbc_corr(an_list[j], 1, 2)[0]),
-                    int(pbc_corr(an_list[j], 1, 2)[1]),
-                    int(pbc_corr(an_list[j], 1, 2)[2]),
-
-                    int(pbc_corr(an_list[j], 1, 3)[0]),
-                    int(pbc_corr(an_list[j], 1, 3)[1]),
-                    int(pbc_corr(an_list[j], 1, 3)[2]),
-
-                    int(pbc_corr(an_list[j], 2)[0]),
-                    int(pbc_corr(an_list[j], 2)[1]),
-                    int(pbc_corr(an_list[j], 2)[2]),
-
-                    int(pbc_corr(an_list[j], 3)[0]),
-                    int(pbc_corr(an_list[j], 3)[1]),
-                    int(pbc_corr(an_list[j], 3)[2]),
-
+                    int(pbc204_age_206_238[0]), int(pbc204_age_206_238[1]), int(pbc204_age_206_238[2]),
+                    int(pbc204_age_207_235[0]), int(pbc204_age_207_235[1]), int(pbc204_age_207_235[2]),
+                    int(pbc204_age_208_232[0]), int(pbc204_age_208_232[1]), int(pbc204_age_208_232[2]),
+                    int(pbc204_age_207_206[0]), int(pbc204_age_207_206[1]), int(pbc204_age_207_206[2]),
+                    int(pbc207_age[0]), int(pbc207_age[1]), int(pbc207_age[2]),
+                    int(pbc208_age[0]), int(pbc208_age[1]), int(pbc208_age[2]),
                     "-1", "-1", "-1",
                     str(varAgeAndersen.get()),
-
                     #int(pbc_corr(an_list[j], 4)[0]),
                     #int(pbc_corr(an_list[j], 4)[1]),
                     #int(pbc_corr(an_list[j], 4)[2]),
-
-                    int(100*an_list[j].calc_discordance(2, p_filters.disc_type[1])),
-                    int(100*an_list[j].calc_discordance(3, p_filters.disc_type[1])),
-                    str(an_list[j].is_grain_good(filters)[0]),
-                    str(an_list[j].is_grain_good(filters)[1]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], p_filters.use_pbc)[0]),
-                    int(an_list[j].calc_age(an_list[j].is_grain_good(filters)[1], p_filters.use_pbc)[unc_type])
+                    int(disc_76_68), int(disc_75_68),
+                    str(is_grain_good[0]), str(is_grain_good[1]),
+                    int(best_age[0]), int(best_age[unc_type])
                     ),
                     tags=str(an_list[j].is_grain_good(filters)[0]))
 
