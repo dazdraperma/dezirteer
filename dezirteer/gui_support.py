@@ -506,7 +506,6 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
         p_table.column(i, width="100", anchor="c")
         while j < len(grainset):
-            pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
             th232_u238 = an_list[j].th232_u238
             pb208_th232 = an_list[j].pb208_th232
             pb207_pb206 = an_list[j].pb207_pb206
@@ -521,16 +520,16 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
             pb208_pb204 = an_list[j].pb208_pb204
             th232_pb204 = an_list[j].th232_pb204
             u238_pb204 = an_list[j].u238_pb204
-            age_208_232 = an_list[j].calc_age(2, p_filters.use_pbc)
-            age_207_206 = an_list[j].calc_age(3, p_filters.use_pbc)
-            age_207_235 = an_list[j].calc_age(1, p_filters.use_pbc)
-            age_206_238 = an_list[j].calc_age(0, p_filters.use_pbc)
+            age_208_232 = an_list[j].calc_age(2, [0, varAgeAndersen.get()])
+            age_207_206 = an_list[j].calc_age(3, [0, varAgeAndersen.get()])
+            age_207_235 = an_list[j].calc_age(1, [0, varAgeAndersen.get()])
+            age_206_238 = an_list[j].calc_age(0, [0, varAgeAndersen.get()])
             pbc204_age_206_238 = an_list[j].calc_age(0, [1, varAgeAndersen.get()])
             pbc204_age_207_235 = an_list[j].calc_age(1, [1, varAgeAndersen.get()])
             pbc204_age_208_232 = an_list[j].calc_age(2, [1, varAgeAndersen.get()])
             pbc204_age_207_206 = an_list[j].calc_age(3, [1, varAgeAndersen.get()])
-            pbc207_age = pbc_corr(an_list[j], 2)
-            pbc208_age = pbc_corr(an_list[j], 3)
+            pbc207_age = an_list[j].calc_age(0, [2, varAgeAndersen.get()])
+            pbc208_age = an_list[j].calc_age(0, [3, varAgeAndersen.get()])
             disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1])
             disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1])
             is_grain_good = an_list[j].is_grain_good(filters)

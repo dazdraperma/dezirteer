@@ -1139,8 +1139,6 @@ class Analysis(object):
 
         try:
             if do_correction in (0, 1):
-                if do_correction == 0:
-                    pass
                 if isotopic_system == 0 and self.pb206_u238[0] > 0:
                     if do_correction == 0:
                         age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
@@ -1200,48 +1198,14 @@ class Analysis(object):
 
             else:
                 if self.channels_for_pbc()[do_correction-1]:
-                    age = pbc_corr(self, do_correction)[0]
-                    age_err_int = pbc_corr(self, do_correction)[1]
-                    age_err_prop = pbc_corr(self, do_correction)[2]
+                    t = pbc_corr(self, do_correction)
+                    age = t[0]
+                    age_err_int = t[1]
+                    age_err_prop = t[2]
                 else:
                     age = -1
                     age_err_int = -1
                     age_err_prop = -1
-
-            '''elif do_correction[1]==2: #207Pbc
-                if self.channels_for_pbc()[1]:
-                    age = pbc_corr(self, 2)[0]
-                    age_err_int = pbc_corr(self, 2)[1]
-                    age_err_prop = pbc_corr(self, 2)[2]
-                else:
-                    age = -1
-                    age_err_int = -1
-                    age_err_prop = -1
-
-            elif do_correction[1] == 3: #208Pbc
-                if self.channels_for_pbc()[2]:
-                    age = pbc_corr(self, 3)[0]
-                    age_err_int = pbc_corr(self, 3)[1]
-                    age_err_prop = pbc_corr(self, 3)[2]
-                else:
-                    age = -1
-                    age_err_int = -1
-                    age_err_prop = -1
-
-            elif do_correction[1] == 4: #And
-                if self.channels_for_pbc()[3]:
-                    age = pbc_corr(self, 4)[0]
-                    age_err_int = pbc_corr(self, 4)[1]
-                    age_err_prop = pbc_corr(self, 4)[2]
-                else:
-                    age = -1
-                    age_err_int = -1
-                    age_err_prop = -1
-
-            else:
-                age = -1
-                age_err_int = -1
-                age_err_prop = -1'''
             return [age, age_err_int, age_err_prop]
         except ValueError:
             pass
@@ -1309,8 +1273,26 @@ class Analysis(object):
         use_pbc = pFilter.use_pbc
         is_grain_in_chosen_sample = True
         is_age_good = True
-        age_206_238 = self.calc_age(0, pFilter.use_pbc)
-        age_207_206 = self.calc_age(3, pFilter.use_pbc)
+        is_pbc_good = True
+
+        age207235 = self.calc_age(1)[0]
+        age207235err = self.calc_age(1)[int(pFilter.unc_type)]
+        if use_pbc[0] > 0:
+            #increment_to_this_age = 10
+            if use_pbc[0] == 1:
+                age_206_238 = pbc_corr(self, 1, 0)
+                age_207_206 = pbc_corr(self, 1, 3)
+            elif use_pbc[0] == 2:
+                age_206_238 = age_207_206 = pbc_corr(self, 2)
+            elif use_pbc[0] == 3:
+                age_206_238 = age_207_206 = pbc_corr(self, 3)
+            elif use_pbc[0] == 4:
+                age_206_238 = age_207_206 = pbc_corr(self, 4, 0, pFilter.andersenAge)
+        else:
+           # increment_to_this_age = 0
+            age_206_238 = self.calc_age(0, pFilter.use_pbc)
+            age_207_206 = self.calc_age(3, pFilter.use_pbc)
+
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
@@ -1331,37 +1313,35 @@ class Analysis(object):
             else:
                 is_grain_in_chosen_sample = False
 
-        # filter by necessary channels if pbc is req'd
-        if use_pbc:
-            pass
-
-
         #----------------------------------------------------------------------------------
-        # decide on the default age system
+
         if which_age == 0:  # from the lesser error
             if age_206_238[int(pFilter.unc_type)] > age_207_206[int(pFilter.unc_type)]:
-                age_68_67 = 1
+                age_system = 1
                 this_age = 3
             else:
-                age_68_67 = 0
+                age_system = 0
                 this_age = 0
         elif (which_age == 1 and age_206_238[0] > age_fixed_limit) or which_age == 2:  # fixed limit, age>limit
-            age_68_67 = 1
+            age_system = 1
             this_age = 3
         elif (which_age == 1 and age_206_238[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
-            age_68_67 = 0
+            age_system = 0
             this_age = 0
         else:
-            age_68_67 = -1
+            age_system = -1
 
-        if age_68_67 == 0:
+        if age_system == 0:
             age = age_206_238[0]
             err = age_206_238[int(pFilter.unc_type)]
         else:
             age = age_207_206[0]
             err = age_207_206[int(pFilter.unc_type)]
 
+        #this_age += increment_to_this_age
         # ----------------------------------------------------------------------------------
+        if use_pbc[0] != 0:
+            is_pbc_good = self.channels_for_pbc()[use_pbc[0]-1]
 
         # filter by minimum and maximum age crops
         if (age > min_age_crop) and (age < max_age_crop):
@@ -1376,8 +1356,6 @@ class Analysis(object):
             else:
                 is_err_good = False
             if do_207235_err == 1:
-                age207235 = self.calc_age(1)[0]
-                age207235err = self.calc_age(1)[int(pFilter.unc_type)]
                 if age207235err / age207235 < err_cutoff:
                     is_207235err_good = True
                 else:
@@ -1389,7 +1367,7 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-        disc = self.calc_discordance(type_disc, pFilter.use_pbc) #22222
+        disc = self.calc_discordance(type_disc, pFilter.use_pbc)
 
         if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
             is_disc_good = True
@@ -1397,7 +1375,7 @@ class Analysis(object):
             is_disc_good = False
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
-               is_grain_in_chosen_sample & is_age_good, this_age
+               is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age
 
 
 class AnalysesSet(object):
@@ -1531,8 +1509,6 @@ class AnalysesSet(object):
     def filters(self):
         return self.__filters
 
-
-
     # sorts data into good and bad sets depending on Filters settings. Returns several parameters of the good set:
     # number of grains, weighted average age ± uncertainty (±1s and 95%), MSWD, max and min ages, max and min conc values
     def good_bad_sets(self, p_filter):
@@ -1631,7 +1607,6 @@ class AnalysesSet(object):
         self.__min_age = min_age
         self.__max_age = max_age
 
-
         self.__min_206_238 = min_206_238
         self.__max_206_238 = max_206_238
 
@@ -1643,7 +1618,6 @@ class AnalysesSet(object):
 
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
-
 
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
 

@@ -388,7 +388,7 @@ def file_to_analysis(imp_file, index):
         pb208_th232.append(float(an_err[4]) / sigma_level)
         pb208_th232.append(float(an_err[4]) / sigma_level)
 
-        if len(an) >=6:
+        if len(an) >= 6:
             th232_u238.append(float(an[5]))
             th232_u238.append(float(an_err[5]) / sigma_level)
             th232_u238.append(float(an_err[5]) / sigma_level)
