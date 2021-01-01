@@ -520,16 +520,20 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
             pb208_pb204 = an_list[j].pb208_pb204
             th232_pb204 = an_list[j].th232_pb204
             u238_pb204 = an_list[j].u238_pb204
-            age_208_232 = an_list[j].calc_age(2, [0, varAgeAndersen.get()])
-            age_207_206 = an_list[j].calc_age(3, [0, varAgeAndersen.get()])
-            age_207_235 = an_list[j].calc_age(1, [0, varAgeAndersen.get()])
-            age_206_238 = an_list[j].calc_age(0, [0, varAgeAndersen.get()])
-            pbc204_age_206_238 = an_list[j].calc_age(0, [1, varAgeAndersen.get()])
-            pbc204_age_207_235 = an_list[j].calc_age(1, [1, varAgeAndersen.get()])
-            pbc204_age_208_232 = an_list[j].calc_age(2, [1, varAgeAndersen.get()])
-            pbc204_age_207_206 = an_list[j].calc_age(3, [1, varAgeAndersen.get()])
-            pbc207_age = an_list[j].calc_age(0, [2, varAgeAndersen.get()])
-            pbc208_age = an_list[j].calc_age(0, [3, varAgeAndersen.get()])
+            age_208_232 = an_list[j].age82#calc_age(2, [0, varAgeAndersen.get()])
+            age_207_206 = an_list[j].age76#calc_age(3, [0, varAgeAndersen.get()])
+            age_207_235 = an_list[j].age75#calc_age(1, [0, varAgeAndersen.get()])
+            age_206_238 = an_list[j].age68#calc_age(0, [0, varAgeAndersen.get()])
+            pbc204_age_206_238 = an_list[j].age68_204corr#calc_age(0, [1, varAgeAndersen.get()])
+            pbc204_age_207_235 = an_list[j].age75_204corr#calc_age(1, [1, varAgeAndersen.get()])
+            pbc204_age_208_232 = an_list[j].age82_204corr#calc_age(2, [1, varAgeAndersen.get()])
+            pbc204_age_207_206 = an_list[j].age76_204corr#calc_age(3, [1, varAgeAndersen.get()])
+            pbc207_age = an_list[j].age_207corr#calc_age(0, [2, varAgeAndersen.get()])
+            pbc208_age = an_list[j].age_208corr#calc_age(0, [3, varAgeAndersen.get()])
+            if p_filters.use_pbc[0] == 4:
+                pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
+            else:
+                pbcAnd_age = [-1, -1, -1]
             disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1])
             disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1])
             is_grain_good = an_list[j].is_grain_good(filters)
@@ -559,7 +563,8 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                     int(pbc204_age_207_206[0]), int(pbc204_age_207_206[1]), int(pbc204_age_207_206[2]),
                     int(pbc207_age[0]), int(pbc207_age[1]), int(pbc207_age[2]),
                     int(pbc208_age[0]), int(pbc208_age[1]), int(pbc208_age[2]),
-                    "-1", "-1", "-1",
+
+                    int(pbcAnd_age[0]), int(pbcAnd_age[1]), int(pbcAnd_age[2]),
                     str(varAgeAndersen.get()),
                     #int(pbc_corr(an_list[j], 4)[0]),
                     #int(pbc_corr(an_list[j], 4)[1]),

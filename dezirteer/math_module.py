@@ -970,6 +970,66 @@ class Analysis(object):
         self.__sigma_level = sigma_level
         self.__final_U_Th_Ratio = final_U_Th_Ratio
         self.__th232_u238 = th232_u238
+        if pb206_u238[0] > 0:
+            self.__age68 = [((1 / lambdas[0]) * log(self.pb206_u238[0] + 1) / 1000000),
+                                 ((1 / lambdas[0]) * self.pb206_u238[1] / 1000000),
+                                 ((1 / lambdas[0]) * self.pb206_u238[2] / 1000000)]
+        else:
+            self.__age68 = [-1, -1, -1]
+
+        if pb207_u235[0] > 0:
+            self.__age75 = [((1 / lambdas[1]) * log(self.pb207_u235[0] + 1) / 1000000),
+                                 ((1 / lambdas[1]) * self.pb207_u235[1] / 1000000),
+                                 ((1 / lambdas[1]) * self.pb207_u235[2] / 1000000)]
+        else:
+            self.__age75 = [-1, -1, -1]
+
+        if pb208_th232[0] > 0:
+            self.__age82 = [((1 / lambdas[2]) * log(self.pb208_th232[0] + 1) / 1000000),
+                                 ((1 / lambdas[2]) * self.pb208_th232[1] / 1000000),
+                                 ((1 / lambdas[2]) * self.pb208_th232[2] / 1000000)]
+        else:
+            self.__age82 = [-1, -1, -1]
+
+        if pb207_pb206[0] > .04605:
+            age76_temp = find_age(pb207_pb206[0]) * 1000000
+            C1 = 1 / U238_U235
+            C2 = LAMBDA_235
+            C3 = LAMBDA_238
+            df_int = pb207_pb206[1]
+            df_prop = pb207_pb206[2]
+            dfdt = C1 * (C3 * exp(C3 * age76_temp) * (exp(C2 * age76_temp) - 1) - C2 * exp(C2 * age76_temp) * (
+                        exp(C3 * age76_temp) - 1)) / ((exp(C3 * age76_temp) - 1) ** 2)
+            self.__age76 = [age76_temp / 1000000, (abs(df_int / dfdt / 1000000)), (abs(df_prop / dfdt / 1000000))]
+
+        else:
+            self.__age76 = [-1, -1, -1]
+
+        temp_68_204pbc_age = pbc_corr(self, 1, 0)
+        self.__age68_204corr = [temp_68_204pbc_age[0], temp_68_204pbc_age[1], temp_68_204pbc_age[2]]
+
+        temp_75_204pbc_age = pbc_corr(self, 1, 1)
+        self.__age75_204corr = [temp_75_204pbc_age[0], temp_75_204pbc_age[1], temp_75_204pbc_age[2]]
+
+        temp_82_204pbc_age = pbc_corr(self, 1, 2)
+        self.__age82_204corr = [temp_82_204pbc_age[0], temp_82_204pbc_age[1], temp_82_204pbc_age[2]]
+
+        temp_76_204pbc_age = pbc_corr(self, 1, 3)
+        self.__age76_204corr = [temp_76_204pbc_age[0], temp_76_204pbc_age[1], temp_76_204pbc_age[2]]
+
+        can_correction_be_done = self.channels_for_pbc()
+
+        if can_correction_be_done[1]:
+            t = pbc_corr(self, 2)
+            self.__age_207corr = [t[0], t[1], t[2]]
+        else:
+            self.__age_207corr = [-1, -1, -1]
+
+        if can_correction_be_done[2]:
+            t = pbc_corr(self, 3)
+            self.__age_208corr = [t[0], t[1], t[2]]
+        else:
+            self.__age_208corr = [-1, -1, -1]
 
     def __repr__(self):
         return self.analysis_name
@@ -1118,6 +1178,92 @@ class Analysis(object):
     def th232_u238(self, value):
         self.__th232_u238 = value
 
+    @property
+    def age68(self):
+        return self.__age68
+
+    @age68.setter
+    def age68(self, value):
+        self.__age68 = value
+
+    @property
+    def age75(self):
+        return self.__age75
+
+    @age75.setter
+    def age75(self, value):
+        self.__age75 = value
+
+    @property
+    def age82(self):
+        return self.__age82
+
+    @age82.setter
+    def age82(self, value):
+        self.__age82 = value
+
+    @property
+    def age76(self):
+        return self.__age76
+
+    @age76.setter
+    def age76(self, value):
+        self.__age76 = value
+
+    # --------------------------
+    @property
+    def age68_204corr(self):
+        return self.__age68_204corr
+
+    @age68_204corr.setter
+    def age68_204corr(self, value):
+        self.__age68_204corr = value
+    #--------------------------
+    @property
+    def age75_204corr(self):
+        return self.__age75_204corr
+
+    @age75_204corr.setter
+    def age75_204corr(self, value):
+        self.__age75_204corr = value
+    #--------------------------
+    @property
+    def age82_204corr(self):
+        return self.__age82_204corr
+
+    @age82_204corr.setter
+    def age82_204corr(self, value):
+        self.__age82_204corr = value
+
+    # --------------------------
+    @property
+    def age76_204corr(self):
+        return self.__age76_204corr
+
+    @age76_204corr.setter
+    def age76_204corr(self, value):
+        self.__age76_204corr = value
+    # --------------------------
+    @property
+    def age_207corr(self):
+        return self.__age_207corr
+
+    @age_207corr.setter
+    def age_207corr(self, value):
+        self.__age_207corr = value
+
+    # --------------------------
+    @property
+    def age_208corr(self):
+        return self.__age_208corr
+
+    @age_208corr.setter
+    def age_208corr(self, value):
+        self.__age_208corr = value
+
+
+
+
     def u238_pb206(self):
         rat238206 = 1 / self.pb206_u238[0]
         return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0]),
@@ -1138,6 +1284,71 @@ class Analysis(object):
                 do_correction = args[0][0]
 
         try:
+            '''if self.pb206_u238[0] > 0:
+                age_68_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000)]
+            else:
+                age_68_uncorr = [-1, -1, -1]
+            if self.pb207_u235[0] > 0:
+                age_75_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000)]
+            else:
+                age_75_uncorr = [-1, -1, -1]
+
+            if self.pb208_th232[0] > 0:
+                age_82_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000),
+                                 ((1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000)]
+            else:
+                age_82_uncorr = [-1, -1, -1]
+
+            if self.pb207_pb206[0] > .04605:
+                age76_temp = find_age(self.pb207_pb206[0]) * 1000000
+                C1 = 1 / U238_U235
+                C2 = LAMBDA_235
+                C3 = LAMBDA_238
+                df_int = self.pb207_pb206[1]
+                df_prop = self.pb207_pb206[2]
+                dfdt = C1 * (C3 * exp(C3 * age76_temp) * (exp(C2 * age76_temp) - 1) - C2 * exp(C2 * age76_temp) *(exp(C3 * age76_temp) - 1)) / ((exp(C3 * age76_temp) - 1) ** 2)
+                age_76_uncorr = [age76_temp/1000000, (abs(df_int / dfdt / 1000000)), (abs(df_prop / dfdt / 1000000))]
+            else:
+                age_76_uncorr = [-1, -1, -1]
+
+            temp_68_204pbc_age = pbc_corr(self, 1, 0)
+            age_68_204corr = [temp_68_204pbc_age[0], temp_68_204pbc_age[1], temp_68_204pbc_age[2]]
+
+            temp_75_204pbc_age = pbc_corr(self, 1, 1)
+            age_75_204corr = [temp_75_204pbc_age[0], temp_75_204pbc_age[1], temp_75_204pbc_age[2]]
+
+            temp_82_204pbc_age = pbc_corr(self, 1, 2)
+            age_82_204corr =  [temp_82_204pbc_age[0], temp_82_204pbc_age[1], temp_82_204pbc_age[2]]
+
+            temp_76_204pbc_age = pbc_corr(self, 1, 3)
+            age_76_204corr = [temp_76_204pbc_age[0], temp_76_204pbc_age[1], temp_76_204pbc_age[2]]
+
+            can_correction_be_done = self.channels_for_pbc()
+            if can_correction_be_done[1]:
+                t = pbc_corr(self, 2)
+                age_207corr = [t[0], t[1], t[2]]
+            else:
+                age_207corr = [-1, -1, -1]
+
+            if can_correction_be_done[2]:
+                t = pbc_corr(self, 3)
+                age_208corr = [t[0], t[1], t[2]]
+            else:
+                age_208corr = [-1, -1, -1]
+
+            if can_correction_be_done[3] and (do_correction != 0):
+                age_andcorr = pbc_corr(self, 4, do_correction)
+            else:
+                age_andcorr = [-1, -1, -1]'''
+
+
+
+
             if do_correction in (0, 1):
                 if isotopic_system == 0 and self.pb206_u238[0] > 0:
                     if do_correction == 0:
@@ -1528,7 +1739,6 @@ class AnalysesSet(object):
         max_207_206 = 0
         min_207_206 = 1
 
-
         ages = []
         errs_inv_sq = []
         wa_age = 0
@@ -1546,8 +1756,6 @@ class AnalysesSet(object):
         self.bad_set.clear()
         while index <= len(self.analyses_list) - 1:
             zircon = self.analyses_list[index]
-
-            #parsed_analysis = parse_sample_analysis(str(zircon))
             l_is_grain_good = Analysis.is_grain_good(zircon, p_filter)
             if l_is_grain_good[0]:
                 z_age = zircon.calc_age(l_is_grain_good[1], p_filter.use_pbc)
