@@ -1346,77 +1346,68 @@ class Analysis(object):
             else:
                 age_andcorr = [-1, -1, -1]'''
 
-
-
-
             if do_correction in (0, 1):
-                if isotopic_system == 0 and self.pb206_u238[0] > 0:
+                if isotopic_system == 0:
                     if do_correction == 0:
-                        age = (1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000
-                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000
-                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000
+                        age = self.age68[0]
+                        age_err_int = self.age68[1]
+                        age_err_prop = self.age68[2]
                     else:
-                        temp_age = pbc_corr(self, 1, 0)
-                        age = temp_age[0]
-                        age_err_int = temp_age[1]
-                        age_err_prop = temp_age[2]
+                        age = self.age68_204corr[0]
+                        age_err_int = self.age68_204corr[1]
+                        age_err_prop = self.age68_204corr[2]
 
-                elif isotopic_system == 1 and self.pb207_u235[0] > 0:
+                elif isotopic_system == 1:
                     if do_correction == 0:
-                        age = (1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000
-                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000
-                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000
+                        age = self.age75[0]
+                        age_err_int = self.age75[1]
+                        age_err_prop = self.age75[2]
                     else:
-                        temp_age = pbc_corr(self, 1, 1)
-                        age = temp_age[0]
-                        age_err_int = temp_age[1]
-                        age_err_prop = temp_age[2]
+                        age = self.age75_204corr[0]
+                        age_err_int = self.age75_204corr[1]
+                        age_err_prop = self.age75_204corr[2]
 
-                elif isotopic_system == 2 and self.pb208_th232[0] > 0:
+                elif isotopic_system == 2:
                     if do_correction == 0:
-                        age = (1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000
-                        age_err_int = (1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000
-                        age_err_prop = (1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000
+                        age = self.age82[0]
+                        age_err_int = self.age82[1]
+                        age_err_prop = self.age82[2]
                     else:
-                        temp_age = pbc_corr(self, 1, 2)
-                        age = temp_age[0]
-                        age_err_int = temp_age[1]
-                        age_err_prop = temp_age[2]
+                        age = self.age82_204corr[0]
+                        age_err_int = self.age82_204corr[1]
+                        age_err_prop = self.age82_204corr[2]
 
-                elif isotopic_system == 3 and self.pb207_pb206[0] > .04605:
+                elif isotopic_system == 3:
                     if do_correction == 0:
                         # .04605 corresponds to age67 ~ 0
-                        age = find_age(self.pb207_pb206[0]) * 1000000
-                        C1 = 1 / U238_U235
-                        C2 = LAMBDA_235
-                        C3 = LAMBDA_238
-                        df_int = self.pb207_pb206[1]
-                        df_prop = self.pb207_pb206[2]
-                        dfdt = C1 * (C3 * exp(C3 * age) * (exp(C2 * age) - 1) - C2 * exp(C2 * age) *
-                                     (exp(C3 * age) - 1)) / ((exp(C3 * age) - 1) ** 2)
-                        age_err_int = abs(df_int / dfdt / 1000000)
-                        age_err_prop = abs(df_prop / dfdt / 1000000)
-                        age = age / 1000000
+                        age = self.age76[0]
+                        age_err_int = self.age76[1]
+                        age_err_prop = self.age76[2]
                     else:
-                        temp_age = pbc_corr(self, 1, 3)
-                        age = temp_age[0]
-                        age_err_int = temp_age[1]
-                        age_err_prop = temp_age[2]
+                        age = self.age76_204corr[0]
+                        age_err_int = self.age76_204corr[1]
+                        age_err_prop = self.age76_204corr[2]
                 else:
                     age = -1
                     age_err_int = -1
                     age_err_prop = -1
 
-            else:
-                if self.channels_for_pbc()[do_correction-1]:
-                    t = pbc_corr(self, do_correction)
-                    age = t[0]
-                    age_err_int = t[1]
-                    age_err_prop = t[2]
-                else:
-                    age = -1
-                    age_err_int = -1
-                    age_err_prop = -1
+            elif do_correction == 2: #207
+                age = self.age_207corr[0]
+                age_err_int = self.age_207corr[1]
+                age_err_prop = self.age_207corr[2]
+
+            elif do_correction == 3: #208
+                age = self.age_208corr[0]
+                age_err_int = self.age_208corr[1]
+                age_err_prop = self.age_208corr[2]
+
+            else: #do_correction == 4: #And
+                and_age = pbc_corr(self, 4, args[0][1])
+                age = and_age[0]
+                age_err_int = and_age[1]
+                age_err_prop = and_age[2]
+
             return [age, age_err_int, age_err_prop]
         except ValueError:
             pass
