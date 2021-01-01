@@ -1414,9 +1414,14 @@ class Analysis(object):
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
     def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
-        age_206_238 = self.calc_age(0, args)[0]
-        age_207_235 = self.calc_age(1, args)[0]
-        age_207_206 = self.calc_age(3, args)[0]
+        if args[0][0] == 0:
+            age_206_238 = self.age68[0] #self.calc_age(0, args)[0]
+            age_207_235 = self.age75[0]#self.calc_age(1, args)[0]
+            age_207_206 = self.age76[0]#self.calc_age(3, args)[0]
+        else:
+            age_206_238 = self.age68_204corr[0]  # self.calc_age(0, args)[0]
+            age_207_235 = self.age75_204corr[0]  # self.calc_age(1, args)[0]
+            age_207_206 = self.age76_204corr[0]  # self.calc_age(3, args)[0]
         disc_68_57 = age_207_235 / age_206_238 - 1
         disc_68_76 = 1 - age_206_238 / age_207_206
 
@@ -1569,12 +1574,14 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-        disc = self.calc_discordance(type_disc, pFilter.use_pbc)
-
-        if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
-            is_disc_good = True
+        if use_pbc[0] in (0, 1):
+            disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
+            if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
+                is_disc_good = True
+            else:
+                is_disc_good = False
         else:
-            is_disc_good = False
+            is_disc_good = True
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
                is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age

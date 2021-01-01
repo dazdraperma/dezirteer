@@ -534,8 +534,8 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
                 pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
             else:
                 pbcAnd_age = [-1, -1, -1]
-            disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1])
-            disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1])
+            disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1],  p_filters.use_pbc)
+            disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
             is_grain_good = an_list[j].is_grain_good(filters)
             best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
             p_table.insert('', 'end', text=(an_list[j]), values=(
