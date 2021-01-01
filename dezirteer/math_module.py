@@ -1271,8 +1271,6 @@ class Analysis(object):
 
     # calculates age ± error from isotopic value and uncertainty
     def calc_age(self, isotopic_system, *args):
-        age_err_int = -1
-        age_err_prop = -1
         if not args:
             do_correction = 0
         elif args:
@@ -1284,68 +1282,6 @@ class Analysis(object):
                 do_correction = args[0][0]
 
         try:
-            '''if self.pb206_u238[0] > 0:
-                age_68_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb206_u238[0] + 1) / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb206_u238[1] / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb206_u238[2] / 1000000)]
-            else:
-                age_68_uncorr = [-1, -1, -1]
-            if self.pb207_u235[0] > 0:
-                age_75_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb207_u235[0] + 1) / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb207_u235[1] / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb207_u235[2] / 1000000)]
-            else:
-                age_75_uncorr = [-1, -1, -1]
-
-            if self.pb208_th232[0] > 0:
-                age_82_uncorr = [((1 / lambdas[isotopic_system]) * log(self.pb208_th232[0] + 1) / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb208_th232[1] / 1000000),
-                                 ((1 / lambdas[isotopic_system]) * self.pb208_th232[2] / 1000000)]
-            else:
-                age_82_uncorr = [-1, -1, -1]
-
-            if self.pb207_pb206[0] > .04605:
-                age76_temp = find_age(self.pb207_pb206[0]) * 1000000
-                C1 = 1 / U238_U235
-                C2 = LAMBDA_235
-                C3 = LAMBDA_238
-                df_int = self.pb207_pb206[1]
-                df_prop = self.pb207_pb206[2]
-                dfdt = C1 * (C3 * exp(C3 * age76_temp) * (exp(C2 * age76_temp) - 1) - C2 * exp(C2 * age76_temp) *(exp(C3 * age76_temp) - 1)) / ((exp(C3 * age76_temp) - 1) ** 2)
-                age_76_uncorr = [age76_temp/1000000, (abs(df_int / dfdt / 1000000)), (abs(df_prop / dfdt / 1000000))]
-            else:
-                age_76_uncorr = [-1, -1, -1]
-
-            temp_68_204pbc_age = pbc_corr(self, 1, 0)
-            age_68_204corr = [temp_68_204pbc_age[0], temp_68_204pbc_age[1], temp_68_204pbc_age[2]]
-
-            temp_75_204pbc_age = pbc_corr(self, 1, 1)
-            age_75_204corr = [temp_75_204pbc_age[0], temp_75_204pbc_age[1], temp_75_204pbc_age[2]]
-
-            temp_82_204pbc_age = pbc_corr(self, 1, 2)
-            age_82_204corr =  [temp_82_204pbc_age[0], temp_82_204pbc_age[1], temp_82_204pbc_age[2]]
-
-            temp_76_204pbc_age = pbc_corr(self, 1, 3)
-            age_76_204corr = [temp_76_204pbc_age[0], temp_76_204pbc_age[1], temp_76_204pbc_age[2]]
-
-            can_correction_be_done = self.channels_for_pbc()
-            if can_correction_be_done[1]:
-                t = pbc_corr(self, 2)
-                age_207corr = [t[0], t[1], t[2]]
-            else:
-                age_207corr = [-1, -1, -1]
-
-            if can_correction_be_done[2]:
-                t = pbc_corr(self, 3)
-                age_208corr = [t[0], t[1], t[2]]
-            else:
-                age_208corr = [-1, -1, -1]
-
-            if can_correction_be_done[3] and (do_correction != 0):
-                age_andcorr = pbc_corr(self, 4, do_correction)
-            else:
-                age_andcorr = [-1, -1, -1]'''
-
             if do_correction in (0, 1):
                 if isotopic_system == 0:
                     if do_correction == 0:
@@ -1402,11 +1338,16 @@ class Analysis(object):
                 age_err_int = self.age_208corr[1]
                 age_err_prop = self.age_208corr[2]
 
-            else: #do_correction == 4: #And
+            elif do_correction == 4: #And
                 and_age = pbc_corr(self, 4, args[0][1])
                 age = and_age[0]
                 age_err_int = and_age[1]
                 age_err_prop = and_age[2]
+
+            else:
+                age = -1
+                age_err_int = -1
+                age_err_prop = -1
 
             return [age, age_err_int, age_err_prop]
         except ValueError:

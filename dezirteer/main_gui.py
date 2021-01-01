@@ -475,7 +475,7 @@ class OperationWindow(Frame):
                                                                                pars_onChange)))
         self.entAgeAndersen.configure(state=DISABLED)
         self.entAgeAndersen.configure(width=5)
-        # print(self.entAgeAndersen.get())
+
 
         self.lblAgeAndersen = Label(self.frAgeDisc)
         self.lblAgeAndersen.grid(row=6, column=2, sticky='w', pady=5)
@@ -1090,8 +1090,6 @@ class OperationWindow(Frame):
         gui_elements.append(self.lboxSamples.curselection()) #25
         gui_elements.append(gui_support.varLimitAgeSpectrum.get()) #26
         gui_elements.append(self.lbShowStatus.cget("fg"))
-
-
         return gui_elements
 
     def set_ui_values(self, args):
