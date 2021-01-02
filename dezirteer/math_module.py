@@ -1428,12 +1428,12 @@ class Analysis(object):
         if use_pbc[0] > 0:
             #increment_to_this_age = 10
             if use_pbc[0] == 1:
-                age_206_238 = pbc_corr(self, 1, 0)
-                age_207_206 = pbc_corr(self, 1, 3)
+                age_206_238 = self.age68_204corr #pbc_corr(self, 1, 0)
+                age_207_206 = self.age76_204corr#pbc_corr(self, 1, 3)
             elif use_pbc[0] == 2:
-                age_206_238 = age_207_206 = pbc_corr(self, 2)
+                age_206_238 = age_207_206 = self.age_207corr #pbc_corr(self, 2)
             elif use_pbc[0] == 3:
-                age_206_238 = age_207_206 = pbc_corr(self, 3)
+                age_206_238 = age_207_206 = self.age_208corr#pbc_corr(self, 3)
             elif use_pbc[0] == 4:
                 age_206_238 = age_207_206 = pbc_corr(self, 4, 0, pFilter.andersenAge)
         else:
