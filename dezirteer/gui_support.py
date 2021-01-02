@@ -149,7 +149,6 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
                 args[4].configure(state=NORMAL)
             else:
                 args[4].configure(state=DISABLED)
-            #args[4].configure(state=NORMAL)
             args[5].configure(state="readonly")
             args[6].configure(state=DISABLED)
 
