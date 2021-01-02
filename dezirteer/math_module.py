@@ -1478,6 +1478,7 @@ class Analysis(object):
             this_age = 0
         else:
             age_system = -1
+            this_age = 0
 
         if age_system == 0:
             age = age_206_238[0]

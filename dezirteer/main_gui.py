@@ -17,7 +17,7 @@ from tkinter import filedialog
 from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
 from scipy import stats
 from numpy import log10
-
+from gui_support import set_all_ui_elements
 
 try:
     from Tkinter import *
@@ -973,51 +973,60 @@ class OperationWindow(Frame):
             for child in var_frame.winfo_children():
                 child.configure(state=NORMAL)
 
-    def set_all_ui_elements(self):
-
+    '''def set_all_ui_elements(self):
         features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter,
                                  self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
-                                 self.entHistBinwidth, self.cbDensityPlotType]
+                                 self.entHistBinwidth, self.cbDensityPlotType, self.entAgeAndersen]
+        # self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
+        # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
 
         for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
             for child in var_frame.winfo_children():
                 if child not in features_custom_state:
                     child.configure(state=NORMAL)
-        self.cbWhichAge.configure(state="readonly")
+
         self.cbPbc.configure(state="readonly")
-        self.cbWhichConc.configure(state="readonly")
         self.cbUConc.configure(state="readonly")
         self.cbConcType.configure(state="readonly")
         self.cbEclipsesAt.configure(state="readonly")
         self.cbDensityPlotType.configure(state="readonly")
         self.entHistBinwidth.configure(state="disabled")
-        self.entAgeCutoff.configure(state="disabled")
         self.cbErrFilter.configure(state="readonly")
         self.cbPbc.configure(state="readonly")
-
-
-        '''self.cbWhichAge.configure(state="readonly")
-        self.cbPbc.configure(state="readonly")
-        self.cbWhichConc.configure(state="readonly")
-        self.cbErrFilter.configure(state="readonly")
-        self.cbDensityPlotType.configure(state="readonly")
-        self.cbEclipsesAt.configure(state="readonly")
-        self.cbUConc.configure(state="readonly")
-        self.cbConcType.configure(state="readonly")
-        self.entNegDiscFilt.configure(state=NORMAL)
-        self.entPosDiscFilt.configure(state=NORMAL)'''
-
-        if self.cbWhichAge.current() == 1:
-                self.entAgeCutoff.configure(state=NORMAL)
-        else:
+        if self.cbPbc.current() in (0, 1):
+            self.entPosDiscFilt.configure(state=NORMAL)
+            self.entNegDiscFilt.configure(state=NORMAL)
+            self.cbWhichAge.configure(state="readonly")
+            self.entAgeCutoff.configure(state=NORMAL)
+            self.entDiscAgeFixedLim.configure(state=NORMAL)
+            self.cbWhichConc.configure(state="readonly")
+            self.entAgeAndersen.configure(state=DISABLED)
+        elif self.cbPbc.current() in (2, 3):
+            self.entPosDiscFilt.configure(state=DISABLED)
+            self.entNegDiscFilt.configure(state=DISABLED)
+            self.cbWhichAge.configure(state=DISABLED)
             self.entAgeCutoff.configure(state=DISABLED)
-
-        if self.cbWhichConc.current() == 0:
-                self.entDiscAgeFixedLim.configure(state=NORMAL)
-        else:
             self.entDiscAgeFixedLim.configure(state=DISABLED)
+            self.cbWhichConc.configure(state=DISABLED)
+            self.entAgeAndersen.configure(state=DISABLED)
+        elif self.cbPbc.current() == 4:
+            self.entPosDiscFilt.configure(state=DISABLED)
+            self.entNegDiscFilt.configure(state=DISABLED)
+            self.cbWhichAge.configure(state=DISABLED)
+            self.entAgeCutoff.configure(state=DISABLED)
+            self.entDiscAgeFixedLim.configure(state=DISABLED)
+            self.cbWhichConc.configure(state=DISABLED)
+            self.entAgeAndersen.configure(state=NORMAL)
+
+        if self.cbWhichAge.current() != 1:
+                self.entAgeCutoff.configure(state=DISABLED)
+        else:
+            print('ha')
+
+        if self.cbWhichConc.current() != 0:
+                self.entDiscAgeFixedLim.configure(state=DISABLED)
 
         if self.cbErrFilter.current() == 1:
             self.entErrFilter.configure(state=NORMAL)
@@ -1049,19 +1058,10 @@ class OperationWindow(Frame):
         if gui_support.varMaxAgeCrop.get() == 1:
             self.entAgeMaxCrop.configure(state=NORMAL)
         else:
-            self.entAgeMaxCrop.configure(state=DISABLED)
-
-        if self.cbPbc.current() == 4:
-            self.entAgeAndersen.configure(state=NORMAL)
-        else:
-            self.entAgeAndersen.configure(state=DISABLED)
-
-
-
+            self.entAgeMaxCrop.configure(state=DISABLED)'''
 
     def get_ui_values(self):
         gui_elements = []
-
         gui_elements.append(self.lbShowStatus.cget("text")) #0
         gui_elements.append(gui_support.varUncType.get())   #1
         gui_elements.append(self.cbWhichAge.get())          #2
@@ -1228,6 +1228,7 @@ class OperationWindow(Frame):
 
                     g_list_of_samples = same_sample_set(g_grainset)
                     self.reset_controls(True)
+                    #self.set_all_ui_elements()
                     self.clear_prev_or_remove_text()
                 else:
                     pass
@@ -1323,36 +1324,60 @@ class OperationWindow(Frame):
 
         self.set_ui_values(loaded_object[3])
 
-        self.set_all_ui_elements()
+        set_all_ui_elements(self)
         pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
         mFile.entryconfig(1, state=NORMAL)
 
     def reset_controls(self, is_data_present):
         global mFile
-        features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
+        '''features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
                                  self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
                                  self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
                                  self.entHistBinwidth, self.cbDensityPlotType, self.entAgeAndersen]
                                  #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
-                                 # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
+                                 # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,'''
         if is_data_present:
             mFile.entryconfig(1, state=NORMAL)
 
-            for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
+            '''for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
                 for child in var_frame.winfo_children():
                     if child not in features_custom_state:
                         child.configure(state=NORMAL)
-            self.cbWhichAge.configure(state="readonly")
+
             self.cbPbc.configure(state="readonly")
-            self.cbWhichConc.configure(state="readonly")
             self.cbUConc.configure(state="readonly")
             self.cbConcType.configure(state="readonly")
             self.cbEclipsesAt.configure(state="readonly")
             self.cbDensityPlotType.configure(state="readonly")
             self.entHistBinwidth.configure(state="disabled")
-            self.entAgeCutoff.configure(state="disabled")
             self.cbErrFilter.configure(state="readonly")
             self.cbPbc.configure(state="readonly")
+            if self.cbPbc.current() in (0, 1):
+                self.entPosDiscFilt.configure(state=NORMAL)
+                self.entNegDiscFilt.configure(state=NORMAL)
+                self.cbWhichAge.configure(state="readonly")
+                self.entAgeCutoff.configure(state=NORMAL)
+                self.entDiscAgeFixedLim.configure(state=NORMAL)
+                self.cbWhichConc.configure(state="readonly")
+                self.entAgeAndersen.configure(state=DISABLED)
+            if self.cbPbc.current() in (2, 3):
+                self.entPosDiscFilt.configure(state=DISABLED)
+                self.entNegDiscFilt.configure(state=DISABLED)
+                self.cbWhichAge.configure(state=DISABLED)
+                self.entAgeCutoff.configure(state=DISABLED)
+                self.entDiscAgeFixedLim.configure(state=DISABLED)
+                self.cbWhichConc.configure(state=DISABLED)
+                self.entAgeAndersen.configure(state=DISABLED)
+            else:
+                self.entPosDiscFilt.configure(state=DISABLED)
+                self.entNegDiscFilt.configure(state=DISABLED)
+                self.cbWhichAge.configure(state=DISABLED)
+                self.entAgeCutoff.configure(state=DISABLED)
+                self.entDiscAgeFixedLim.configure(state=DISABLED)
+                self.cbWhichConc.configure(state=DISABLED)
+                self.entAgeAndersen.configure(state=NORMAL)'''
+            set_all_ui_elements(self)
+
             self.fill_listbox()
             if self.lboxSamples.get(0) == '':
                 status_text = ' data, bad divider'

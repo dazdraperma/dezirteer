@@ -137,15 +137,39 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         else:
             args[1].configure(state=DISABLED)
     elif p_number_in_list == 4:
-        for i in range(len(args)):
-            if p_value in (2, 3, 4):
-                args[i].configure(state=DISABLED)
-                if p_value == 4:
-                    args[6].configure(state=NORMAL)
-            elif p_value == 1:
-                args[i].configure(state="readonly")
+        if p_value in (0, 1):
+            args[0].configure(state=NORMAL)
+            args[1].configure(state=NORMAL)
+            args[2].configure(state="readonly")
+            if args[2].current() == 1:
+                args[3].configure(state=NORMAL)
             else:
-                args[i].configure(state="readonly")
+                args[3].configure(state=DISABLED)
+            if args[5].current() == 0:
+                args[4].configure(state=NORMAL)
+            else:
+                args[4].configure(state=DISABLED)
+            #args[4].configure(state=NORMAL)
+            args[5].configure(state="readonly")
+            args[6].configure(state=DISABLED)
+
+        elif p_value in (2, 3):
+            args[0].configure(state=DISABLED)
+            args[1].configure(state=DISABLED)
+            args[2].configure(state=DISABLED)
+            args[3].configure(state=DISABLED)
+            args[4].configure(state=DISABLED)
+            args[5].configure(state=DISABLED)
+            args[6].configure(state=DISABLED)
+
+        else:
+            args[0].configure(state=DISABLED)
+            args[1].configure(state=DISABLED)
+            args[2].configure(state=DISABLED)
+            args[3].configure(state=DISABLED)
+            args[4].configure(state=DISABLED)
+            args[5].configure(state=DISABLED)
+            args[6].configure(state=NORMAL)
         pars[0].use_pbc = [p_value, args[6].get()]
 
     elif p_number_in_list == 5:
@@ -236,6 +260,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
+
 #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
 
 
@@ -583,3 +608,85 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 
 
 
+def set_all_ui_elements(par):
+    features_custom_state = [par.chbInclude207235Err, par.entAgeMinCrop, par.entAgeMaxCrop, par.entErrFilter,
+                                par.entUconcCutoff, par.cbUConc, par.cbConcType, par.cbErrFilter,
+                                par.cbEclipsesAt, par.cbWhichAge,
+                                par.cbWhichConc, par.entDiscAgeFixedLim, par.cbPbc, par.entAgeCutoff,
+                                par.entHistBinwidth, par.cbDensityPlotType, par.entAgeAndersen]
+
+    for var_frame in (par.frImport, par.frAgeDisc, par.frFilter, par.frGraphSettings, par.frStatus):
+        for child in var_frame.winfo_children():
+            if child not in features_custom_state:
+                child.configure(state=NORMAL)
+
+    par.cbPbc.configure(state="readonly")
+    par.cbUConc.configure(state="readonly")
+    par.cbConcType.configure(state="readonly")
+    par.cbEclipsesAt.configure(state="readonly")
+    par.cbDensityPlotType.configure(state="readonly")
+    par.entHistBinwidth.configure(state="disabled")
+    par.cbErrFilter.configure(state="readonly")
+    par.cbPbc.configure(state="readonly")
+    if par.cbPbc.current() in (0, 1):
+        par.entPosDiscFilt.configure(state=NORMAL)
+        par.entNegDiscFilt.configure(state=NORMAL)
+        par.cbWhichAge.configure(state="readonly")
+        par.entAgeCutoff.configure(state=NORMAL)
+        par.entDiscAgeFixedLim.configure(state=NORMAL)
+        par.cbWhichConc.configure(state="readonly")
+        par.entAgeAndersen.configure(state=DISABLED)
+    elif par.cbPbc.current() in (2, 3):
+        par.entPosDiscFilt.configure(state=DISABLED)
+        par.entNegDiscFilt.configure(state=DISABLED)
+        par.cbWhichAge.configure(state=DISABLED)
+        par.entAgeCutoff.configure(state=DISABLED)
+        par.entDiscAgeFixedLim.configure(state=DISABLED)
+        par.cbWhichConc.configure(state=DISABLED)
+        par.entAgeAndersen.configure(state=DISABLED)
+    elif par.cbPbc.current() == 4:
+        par.entPosDiscFilt.configure(state=DISABLED)
+        par.entNegDiscFilt.configure(state=DISABLED)
+        par.cbWhichAge.configure(state=DISABLED)
+        par.entAgeCutoff.configure(state=DISABLED)
+        par.entDiscAgeFixedLim.configure(state=DISABLED)
+        par.cbWhichConc.configure(state=DISABLED)
+        par.entAgeAndersen.configure(state=NORMAL)
+
+    if par.cbWhichAge.current() != 1:
+            par.entAgeCutoff.configure(state=DISABLED)
+
+    if par.cbWhichConc.current() != 0:
+            par.entDiscAgeFixedLim.configure(state=DISABLED)
+
+    if par.cbErrFilter.current() == 1:
+        par.entErrFilter.configure(state=NORMAL)
+        par.chbInclude207235Err.configure(state=NORMAL)
+    else:
+        par.entErrFilter.configure(state=DISABLED)
+        par.chbInclude207235Err.configure(state=DISABLED)
+
+    if par.cbDensityPlotType.current() == 0:
+        par.entKDEBandwidth.configure(state=NORMAL)
+        par.entHistBinwidth.configure(state=DISABLED)
+    elif par.cbDensityPlotType.current() == 1:
+        par.entKDEBandwidth.configure(state=DISABLED)
+        par.entHistBinwidth.configure(state=DISABLED)
+    else:
+        par.entKDEBandwidth.configure(state=DISABLED)
+        par.entHistBinwidth.configure(state=NORMAL)
+
+    if par.cbUConc.current() == 1:
+        par.entUconcCutoff.configure(state=NORMAL)
+    else:
+        par.entUconcCutoff.configure(state=DISABLED)
+
+    if varMinAgeCrop.get() == 1:
+        par.entAgeMinCrop.configure(state=NORMAL)
+    else:
+        par.entAgeMinCrop.configure(state=DISABLED)
+
+    if varMaxAgeCrop.get() == 1:
+        par.entAgeMaxCrop.configure(state=NORMAL)
+    else:
+        par.entAgeMaxCrop.configure(state=DISABLED)
