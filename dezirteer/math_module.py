@@ -69,26 +69,29 @@ def compb(age, n):  # Stacey & Cramers 2 stage pb evolution model
 
 
 def pb4cor(fc, pb_pb4, pb_uth, lam):  # universal 204pb corr function for all measured ratios
-    ratio = pb_uth[0] * (1 - fc)
-    #int ratio errors
-    rel1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
-    rel2_int = (pb_uth[1] / pb_uth[0]) ** 2
-    ratio_err_int = sqrt(rel1_int / (pb_pb4[0] * (1 - fc)) ** 2 + rel2_int) * ratio
-    #prop ratio errors
-    rel1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
-    rel2_prop = (pb_uth[2] / pb_uth[0]) ** 2
-    ratio_err_prop = sqrt(rel1_prop / (pb_pb4[0] * (1 - fc)) ** 2 + rel2_prop) * ratio
-    if ratio > 0:
-        age = log(1 + ratio) / lam / 1000000
-        #internal age errors
-        age_err_int = ratio_err_int / (1 + ratio) / lam / 1000000
-        #propagated age errors
-        age_err_prop = ratio_err_prop / (1 + ratio) / lam / 1000000
-    else:
-        age = -1
-        age_err_int = -1
-        age_err_prop = -1
-    # print(age, age_err_int, age_err_prop, ratio, ratio_err_int, ratio_err_prop)
+    try:
+        ratio = pb_uth[0] * (1 - fc)
+        #int ratio errors
+        rel1_int = (pb_pb4[1] / pb_pb4[0]) ** 2
+        rel2_int = (pb_uth[1] / pb_uth[0]) ** 2
+        ratio_err_int = sqrt(rel1_int / (pb_pb4[0] * (1 - fc)) ** 2 + rel2_int) * ratio
+        #prop ratio errors
+        rel1_prop = (pb_pb4[2] / pb_pb4[0]) ** 2
+        rel2_prop = (pb_uth[2] / pb_uth[0]) ** 2
+        ratio_err_prop = sqrt(rel1_prop / (pb_pb4[0] * (1 - fc)) ** 2 + rel2_prop) * ratio
+        if ratio > 0:
+            age = log(1 + ratio) / lam / 1000000
+            #internal age errors
+            age_err_int = ratio_err_int / (1 + ratio) / lam / 1000000
+            #propagated age errors
+            age_err_prop = ratio_err_prop / (1 + ratio) / lam / 1000000
+        else:
+            age = -1
+            age_err_int = -1
+            age_err_prop = -1
+        # print(age, age_err_int, age_err_prop, ratio, ratio_err_int, ratio_err_prop)
+    except ZeroDivisionError:
+        age = age_err_int = age_err_prop = ratio = ratio_err_int = ratio_err_prop = -1
     return age, age_err_int, age_err_prop, ratio, ratio_err_int, ratio_err_prop
 
 def eq7(t1, xt2, yt2, zt2, c7, c8, x, y, z, u, k):

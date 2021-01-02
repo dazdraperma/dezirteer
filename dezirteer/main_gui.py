@@ -354,7 +354,8 @@ class OperationWindow(Frame):
         self.rbInternal.configure(font="TkTextFont")
         self.rbInternal.configure(text="Int.")
         self.rbInternal.configure(variable=gui_support.varUncType, value=1)
-        self.rbInternal.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+        self.rbInternal.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange,
+                                                                       self))
         self.rbInternal.select()
 
         self.rbPropagated = Radiobutton(self.frImport)
@@ -362,7 +363,8 @@ class OperationWindow(Frame):
         self.apply_style(self.rbPropagated)
         self.rbPropagated.configure(text="Prop.")
         self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
-        self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(), pars_onChange))
+        self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(),
+                                                                         pars_onChange, self))
 
         # _______________frSample________________________________________________________________________________________
         self.frSample = Frame(self.frOper)
@@ -413,10 +415,11 @@ class OperationWindow(Frame):
         self.entAgeCutoff.configure(foreground="#000000")
         self.entAgeCutoff.configure(insertbackground="black")
         self.entAgeCutoff.configure(textvariable=gui_support.varAgeCutoff)
-        self.entAgeCutoff.configure(command=lambda: gui_support.onChange(19, float(self.entAgeCutoff.get()), pars_onChange))
+        self.entAgeCutoff.configure(command=lambda: gui_support.onChange(19, float(self.entAgeCutoff.get()),
+                                                                         pars_onChange, self))
         self.entAgeCutoff.bind('<KeyRelease>', (lambda _:gui_support.onChange(19,
                                                                               float(''.join(c for c in self.entAgeCutoff.get() if (c.isdigit() or c =='.'))),
-                                                                              pars_onChange)))
+                                                                              pars_onChange, self)))
         self.entAgeCutoff.configure(state=DISABLED)
         self.entAgeCutoff.configure(width=5)
 
@@ -432,11 +435,8 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(state=DISABLED)
         self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
         self.cbWhichAge.current(0)
-        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(3,
-                                                                                       self.cbWhichAge.current(),
-                                                                                       pars_onChange,
-                                                                                       self.entAgeCutoff.get(),
-                                                                                       self.entAgeCutoff))
+        self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(3, self.cbWhichAge.current(),
+                                                                                        pars_onChange, self))
 
         self.lbPbc = Label(self.frAgeDisc)
         self.lbPbc.grid(row=5, sticky='ew', pady=10, columnspan=3)
@@ -452,11 +452,7 @@ class OperationWindow(Frame):
         self.cbPbc.configure(values=('None', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
         self.cbPbc.current(0)
         self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(),
-                                                                                   pars_onChange, self.entPosDiscFilt,
-                                                                                   self.entNegDiscFilt, self.cbWhichAge,
-                                                                                   self.entAgeCutoff,
-                                                                                   self.entDiscAgeFixedLim,
-                                                                                   self.cbWhichConc, self.entAgeAndersen))
+                                                                                   pars_onChange, self))
 
         self.entAgeAndersen = Spinbox(self.frAgeDisc, from_=0, to=EarthAge)
         self.entAgeAndersen.grid(row=6, column=1, pady=5, padx=5, sticky='w')
@@ -472,7 +468,7 @@ class OperationWindow(Frame):
                                                                                float(''.join(
                                                                                    c for c in self.entAgeAndersen.get() if
                                                                                    (c.isdigit() or c == '.'))),
-                                                                               pars_onChange)))
+                                                                               pars_onChange, self)))
         self.entAgeAndersen.configure(state=DISABLED)
         self.entAgeAndersen.configure(width=5)
 
@@ -498,9 +494,10 @@ class OperationWindow(Frame):
         self.entDiscAgeFixedLim.configure(foreground="#000000")
         self.entDiscAgeFixedLim.configure(insertbackground="black")
         self.entDiscAgeFixedLim.configure(textvariable=gui_support.varDiscCutoff)
-        self.entDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(25, float(self.entDiscAgeFixedLim.get()), pars_onChange))
+        self.entDiscAgeFixedLim.configure(command=lambda: gui_support.onChange(25, float(self.entDiscAgeFixedLim.get()),
+                                                                               pars_onChange, self))
         self.entDiscAgeFixedLim.bind('<KeyRelease>', (lambda _: gui_support.onChange(25, float(
-            ''.join(c for c in self.entDiscAgeFixedLim.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+            ''.join(c for c in self.entDiscAgeFixedLim.get() if (c.isdigit() or c == '.'))), pars_onChange, self)))
         self.entDiscAgeFixedLim.configure(state=DISABLED)
         self.entDiscAgeFixedLim.configure(width=5)
 
@@ -517,8 +514,7 @@ class OperationWindow(Frame):
 
         self.cbWhichConc.configure(values=('Fixed limit (Ma):', '207/206-206/238', '207/235-206/238', 'Lesser of 2'))
         self.cbWhichConc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(8, self.cbWhichConc.current()+1,
-                                                                                        pars_onChange, self.entDiscAgeFixedLim.get(),
-                                                                                        self.entDiscAgeFixedLim))
+                                                                                        pars_onChange, self))
         self.cbWhichConc.current(3)
 
 
@@ -558,9 +554,10 @@ class OperationWindow(Frame):
         self.entNegDiscFilt.configure(foreground="#000000")
         self.entNegDiscFilt.configure(insertbackground="black")
         self.entNegDiscFilt.configure(textvariable=gui_support.varNegDiscFilter)
-        self.entNegDiscFilt.configure(command=lambda:gui_support.onChange(7, float(self.entNegDiscFilt.get() ), pars_onChange))
+        self.entNegDiscFilt.configure(command=lambda:gui_support.onChange(7, float(self.entNegDiscFilt.get()),
+                                                                          pars_onChange, self))
         self.entNegDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(7, float(
-            ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+            ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange, self)))
         self.entNegDiscFilt.configure(state=DISABLED)
         self.entNegDiscFilt.configure(width=3)
 
@@ -573,9 +570,9 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.configure(insertbackground="black")
         self.entPosDiscFilt.configure(textvariable=gui_support.varPosDiscFilter)
         self.entPosDiscFilt.configure(
-            command=lambda: gui_support.onChange(6, float(self.entPosDiscFilt.get()), pars_onChange))
+            command=lambda: gui_support.onChange(6, float(self.entPosDiscFilt.get()), pars_onChange, self))
         self.entPosDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(6, float(
-            ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+            ''.join(c for c in self.entPosDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange, self)))
         self.entPosDiscFilt.configure(state=DISABLED)
         self.entPosDiscFilt.configure(width=3)
 
@@ -595,7 +592,7 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(insertbackground="black")
         self.entErrFilter.configure(textvariable=gui_support.varErrFilter)
         self.entErrFilter.bind('<KeyRelease>', (lambda _: gui_support.onChange(20, float(
-            ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))), pars_onChange)))
+            ''.join(c for c in self.entErrFilter.get() if (c.isdigit() or c == '.'))), pars_onChange, self)))
         self.entErrFilter.configure(width=3)
         self.entErrFilter.configure(state=DISABLED)
 
@@ -613,11 +610,7 @@ class OperationWindow(Frame):
         self.cbErrFilter.configure(width=10)
         self.cbErrFilter.current(0)
         self.cbErrFilter.bind('<<ComboboxSelected>>',
-                              lambda event: gui_support.onChange(5, self.cbErrFilter.current(),
-                                                                                        pars_onChange,
-                                                                                        self.entErrFilter.get(),
-                                                                                        self.entErrFilter,
-                                                                                        self.chbInclude207235Err))
+                              lambda event: gui_support.onChange(5, self.cbErrFilter.current(), pars_onChange, self))
 
         self.chbInclude207235Err = Checkbutton(self.frFilter)
         self.chbInclude207235Err.grid(row=5, column=1, columnspan=3, sticky='w', pady=5)
@@ -628,7 +621,7 @@ class OperationWindow(Frame):
         self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
         self.chbInclude207235Err.configure(command=lambda: gui_support.onChange(22,
                                                                                 gui_support.varInclude207235Err.get(),
-                                                                                pars_onChange))
+                                                                                pars_onChange, self))
 
         self.lbUConcFilter = Label(self.frFilter)
         self.lbUConcFilter.grid(row=6, column=1, columnspan=3, pady=4, sticky='w')
@@ -646,7 +639,7 @@ class OperationWindow(Frame):
         self.entUconcCutoff.configure(textvariable=gui_support.varUConc)
         self.entUconcCutoff.bind('<KeyRelease>', (lambda _: gui_support.onChange(18, float(
             ''.join(c for c in self.entUconcCutoff.get() if (c.isdigit() or c == '.'))),
-                                                                               pars_onChange)))
+                                                                               pars_onChange, self)))
         self.entUconcCutoff.configure(width=5)
         self.entUconcCutoff.configure(state=DISABLED)
 
@@ -662,10 +655,7 @@ class OperationWindow(Frame):
         self.cbUConc.configure(state=DISABLED)
         self.cbUConc.configure(values=('Not used', 'Used'))
         self.cbUConc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(2, self.cbUConc.current(),
-                                                                                        pars_onChange,
-                                                                                        self.cbUConc.get(),
-                                                                                        self.cbUConc,
-                                                                                        self.entUconcCutoff))
+                                                                                        pars_onChange, self))
         self.cbUConc.configure(width=10)
         self.cbUConc.current(0)
 
@@ -838,7 +828,7 @@ class OperationWindow(Frame):
         self.chbMinAgeCrop.configure(state=DISABLED)
         self.chbMinAgeCrop.configure(variable=gui_support.varMinAgeCrop)
         self.chbMinAgeCrop.configure(command=lambda: gui_support.onChange(26, self.entAgeMinCrop.get(), pars_onChange,
-                                                                          self.entAgeMinCrop))
+                                                                          self))
 
         self.entAgeMaxCrop = Spinbox(self.frGraphSettings, from_=1, to=EarthAge)
         self.entAgeMaxCrop.grid(row=6, column=3, pady=5, sticky='w')
@@ -857,7 +847,7 @@ class OperationWindow(Frame):
         self.chbMaxAgeCrop.configure(state=DISABLED)
         self.chbMaxAgeCrop.configure(variable=gui_support.varMaxAgeCrop)
         self.chbMaxAgeCrop.configure(command=lambda: gui_support.onChange(27, self.entAgeMaxCrop.get(), pars_onChange,
-                                                                          self.entAgeMaxCrop))
+                                                                          self))
 
 
 

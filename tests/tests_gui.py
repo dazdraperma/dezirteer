@@ -106,16 +106,14 @@ class TestGui(unittest.TestCase):
             for test_num in range(len(g_matrix_inputs)):
                 with open(file_name, 'w+') as the_file:
                     the_file.write('Test #'+str(test_num)+' input: ')
-                gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange)
-                gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange)
-                gui_support.onChange(5, g_matrix_inputs[test_num][2], g_pars_onChange, g_matrix_inputs[test_num][3],
-                                     g_operwindow.entErrFilter, g_operwindow.chbInclude207235Err)
-                gui_support.onChange(20,  g_matrix_inputs[test_num][3], g_pars_onChange)
-                gui_support.onChange(22, g_matrix_inputs[test_num][4], g_pars_onChange)
+                gui_support.onChange(6, g_matrix_inputs[test_num][0], g_pars_onChange, g_operwindow)
+                gui_support.onChange(7, g_matrix_inputs[test_num][1], g_pars_onChange, g_operwindow)
+                gui_support.onChange(5, g_matrix_inputs[test_num][2], g_pars_onChange, g_operwindow)
+                gui_support.onChange(20,  g_matrix_inputs[test_num][3], g_pars_onChange, g_operwindow)
+                gui_support.onChange(22, g_matrix_inputs[test_num][4], g_pars_onChange, g_operwindow)
 
-                gui_support.onChange(3, g_matrix_inputs[test_num][5], g_pars_onChange, g_matrix_inputs[test_num][6],
-                                     g_operwindow.entAgeCutoff)
-                gui_support.onChange(19, g_matrix_inputs[test_num][6], g_pars_onChange)
+                gui_support.onChange(3, g_matrix_inputs[test_num][5], g_pars_onChange, g_operwindow)
+                gui_support.onChange(19, g_matrix_inputs[test_num][6], g_pars_onChange, g_operwindow)
 
                 g_operwindow.clear_and_plot()
                 self.assertEqual(main_gui.g_number_of_good_grains[0], g_matrix_results[file_num][test_num][0])

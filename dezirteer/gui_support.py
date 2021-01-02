@@ -125,71 +125,18 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].show_multiple = p_value
     elif p_number_in_list == 2:
         pars[0].filter_by_uconc[0] = True if p_value == 1 else False
-        if p_value == 1:
-            args[2].configure(state=NORMAL)
-        else:
-            args[2].configure(state=DISABLED)
     elif p_number_in_list == 3:
         pars[0].which_age[0] = p_value
-        if p_value == 1:
-            args[1].configure(state=NORMAL)
-            pars[0].which_age[1] = varAgeCutoff.get()
-        else:
-            args[1].configure(state=DISABLED)
     elif p_number_in_list == 4:
-        if p_value in (0, 1):
-            args[0].configure(state=NORMAL)
-            args[1].configure(state=NORMAL)
-            args[2].configure(state="readonly")
-            if args[2].current() == 1:
-                args[3].configure(state=NORMAL)
-            else:
-                args[3].configure(state=DISABLED)
-            if args[5].current() == 0:
-                args[4].configure(state=NORMAL)
-            else:
-                args[4].configure(state=DISABLED)
-            args[5].configure(state="readonly")
-            args[6].configure(state=DISABLED)
-
-        elif p_value in (2, 3):
-            args[0].configure(state=DISABLED)
-            args[1].configure(state=DISABLED)
-            args[2].configure(state=DISABLED)
-            args[3].configure(state=DISABLED)
-            args[4].configure(state=DISABLED)
-            args[5].configure(state=DISABLED)
-            args[6].configure(state=DISABLED)
-
-        else:
-            args[0].configure(state=DISABLED)
-            args[1].configure(state=DISABLED)
-            args[2].configure(state=DISABLED)
-            args[3].configure(state=DISABLED)
-            args[4].configure(state=DISABLED)
-            args[5].configure(state=DISABLED)
-            args[6].configure(state=NORMAL)
-        pars[0].use_pbc = [p_value, args[6].get()]
-
+        pars[0].use_pbc = [p_value, varAgeAndersen.get()]
     elif p_number_in_list == 5:
         pars[0].filter_by_err[0] = p_value
-        if p_value == 1:
-            args[1].configure(state=NORMAL)
-            args[2].configure(state=NORMAL)
-        else:
-            args[1].configure(state=DISABLED)
-            args[2].configure(state=DISABLED)
     elif p_number_in_list == 6:
         pars[0].pos_disc_filter = p_value/100
     elif p_number_in_list == 7:
         pars[0].neg_disc_filter = p_value/100*(-1)
     elif p_number_in_list == 8:
         pars[0].disc_type[0] = p_value
-        if p_value == 1:
-            args[1].configure(state=NORMAL)
-            pars[0].disc_type[1] = varAgeCutoff.get()
-        else:
-            args[1].configure(state=DISABLED)
     elif p_number_in_list == 9:
         pars[0].conc_type = p_value
     elif p_number_in_list == 11:
@@ -213,14 +160,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 20:
         pars[0].filter_by_err[1] = p_value/100
     elif p_number_in_list == 21:
-       if varDiscLinked2Age.get() == 1:
-           args[4].set(args[5].get()) #set the slider
-           args[varAgebased.get()].select()
-           for i in range(0, len(args)): #disable all controls
-               args[i].configure(state=DISABLED)
-       elif varDiscLinked2Age.get() == 0:
-           for i in args:
-            i.configure(state=NORMAL)
+       pass
     elif p_number_in_list == 22:
         pars[0].include207235Err = p_value
     elif p_number_in_list == 23:
@@ -229,37 +169,27 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].filter_by_commPb = p_value
     elif p_number_in_list == 25:
         pars[0].disc_type[1] = p_value
-
     elif p_number_in_list == 26:
         if varMinAgeCrop.get() == 0:
             pars[0].minAgeCrop = 0
-            args[0].configure(state=DISABLED)
-        else:
-            args[0].configure(state=NORMAL)
             try:
                 pars[0].minAgeCrop = float(p_value)
             except ValueError:
                 pars[0].minAgeCrop = 0
-                args[0].insert(0, '0')
-
     elif p_number_in_list == 27:
         if varMaxAgeCrop.get() == 0:
             pars[0].maxAgeCrop = EarthAge
-            args[0].configure(state=DISABLED)
         else:
-            args[0].configure(state=NORMAL)
             try:
                 pars[0].maxAgeCrop = float(p_value)
             except ValueError:
                 pars[0].maxAgeCrop = 0
-                args[0].insert(0, EarthAge)
-
     elif p_number_in_list == 28:
         pars[0].andersenAge = p_value
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
-
+    set_all_ui_elements(args[0])
 #'''p_filters, p_table, p_grainset, p_colnames''' p_table, p_grainset, p_filters, p_colnames
 
 
