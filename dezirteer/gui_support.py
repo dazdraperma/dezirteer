@@ -589,6 +589,10 @@ def set_all_ui_elements(par):
         par.cbWhichConc.configure(state=DISABLED)
         par.entAgeAndersen.configure(state=NORMAL)
 
+    if varDiscPerc.get() == 0:
+        par.cbDiscIntersect.configure(state=DISABLED)
+    else:
+        par.cbDiscIntersect.configure(state="readonly")
     if par.cbWhichAge.current() != 1:
             par.entAgeCutoff.configure(state=DISABLED)
 
