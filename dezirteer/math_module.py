@@ -905,7 +905,6 @@ def file_to_analysis(imp_file, index):
         corr_coef_75_68 = rho[0]
         corr_coef_86_76 = rho[1]
 
-
     else: #template
         sigma_level = 1
         an = full_data[index].split(",")
@@ -1375,8 +1374,6 @@ class Analysis(object):
         except ValueError:
             pass
 
-
-
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
     def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
         if args[0][0] == 0:
@@ -1456,16 +1453,18 @@ class Analysis(object):
             if use_pbc[0] == 1:
                 age_206_238 = self.age68_204corr #pbc_corr(self, 1, 0)
                 age_207_206 = self.age76_204corr#pbc_corr(self, 1, 3)
+                age_207_235 = self.age75_204corr
             elif use_pbc[0] == 2:
-                age_206_238 = age_207_206 = self.age_207corr #pbc_corr(self, 2)
+                age_206_238 = age_207_206 = age_207_235 = self.age_207corr #pbc_corr(self, 2)
             elif use_pbc[0] == 3:
-                age_206_238 = age_207_206 = self.age_208corr#pbc_corr(self, 3)
+                age_206_238 = age_207_206 = age_207_235 = self.age_208corr#pbc_corr(self, 3)
             elif use_pbc[0] == 4:
-                age_206_238 = age_207_206 = pbc_corr(self, 4, 0, pFilter.andersenAge)
+                age_206_238 = age_207_206 = age_207_235 = pbc_corr(self, 4, 0, pFilter.andersenAge)
         else:
            # increment_to_this_age = 0
             age_206_238 = self.calc_age(0, pFilter.use_pbc)
             age_207_206 = self.calc_age(3, pFilter.use_pbc)
+            age_207_235 = self.calc_age(1, pFilter.use_pbc)
 
 
         # cut out negative ratios
@@ -1554,9 +1553,9 @@ class Analysis(object):
             else:
                 is_disc_good = True
         else:
-            conc_value = find_conc_value(self.pb206_u238[0], self.pb207_u235[0])
-            correct_75 = concordia_table[conc_value[0]][1]
-            correct_68 = concordia_table[conc_value[1]][0]
+            correct_75 = calc_ratio(age_206_238[0])[1]
+            correct_68 = calc_ratio(age_207_235[0])[0]
+
             if ((self.pb206_u238[0] > correct_68) and (self.pb206_u238[0] - intersectAt * self.pb206_u238[int(pFilter.unc_type)] < correct_68))\
                     or ((self.pb206_u238[0] < correct_68) and (self.pb206_u238[0] + intersectAt * self.pb206_u238[int(pFilter.unc_type)] > correct_68)):
                 is_68_good = True
@@ -1811,9 +1810,7 @@ class AnalysesSet(object):
 
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
-
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
-
 
     # calculates probability density function for a given age
     def pdp_calc(self, p_age_needed, unc_type):
