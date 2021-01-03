@@ -556,7 +556,7 @@ class OperationWindow(Frame):
         self.cbDiscIntersect.configure(width=3)
         self.cbDiscIntersect.configure(takefocus="")
         self.cbDiscIntersect.configure(state=DISABLED)
-        self.cbDiscIntersect.configure(values=('1σ', '2σ'))
+        self.cbDiscIntersect.configure(values=('1σ', '2σ', '3σ', '4σ', '5σ', '6σ', '7σ', '8σ', '9σ', '10σ'))
         self.cbDiscIntersect.current(0)
         self.cbDiscIntersect.bind('<<ComboboxSelected>>',
                                   lambda event: gui_support.onChange(30, self.cbDiscIntersect.current(), pars_onChange,
