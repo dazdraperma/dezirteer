@@ -443,7 +443,7 @@ class OperationWindow(Frame):
         self.apply_style(self.lbPbc)
         self.lbPbc.configure(font=font9)
         self.lbPbc.configure(state=DISABLED)
-        self.lbPbc.configure(text='Common Pb corr.')
+        self.lbPbc.configure(text='Apply common Pb corr.?')
 
         self.cbPbc = ttk.Combobox(self.frAgeDisc)
         self.cbPbc.grid(row=6, column=0, sticky='ew')
@@ -531,10 +531,45 @@ class OperationWindow(Frame):
         self.frFilter.configure(highlightcolor="black")
 
         self.lbDiscFilt = Label(self.frFilter)
-        self.lbDiscFilt.grid(row=0, column=0, columnspan=3, sticky='ew', pady=5)
+        self.lbDiscFilt.grid(row=0, column=1, columnspan=3, sticky='w', pady=5)
         self.apply_style(self.lbDiscFilt)
         self.lbDiscFilt.configure(font=font9)
-        self.lbDiscFilt.configure(text='Discord. filters (%)')
+        self.lbDiscFilt.configure(text='EITHER: Filter out high discord. values(%)')
+
+        self.rbDiscPerc = Radiobutton(self.frFilter)
+        self.rbDiscPerc.grid(row=0, column=0, sticky='e')
+        self.apply_style(self.rbDiscPerc)
+        self.rbDiscPerc.configure(font="TkTextFont")
+        self.rbDiscPerc.configure(variable=gui_support.varDiscPerc, value=0)
+        self.rbDiscPerc.configure(command=lambda: gui_support.onChange(29, gui_support.varDiscPerc.get(), pars_onChange,
+                                                                       self))
+        self.rbDiscPerc.select()
+
+        self.lbDiscIntersect = Label(self.frFilter)
+        self.lbDiscIntersect.grid(row=2, column=1, columnspan=4, sticky='w', pady=5)
+        self.apply_style(self.lbDiscIntersect)
+        self.lbDiscIntersect.configure(font=font9)
+        self.lbDiscIntersect.configure(text='OR: Filter out if miss concordia within uncertainty: ')
+
+        self.cbDiscIntersect = ttk.Combobox(self.frFilter)
+        self.cbDiscIntersect.grid(row=3, column=1, sticky='w')
+        self.cbDiscIntersect.configure(width=3)
+        self.cbDiscIntersect.configure(takefocus="")
+        self.cbDiscIntersect.configure(state=DISABLED)
+        self.cbDiscIntersect.configure(values=('1σ', '2σ'))
+        self.cbDiscIntersect.current(0)
+        self.cbDiscIntersect.bind('<<ComboboxSelected>>',
+                                  lambda event: gui_support.onChange(30, self.cbDiscIntersect.current(), pars_onChange,
+                                                                     self))
+
+        self.rbDiscIntersect = Radiobutton(self.frFilter)
+        self.rbDiscIntersect.grid(row=2, column=0, sticky='e')
+        self.apply_style(self.rbDiscIntersect)
+        self.rbDiscIntersect.configure(font="TkTextFont")
+        self.rbDiscIntersect.configure(variable=gui_support.varDiscPerc, value=1)
+        self.rbDiscIntersect.configure(command=lambda: gui_support.onChange(29, gui_support.varDiscPerc.get(), pars_onChange,
+                                                                       self))
+
 
         self.lblMinus = Label(self.frFilter)
         self.lblMinus.grid(row=1, column=0, sticky='ew', pady=5)
@@ -554,7 +589,7 @@ class OperationWindow(Frame):
         self.entNegDiscFilt.configure(foreground="#000000")
         self.entNegDiscFilt.configure(insertbackground="black")
         self.entNegDiscFilt.configure(textvariable=gui_support.varNegDiscFilter)
-        self.entNegDiscFilt.configure(command=lambda:gui_support.onChange(7, float(self.entNegDiscFilt.get()),
+        self.entNegDiscFilt.configure(command=lambda: gui_support.onChange(7, float(self.entNegDiscFilt.get()),
                                                                           pars_onChange, self))
         self.entNegDiscFilt.bind('<KeyRelease>', (lambda _: gui_support.onChange(7, float(
             ''.join(c for c in self.entNegDiscFilt.get() if (c.isdigit() or c == '.'))), pars_onChange, self)))
@@ -577,14 +612,16 @@ class OperationWindow(Frame):
         self.entPosDiscFilt.configure(width=3)
 
         self.lbFilterByError = Label(self.frFilter)
-        self.lbFilterByError.grid(row=3, columnspan=3, pady=5, sticky='ew')
+        self.lbFilterByError.grid(row=4, column=0, columnspan=2, pady=5, sticky='ew')
         self.apply_style(self.lbFilterByError)
         self.lbFilterByError.configure(font=font9)
         self.lbFilterByError.configure(state=DISABLED)
         self.lbFilterByError.configure(text='Filter by error:')
 
+
+
         self.entErrFilter = Entry(self.frFilter)
-        self.entErrFilter.grid(row=4, column=3, padx=5, sticky='w')
+        self.entErrFilter.grid(row=5, column=2, padx=5, sticky='w')
         self.entErrFilter.configure(background="white")
         self.entErrFilter.configure(disabledforeground="#a3a3a3")
         self.entErrFilter.configure(font="TkFixedFont")
@@ -597,12 +634,12 @@ class OperationWindow(Frame):
         self.entErrFilter.configure(state=DISABLED)
 
         self.lblErrCutoff = Label(self.frFilter)
-        self.lblErrCutoff.grid(row=4, column=4, sticky='w')
+        self.lblErrCutoff.grid(row=4, column=2, sticky='w')
         self.apply_style(self.lblErrCutoff)
         self.lblErrCutoff.configure(text="%")
 
         self.cbErrFilter = ttk.Combobox(self.frFilter)
-        self.cbErrFilter.grid(row=4, column=1, columnspan=2, sticky='w')
+        self.cbErrFilter.grid(row=5, column=0, columnspan=2, sticky='w')
         self.cbErrFilter.configure(width=15)
         self.cbErrFilter.configure(takefocus="")
         self.cbErrFilter.configure(state=DISABLED)
@@ -613,9 +650,9 @@ class OperationWindow(Frame):
                               lambda event: gui_support.onChange(5, self.cbErrFilter.current(), pars_onChange, self))
 
         self.chbInclude207235Err = Checkbutton(self.frFilter)
-        self.chbInclude207235Err.grid(row=5, column=1, columnspan=3, sticky='w', pady=5)
+        self.chbInclude207235Err.grid(row=6, column=0, columnspan=3, sticky='w', pady=5)
         self.apply_style(self.chbInclude207235Err)
-        self.chbInclude207235Err.configure(text="include 207/235 error")
+        self.chbInclude207235Err.configure(text="include 7/5 error")
         self.chbInclude207235Err.configure(justify=LEFT)
         self.chbInclude207235Err.configure(state=DISABLED)
         self.chbInclude207235Err.configure(variable=gui_support.varInclude207235Err)
@@ -624,13 +661,13 @@ class OperationWindow(Frame):
                                                                                 pars_onChange, self))
 
         self.lbUConcFilter = Label(self.frFilter)
-        self.lbUConcFilter.grid(row=6, column=1, columnspan=3, pady=4, sticky='w')
+        self.lbUConcFilter.grid(row=4, column=3, columnspan=1, pady=4, sticky='w')
         self.apply_style(self.lbUConcFilter)
         self.lbUConcFilter.configure(font=font9)
         self.lbUConcFilter.configure(text="Filter by Uconc:")
 
         self.entUconcCutoff = Entry(self.frFilter)
-        self.entUconcCutoff.grid(row=7, column=3, columnspan=2, pady=5, padx=5, sticky='w')
+        self.entUconcCutoff.grid(row=5, column=4, columnspan=2, pady=5, padx=5, sticky='w')
         self.entUconcCutoff.configure(background="white")
         self.entUconcCutoff.configure(disabledforeground="#a3a3a3")
         self.entUconcCutoff.configure(font="TkFixedFont")
@@ -644,12 +681,12 @@ class OperationWindow(Frame):
         self.entUconcCutoff.configure(state=DISABLED)
 
         self.lblUConcCutoff = Label(self.frFilter)
-        self.lblUConcCutoff.grid(row=7, column=5, sticky='w', pady=5)
+        self.lblUConcCutoff.grid(row=4, column=4, sticky='w', pady=5)
         self.apply_style(self.lblUConcCutoff)
         self.lblUConcCutoff.configure(text="ppm")
 
         self.cbUConc = ttk.Combobox(self.frFilter)
-        self.cbUConc.grid(row=7, column=1, sticky='w')
+        self.cbUConc.grid(row=5, column=3, sticky='w')
         self.cbUConc.configure(width=15)
         self.cbUConc.configure(takefocus="")
         self.cbUConc.configure(state=DISABLED)
@@ -963,93 +1000,6 @@ class OperationWindow(Frame):
             for child in var_frame.winfo_children():
                 child.configure(state=NORMAL)
 
-    '''def set_all_ui_elements(self):
-        features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
-                                 self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter,
-                                 self.cbEclipsesAt, self.cbWhichAge,
-                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
-                                 self.entHistBinwidth, self.cbDensityPlotType, self.entAgeAndersen]
-        # self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
-        # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,
-
-        for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
-            for child in var_frame.winfo_children():
-                if child not in features_custom_state:
-                    child.configure(state=NORMAL)
-
-        self.cbPbc.configure(state="readonly")
-        self.cbUConc.configure(state="readonly")
-        self.cbConcType.configure(state="readonly")
-        self.cbEclipsesAt.configure(state="readonly")
-        self.cbDensityPlotType.configure(state="readonly")
-        self.entHistBinwidth.configure(state="disabled")
-        self.cbErrFilter.configure(state="readonly")
-        self.cbPbc.configure(state="readonly")
-        if self.cbPbc.current() in (0, 1):
-            self.entPosDiscFilt.configure(state=NORMAL)
-            self.entNegDiscFilt.configure(state=NORMAL)
-            self.cbWhichAge.configure(state="readonly")
-            self.entAgeCutoff.configure(state=NORMAL)
-            self.entDiscAgeFixedLim.configure(state=NORMAL)
-            self.cbWhichConc.configure(state="readonly")
-            self.entAgeAndersen.configure(state=DISABLED)
-        elif self.cbPbc.current() in (2, 3):
-            self.entPosDiscFilt.configure(state=DISABLED)
-            self.entNegDiscFilt.configure(state=DISABLED)
-            self.cbWhichAge.configure(state=DISABLED)
-            self.entAgeCutoff.configure(state=DISABLED)
-            self.entDiscAgeFixedLim.configure(state=DISABLED)
-            self.cbWhichConc.configure(state=DISABLED)
-            self.entAgeAndersen.configure(state=DISABLED)
-        elif self.cbPbc.current() == 4:
-            self.entPosDiscFilt.configure(state=DISABLED)
-            self.entNegDiscFilt.configure(state=DISABLED)
-            self.cbWhichAge.configure(state=DISABLED)
-            self.entAgeCutoff.configure(state=DISABLED)
-            self.entDiscAgeFixedLim.configure(state=DISABLED)
-            self.cbWhichConc.configure(state=DISABLED)
-            self.entAgeAndersen.configure(state=NORMAL)
-
-        if self.cbWhichAge.current() != 1:
-                self.entAgeCutoff.configure(state=DISABLED)
-        else:
-            print('ha')
-
-        if self.cbWhichConc.current() != 0:
-                self.entDiscAgeFixedLim.configure(state=DISABLED)
-
-        if self.cbErrFilter.current() == 1:
-            self.entErrFilter.configure(state=NORMAL)
-            self.chbInclude207235Err.configure(state=NORMAL)
-        else:
-            self.entErrFilter.configure(state=DISABLED)
-            self.chbInclude207235Err.configure(state=DISABLED)
-
-        if self.cbDensityPlotType.current() == 0:
-            self.entKDEBandwidth.configure(state=NORMAL)
-            self.entHistBinwidth.configure(state=DISABLED)
-        elif self.cbDensityPlotType.current() == 1:
-            self.entKDEBandwidth.configure(state=DISABLED)
-            self.entHistBinwidth.configure(state=DISABLED)
-        else:
-            self.entKDEBandwidth.configure(state=DISABLED)
-            self.entHistBinwidth.configure(state=NORMAL)
-
-        if self.cbUConc.current() == 1:
-            self.entUconcCutoff.configure(state=NORMAL)
-        else:
-            self.entUconcCutoff.configure(state=DISABLED)
-
-        if gui_support.varMinAgeCrop.get() == 1:
-            self.entAgeMinCrop.configure(state=NORMAL)
-        else:
-            self.entAgeMinCrop.configure(state=DISABLED)
-
-        if gui_support.varMaxAgeCrop.get() == 1:
-            self.entAgeMaxCrop.configure(state=NORMAL)
-        else:
-            self.entAgeMaxCrop.configure(state=DISABLED)'''
-
     def get_ui_values(self):
         gui_elements = []
         gui_elements.append(self.lbShowStatus.cget("text")) #0
@@ -1261,33 +1211,6 @@ class OperationWindow(Frame):
 
         filename = filedialog.asksaveasfile(mode='w', defaultextension=".dzr", initialdir=g_directory,
                                              filetypes=[("Dezirteer session", "*.dzr")])
-        '''self.lbShowStatus
-        self.rbInternal
-        self.rbPropagated
-        self.cbWhichAge
-        self.entAgeCutoff
-        self.cbPbc
-        self.cbWhichConc
-        self.entDiscAgeFixedLim
-        self.entNegDiscFilt
-        self.entPosDiscFilt
-        self.cbErrFilter
-        self.entErrFilter
-        self.chbInclude207235Err
-        self.entUconcCutoff
-        self.cbUConc
-        self.cbConcType
-        self.cbEclipsesAt
-        self.cbDensityPlotType
-        self.entHistBinwidth
-        self.entKDEBandwidth
-        self.entAgeMinCrop
-        self.chbMinAgeCrop
-        self.entAgeMaxCrop
-        self.chbShowCalc
-        self.chbKeepPrev
-        self.chbLimitAgeSpectrum'''
-
         l_ui_values = self.get_ui_values()
         save_object([g_grainset, g_graph_settings, g_filters, l_ui_values], filename.name)
 
@@ -1320,54 +1243,10 @@ class OperationWindow(Frame):
 
     def reset_controls(self, is_data_present):
         global mFile
-        '''features_custom_state = [self.chbInclude207235Err, self.entAgeMinCrop, self.entAgeMaxCrop, self.entErrFilter,
-                                 self.entUconcCutoff, self.cbUConc, self.cbConcType, self.cbErrFilter, self.cbEclipsesAt, self.cbWhichAge,
-                                 self.cbWhichConc, self.entDiscAgeFixedLim, self.cbPbc, self.entAgeCutoff,
-                                 self.entHistBinwidth, self.cbDensityPlotType, self.entAgeAndersen]
-                                 #self.rbUseCorr, self.rbUseUncorr, self.cbTypePbc, self.scDiscAgeFixedLim,
-                                 # self.scUconcCutoff, self.scErrFilter, self.chbAnchored, self.entAnchoredAge, self.chbFitDiscordia,'''
+
         if is_data_present:
             mFile.entryconfig(1, state=NORMAL)
-
-            '''for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
-                for child in var_frame.winfo_children():
-                    if child not in features_custom_state:
-                        child.configure(state=NORMAL)
-
-            self.cbPbc.configure(state="readonly")
-            self.cbUConc.configure(state="readonly")
-            self.cbConcType.configure(state="readonly")
-            self.cbEclipsesAt.configure(state="readonly")
-            self.cbDensityPlotType.configure(state="readonly")
-            self.entHistBinwidth.configure(state="disabled")
-            self.cbErrFilter.configure(state="readonly")
-            self.cbPbc.configure(state="readonly")
-            if self.cbPbc.current() in (0, 1):
-                self.entPosDiscFilt.configure(state=NORMAL)
-                self.entNegDiscFilt.configure(state=NORMAL)
-                self.cbWhichAge.configure(state="readonly")
-                self.entAgeCutoff.configure(state=NORMAL)
-                self.entDiscAgeFixedLim.configure(state=NORMAL)
-                self.cbWhichConc.configure(state="readonly")
-                self.entAgeAndersen.configure(state=DISABLED)
-            if self.cbPbc.current() in (2, 3):
-                self.entPosDiscFilt.configure(state=DISABLED)
-                self.entNegDiscFilt.configure(state=DISABLED)
-                self.cbWhichAge.configure(state=DISABLED)
-                self.entAgeCutoff.configure(state=DISABLED)
-                self.entDiscAgeFixedLim.configure(state=DISABLED)
-                self.cbWhichConc.configure(state=DISABLED)
-                self.entAgeAndersen.configure(state=DISABLED)
-            else:
-                self.entPosDiscFilt.configure(state=DISABLED)
-                self.entNegDiscFilt.configure(state=DISABLED)
-                self.cbWhichAge.configure(state=DISABLED)
-                self.entAgeCutoff.configure(state=DISABLED)
-                self.entDiscAgeFixedLim.configure(state=DISABLED)
-                self.cbWhichConc.configure(state=DISABLED)
-                self.entAgeAndersen.configure(state=NORMAL)'''
             set_all_ui_elements(self)
-
             self.fill_listbox()
             if self.lboxSamples.get(0) == '':
                 status_text = ' data, bad divider'

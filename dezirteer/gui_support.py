@@ -186,6 +186,10 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
                 pars[0].maxAgeCrop = 0
     elif p_number_in_list == 28:
         pars[0].andersenAge = p_value
+    elif p_number_in_list == 29:
+        pars[0].discOrIntersect = p_value
+    elif p_number_in_list == 30:
+        pars[0].intersectAt = p_value+1
 
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
@@ -232,7 +236,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
-    global varAgeAndersen
+    global varAgeAndersen, varDiscPerc
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -279,6 +283,8 @@ def set_Tk_var():
     varHistBinwidth.set(50)
     varAgeAndersen = IntVar()
     varAgeAndersen.set(0)
+    varDiscPerc = IntVar()
+    varDiscPerc.set(0)
 
 
 def init(pTop, pGui, *args, **kwargs):
@@ -542,7 +548,7 @@ def set_all_ui_elements(par):
                                 par.entUconcCutoff, par.cbUConc, par.cbConcType, par.cbErrFilter,
                                 par.cbEclipsesAt, par.cbWhichAge,
                                 par.cbWhichConc, par.entDiscAgeFixedLim, par.cbPbc, par.entAgeCutoff,
-                                par.entHistBinwidth, par.cbDensityPlotType, par.entAgeAndersen]
+                                par.entHistBinwidth, par.cbDensityPlotType, par.entAgeAndersen, par.cbDiscIntersect]
 
     for var_frame in (par.frImport, par.frAgeDisc, par.frFilter, par.frGraphSettings, par.frStatus):
         for child in var_frame.winfo_children():
@@ -556,6 +562,7 @@ def set_all_ui_elements(par):
     par.cbDensityPlotType.configure(state="readonly")
     par.entHistBinwidth.configure(state="disabled")
     par.cbErrFilter.configure(state="readonly")
+    par.cbDiscIntersect.configure(state="readonly")
     par.cbPbc.configure(state="readonly")
     if par.cbPbc.current() in (0, 1):
         par.entPosDiscFilt.configure(state=NORMAL)

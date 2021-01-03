@@ -355,6 +355,10 @@ def fill_concordia_table():
             ratios = []
             t += 1
 
+def find_conc_value(val68, val75):
+    pos68 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][0]-val68))
+    pos75 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][1] - val75))
+    return pos68, pos75
 
 # calculates pb-pb age from the table of pb-pb ratios,filled in fill_Pb206207_table()
 def find_age(pLeadRatio):
@@ -366,7 +370,7 @@ class Filters(object):  # describes filters that should be applied to data in An
                  filter_by_err=[False, 0.1], include207235Err=False,
                  pos_disc_filter=0.2, neg_disc_filter=-0.1, disc_type=[4, 1000],
                  sample_name_filter=[], unc_type='1', filter_by_commPb=[False, 0.1], minAgeCrop=0, maxAgeCrop=EarthAge,
-                 andersenAge=1000):
+                 andersenAge=1000, discOrIntersect=0, intersectAt=1):
         self.__filter_by_uconc = filter_by_uconc
         self.__which_age = which_age
         self.__use_pbc = use_pbc
@@ -381,6 +385,8 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__minAgeCrop = minAgeCrop
         self.__maxAgeCrop = maxAgeCrop
         self.__andersenAge = andersenAge
+        self.__discOrIntersect = discOrIntersect
+        self.__intersectAt = intersectAt
 
 
     @property
@@ -494,6 +500,22 @@ class Filters(object):  # describes filters that should be applied to data in An
     @andersenAge.setter
     def andersenAge(self, value):
         self.__andersenAge = value
+
+    @property
+    def discOrIntersect(self):
+        return self.__discOrIntersect
+
+    @discOrIntersect.setter
+    def discOrIntersect(self, value):
+        self.__discOrIntersect = value
+
+    @property
+    def intersectAt(self):
+        return self.__intersectAt
+
+    @intersectAt.setter
+    def intersectAt(self, value):
+        self.__intersectAt = value
 
 
 #this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
@@ -1264,9 +1286,6 @@ class Analysis(object):
     def age_208corr(self, value):
         self.__age_208corr = value
 
-
-
-
     def u238_pb206(self):
         rat238206 = 1 / self.pb206_u238[0]
         return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0]),
@@ -1356,6 +1375,8 @@ class Analysis(object):
         except ValueError:
             pass
 
+
+
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
     def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
         if args[0][0] == 0:
@@ -1425,6 +1446,8 @@ class Analysis(object):
         is_grain_in_chosen_sample = True
         is_age_good = True
         is_pbc_good = True
+        discOrIntersect = pFilter.discOrIntersect
+        intersectAt = pFilter.intersectAt
 
         age207235 = self.calc_age(1)[0]
         age207235err = self.calc_age(1)[int(pFilter.unc_type)]
@@ -1519,14 +1542,33 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-        if use_pbc[0] in (0, 1):
-            disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
-            if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
-                is_disc_good = True
+
+
+        if discOrIntersect == 0:
+            if use_pbc[0] in (0, 1):
+                disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
+                if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
+                    is_disc_good = True
+                else:
+                    is_disc_good = False
             else:
-                is_disc_good = False
+                is_disc_good = True
         else:
-            is_disc_good = True
+            conc_value = find_conc_value(self.pb206_u238[0], self.pb207_u235[0])
+            correct_75 = concordia_table[conc_value[0]][1]
+            correct_68 = concordia_table[conc_value[1]][0]
+            if ((self.pb206_u238[0] > correct_68) and (self.pb206_u238[0] - intersectAt * self.pb206_u238[int(pFilter.unc_type)] < correct_68))\
+                    or ((self.pb206_u238[0] < correct_68) and (self.pb206_u238[0] + intersectAt * self.pb206_u238[int(pFilter.unc_type)] > correct_68)):
+                is_68_good = True
+            else:
+                is_68_good = False
+
+            if ((self.pb207_u235[0] > correct_75) and (self.pb207_u235[0] - intersectAt * self.pb207_u235[int(pFilter.unc_type)] < correct_75))\
+                    or ((self.pb207_u235[0] < correct_75) and (self.pb207_u235[0] + intersectAt * self.pb207_u235[int(pFilter.unc_type)] > correct_75)):
+                is_75_good = True
+            else:
+                is_75_good = False
+            is_disc_good = is_75_good & is_68_good
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
                is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age
