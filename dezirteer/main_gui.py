@@ -1450,8 +1450,16 @@ class OperationWindow(Frame):
                 b = sqrt(test_minor_axis)
 
                 if i == 1:
-                    oval_color = 'black'
-                    oval_fill = True
+                    if args != "":
+                        if zir.analysis_name == args[0]:
+                            oval_color = 'black'
+                            oval_fill = True
+                        else:
+                            oval_color = 'black'
+                            oval_fill = False
+                    else:
+                        oval_color = 'black'
+                        oval_fill = False
 
                 else:
                     if args != "":
