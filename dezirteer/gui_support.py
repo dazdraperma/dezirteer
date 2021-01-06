@@ -542,7 +542,6 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     return good_grains
 
 
-
 def set_all_ui_elements(par):
     features_custom_state = [par.chbInclude207235Err, par.entAgeMinCrop, par.entAgeMaxCrop, par.entErrFilter,
                                 par.entUconcCutoff, par.cbUConc, par.cbConcType, par.cbErrFilter,
