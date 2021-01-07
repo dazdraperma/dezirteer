@@ -183,15 +183,16 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
                 a76[2] = U238_U235 * a76[5] / (
                             LAMBDA_235 * e5 / (e8 - 1) - LAMBDA_238 * e8 * (e5 - 1) / (e8 - 1) ** 2)
                 a76[2] = a76[2] / 1000000
-            else:
-                a76[2] = a76[1]
-                a76[5] = a76[4]
+            # else:
+            #     a76[2] = a76[1]
+            #     a76[5] = a76[4]
         else:
             a76 = [-1, -1, -1, -1, -1, -1]
 
         if not args:
             corr_age = [a68[0], a68[1], a68[2]]
         else:
+            #ages
             if args[0] == 0:
                 corr_age = [a68[0], a68[1], a68[2]]
             elif args[0] == 1:
@@ -200,6 +201,15 @@ def pbc_corr(zir, corr_type, *args):  # returns Pbc-corrected ages
                 corr_age = [a82[0], a82[1], a82[2]]
             elif args[0] == 3:
                 corr_age = [a76[0], a76[1], a76[2]]
+            #ratios
+            elif args[0] == 4:
+                corr_age = [a68[3], a68[4], a68[5]]
+            elif args[0] == 5:
+                corr_age = [a75[3], a75[4], a75[5]]
+            elif args[0] == 6:
+                corr_age = [a82[3], a82[4], a82[5]]
+            elif args[0] == 7:
+                corr_age = [a76[3], a76[4], a76[5]]
 
     elif corr_type == 2 and mr76[0] > 0 and mr68[0] > 0:  # 207
         a = 0
