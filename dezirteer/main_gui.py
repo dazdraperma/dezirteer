@@ -1415,6 +1415,7 @@ class OperationWindow(Frame):
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
+
         current_set = [g_grainset.good_set, g_grainset.bad_set]
         for i in (0, 1):
             for zir in current_set[i]:
@@ -1449,32 +1450,42 @@ class OperationWindow(Frame):
                 test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
                 b = sqrt(test_minor_axis)
 
-                if i == 1:
+                if i == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
                     if args != "":
                         if zir.analysis_name == args[0]:
                             oval_color = 'black'
                             oval_fill = True
+                            shall_plot = True
                         else:
                             oval_color = 'black'
                             oval_fill = False
+                            shall_plot = True
                     else:
                         oval_color = 'black'
                         oval_fill = False
+                        shall_plot = True
+
+                elif i == 1 and (parse_sample_analysis(zir.analysis_name)[0] not in g_filters.sample_name_filter):
+                    shall_plot = False
 
                 else:
                     if args != "":
                         if zir.analysis_name == args[0]:
                             oval_color = 'blue'
                             oval_fill = True
+                            shall_plot = True
                         else:
                             oval_color = 'red'
                             oval_fill = False
+                            shall_plot = True
                     else:
                         oval_color = 'red'
                         oval_fill = False
-                el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
+                        shall_plot = True
+                if shall_plot:
+                    el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
                              fill=oval_fill)
-                self.ax_conc.add_patch(el)
+                    self.ax_conc.add_patch(el)
 
     def plot_hist(self, min_age, max_age):
         global g_prob_graph_to_draw
