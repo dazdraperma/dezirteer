@@ -1442,11 +1442,17 @@ class Analysis(object):
             age_206_238 = self.age68_204corr[0]  # self.calc_age(0, args)[0]
             age_207_235 = self.age75_204corr[0]  # self.calc_age(1, args)[0]
             age_207_206 = self.age76_204corr[0]  # self.calc_age(3, args)[0]
-        disc_68_57 = age_207_235 / age_206_238 - 1
-        disc_68_76 = 1 - age_206_238 / age_207_206
+        if (age_207_235 < 0) or (age_206_238 < 0):
+            disc_68_57 = -999.99
+        else:
+            disc_68_57 = age_207_235 / age_206_238 - 1
+        if (age_206_238 < 0) or (age_207_206 < 0):
+            disc_68_76 = -999.99
+        else:
+            disc_68_76 = 1 - age_206_238 / age_207_206
 
-        if disc_type == 0:
-            return -1
+        #if disc_type == 0:
+        #    return -1
 
         if disc_type == 1:
             if age_206_238 > age_cutoff:
