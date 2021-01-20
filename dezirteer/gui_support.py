@@ -236,7 +236,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
-    global varAgeAndersen, varDiscPerc
+    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -285,6 +285,10 @@ def set_Tk_var():
     varAgeAndersen.set(0)
     varDiscPerc = IntVar()
     varDiscPerc.set(0)
+    varInclude204Ellipses = IntVar()
+    varInclude204Ellipses.set(0)
+    varIncludeBadEllipses = IntVar()
+    varIncludeBadEllipses.set(0)
 
 
 def init(pTop, pGui, *args, **kwargs):

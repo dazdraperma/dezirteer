@@ -746,21 +746,38 @@ class OperationWindow(Frame):
         self.cbEllipsesAt.config(width=3)
         self.cbEllipsesAt.current(0)
 
+        self.chbInclude204Ellipses = Checkbutton(self.frGraphSettings)
+        self.chbInclude204Ellipses.grid(row=2, column=0, columnspan=2, sticky='w', pady=5)
+        self.apply_style(self.chbInclude204Ellipses)
+        self.chbInclude204Ellipses.configure(text="show 204Pbc(yellow)")
+        self.chbInclude204Ellipses.configure(justify=LEFT)
+        self.chbInclude204Ellipses.configure(state=DISABLED)
+        self.chbInclude204Ellipses.configure(variable=gui_support.varInclude204Ellipses)
+        #self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))
+
+        self.chbIncludeBadEllipses = Checkbutton(self.frGraphSettings)
+        self.chbIncludeBadEllipses.grid(row=2, column=2, columnspan=2, sticky='w', pady=5)
+        self.apply_style(self.chbIncludeBadEllipses)
+        self.chbIncludeBadEllipses.configure(text="show bad spots(grey)")
+        self.chbIncludeBadEllipses.configure(justify=LEFT)
+        self.chbIncludeBadEllipses.configure(state=DISABLED)
+        self.chbIncludeBadEllipses.configure(variable=gui_support.varIncludeBadEllipses)
+        # self.chbIncludeBadEllipses.configure(command=lambda: gui_support.onChange(22,gui_support.varIncludeBadEllipses.get(),pars_onChange, self))
 
 
         self.lbDensityPlot = Label(self.frGraphSettings)
-        self.lbDensityPlot.grid(row=2, columnspan=3, pady=5, sticky='ew')
+        self.lbDensityPlot.grid(row=3, columnspan=3, pady=5, sticky='ew')
         self.apply_style(self.lbDensityPlot)
         self.lbDensityPlot.configure(font=font9)
         self.lbDensityPlot.configure(text='Density plot:')
 
         self.lbDensityPlotType = Label(self.frGraphSettings)
-        self.lbDensityPlotType.grid(row=3, column=0, pady=5, sticky='w')
+        self.lbDensityPlotType.grid(row=4, column=0, pady=5, sticky='w')
         self.apply_style(self.lbDensityPlotType)
         self.lbDensityPlotType.configure(text='Type:')
 
         self.entKDEBandwidth = Spinbox(self.frGraphSettings, from_=1, to=3000)
-        self.entKDEBandwidth.grid(row=3, column=3, pady=5, padx=5, sticky='w')
+        self.entKDEBandwidth.grid(row=4, column=3, pady=5, padx=5, sticky='w')
         self.entKDEBandwidth.configure(background="white")
         self.entKDEBandwidth.configure(disabledforeground="#a3a3a3")
         self.entKDEBandwidth.configure(font="TkFixedFont")
@@ -779,7 +796,7 @@ class OperationWindow(Frame):
 
 
         self.entHistBinwidth = Spinbox(self.frGraphSettings, from_=1, to=3000)
-        self.entHistBinwidth.grid(row=4, column=3, pady=5, padx=5, sticky='w')
+        self.entHistBinwidth.grid(row=5, column=3, pady=5, padx=5, sticky='w')
         self.entHistBinwidth.configure(background="white")
         self.entHistBinwidth.configure(disabledforeground="#a3a3a3")
         self.entHistBinwidth.configure(font="TkFixedFont")
@@ -797,7 +814,7 @@ class OperationWindow(Frame):
 
 
         self.cbDensityPlotType = ttk.Combobox(self.frGraphSettings)
-        self.cbDensityPlotType.grid(row=3, column=1, sticky='w')
+        self.cbDensityPlotType.grid(row=4, column=1, sticky='w')
         self.cbDensityPlotType.configure(takefocus="")
         self.cbDensityPlotType.configure(state=DISABLED)
         self.cbDensityPlotType.configure(values=('KDE', 'PDP', 'Histogram'))
@@ -809,24 +826,24 @@ class OperationWindow(Frame):
         self.cbDensityPlotType.current(0)
 
         self.lbKDEBandwidth = Label(self.frGraphSettings)
-        self.lbKDEBandwidth.grid(row=3, column=2, pady=5, sticky='w')
+        self.lbKDEBandwidth.grid(row=4, column=2, pady=5, sticky='w')
         self.apply_style(self.lbKDEBandwidth)
         self.lbKDEBandwidth.configure(text='Bandwidth')
 
 
         self.lbHistBinwidth = Label(self.frGraphSettings)
-        self.lbHistBinwidth.grid(row=4, column=2, pady=5, sticky='w')
+        self.lbHistBinwidth.grid(row=5, column=2, pady=5, sticky='w')
         self.apply_style(self.lbHistBinwidth)
         self.lbHistBinwidth.configure(text='Bin width:')
 
         self.lbAgeCrop = Label(self.frGraphSettings)
-        self.lbAgeCrop.grid(row=5, columnspan=4, sticky='ew', pady=5)
+        self.lbAgeCrop.grid(row=6, columnspan=4, sticky='ew', pady=5)
         self.apply_style(self.lbAgeCrop)
         self.lbAgeCrop.configure(font=font9)
         self.lbAgeCrop.configure(text='Age crop:')
 
         self.entAgeMinCrop = Spinbox(self.frGraphSettings, from_=1, to=EarthAge)
-        self.entAgeMinCrop.grid(row=6, column=1, pady=5, sticky='w')
+        self.entAgeMinCrop.grid(row=7, column=1, pady=5, sticky='w')
         self.entAgeMinCrop.configure(background="white")
         self.entAgeMinCrop.configure(disabledforeground="#a3a3a3")
         self.entAgeMinCrop.configure(font="TkFixedFont")
@@ -835,7 +852,7 @@ class OperationWindow(Frame):
         self.entAgeMinCrop.configure(width=5)
 
         self.chbMinAgeCrop = Checkbutton(self.frGraphSettings)
-        self.chbMinAgeCrop.grid(row=6, column=0, sticky='w', pady=5)
+        self.chbMinAgeCrop.grid(row=7, column=0, sticky='w', pady=5)
         self.apply_style(self.chbMinAgeCrop)
         self.chbMinAgeCrop.configure(text="Min age:")
         self.chbMinAgeCrop.configure(justify=LEFT)
@@ -845,7 +862,7 @@ class OperationWindow(Frame):
                                                                           self))
 
         self.entAgeMaxCrop = Spinbox(self.frGraphSettings, from_=1, to=EarthAge)
-        self.entAgeMaxCrop.grid(row=6, column=3, pady=5, sticky='w')
+        self.entAgeMaxCrop.grid(row=7, column=3, pady=5, sticky='w')
         self.entAgeMaxCrop.configure(background="white")
         self.entAgeMaxCrop.configure(disabledforeground="#a3a3a3")
         self.entAgeMaxCrop.configure(font="TkFixedFont")
@@ -854,7 +871,7 @@ class OperationWindow(Frame):
         self.entAgeMaxCrop.configure(width=5)
 
         self.chbMaxAgeCrop = Checkbutton(self.frGraphSettings)
-        self.chbMaxAgeCrop.grid(row=6, column=2, sticky='w', pady=5)
+        self.chbMaxAgeCrop.grid(row=7, column=2, sticky='w', pady=5)
         self.apply_style(self.chbMaxAgeCrop)
         self.chbMaxAgeCrop.configure(text="Max age:")
         self.chbMaxAgeCrop.configure(justify=LEFT)
@@ -1394,6 +1411,8 @@ class OperationWindow(Frame):
         # plots ellipses on concordia-discordia diagram
 
         current_set = [g_grainset.good_set, g_grainset.bad_set]
+        plot_204_ellipses = gui_support.varInclude204Ellipses.get()
+        plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
         for i in (0, 1):
             for zir in current_set[i]:
                 sigma_level = g_graph_settings.ellipses_at
@@ -1427,44 +1446,40 @@ class OperationWindow(Frame):
                 test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
                 b = sqrt(test_minor_axis)
 
-                if i == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
-                    if args != "":
-                        if zir.analysis_name == args[0]:
-                            oval_color = 'grey'
-                            oval_fill = True
-                            shall_plot = True
-                            line_thickness = 1
-                        else:
-                            oval_color = 'grey'
-                            oval_fill = False
-                            shall_plot = True
-                            line_thickness = 1
-                    else:
+                if i == 1:
+                    if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
+                        if args != "":
+                                if zir.analysis_name == args[0]:
+                                    oval_fill = True
+                                else:
+                                    oval_fill = False
                         oval_color = 'grey'
-                        oval_fill = False
                         shall_plot = True
                         line_thickness = 1
+                    else:
+                        shall_plot = False
 
-                elif i == 1 and (parse_sample_analysis(zir.analysis_name)[0] not in g_filters.sample_name_filter):
-                    shall_plot = False
+
+                #elif i == 1 and (parse_sample_analysis(zir.analysis_name)[0] not in g_filters.sample_name_filter):
+                #    shall_plot = False
 
                 else:
                     if args != "":
                         if zir.analysis_name == args[0]:
-                            oval_color = 'blue'
+                            oval_color = 'green'
                             oval_fill = True
                             shall_plot = True
-                            line_thickness = 2
+                            line_thickness = 1
                         else:
                             oval_color = 'green'
                             oval_fill = False
                             shall_plot = True
-                            line_thickness = 2
+                            line_thickness = 1
                     else:
                         oval_color = 'green'
                         oval_fill = False
                         shall_plot = True
-                        line_thickness = 2
+                        line_thickness = 1
                 if shall_plot:
                     el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
                              fill=oval_fill, linewidth=line_thickness)
