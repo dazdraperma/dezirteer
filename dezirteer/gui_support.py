@@ -24,11 +24,11 @@ class NoGrainsError(Exception):
 
 #class containing settings to be applied to graph
 class GraphSettings(object):
-    def __init__(self, show_multiple=False, conc_type=0, eclipses_at=1, fit_disc=False,
+    def __init__(self, show_multiple=False, conc_type=0, ellipses_at=1, fit_disc=False,
                  anchored=False, pdp_kde_hist=0, do_hist=False, bandwidth=50, binwidth=50, keep_previous=False):
         self.__show_multiple = show_multiple
         self.__conc_type = conc_type
-        self.__eclipses_at = eclipses_at
+        self.__ellipses_at = ellipses_at
         self.__fit_disc = fit_disc
         self.__anchored = anchored
         self.__pdp_kde_hist = pdp_kde_hist
@@ -54,12 +54,12 @@ class GraphSettings(object):
         self.__conc_type = value
 
     @property
-    def eclipses_at(self):
-        return self.__eclipses_at
+    def ellipses_at(self):
+        return self.__ellipses_at
 
-    @eclipses_at.setter
-    def eclipses_at(self, value):
-        self.__eclipses_at = value
+    @ellipses_at.setter
+    def ellipses_at(self, value):
+        self.__ellipses_at = value
 
     @property
     def fit_disc(self):
@@ -203,7 +203,7 @@ def onGraphChange(p_graph_settings, p_number_in_list, p_value, *args, **kwargs):
     elif p_number_in_list == 1:
         p_graph_settings.conc_type = p_value
     elif p_number_in_list == 2:
-        p_graph_settings.eclipses_at = p_value
+        p_graph_settings.ellipses_at = p_value
     elif p_number_in_list == 7:
         p_graph_settings.pdp_kde_hist = p_value
         if p_value == 0:
@@ -231,7 +231,7 @@ def TableOnDoubleClick(event):
 
 #sets form variables
 def set_Tk_var():
-    global varUConc, varAgebased, varUncorrOrPbc, varErrFilter, varDiscType, varConcType, varEclipseSigma
+    global varUConc, varAgebased, varUncorrOrPbc, varErrFilter, varDiscType, varConcType, varEllipseSigma
     global varShowMultiple, varDrawKde, varPosDiscFilter, varNegDiscFilter, varFitDiscordia, varDrawPDP
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
@@ -242,7 +242,7 @@ def set_Tk_var():
     varDiscType = IntVar()
     varConcType = IntVar()
     varConcType.set(0)
-    varEclipseSigma = IntVar()
+    varEllipseSigma = IntVar()
     varAgebased = IntVar()
     varUncorrOrPbc = IntVar()
     varErrFilter = IntVar()
@@ -545,7 +545,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 def set_all_ui_elements(par):
     features_custom_state = [par.chbInclude207235Err, par.entAgeMinCrop, par.entAgeMaxCrop, par.entErrFilter,
                                 par.entUconcCutoff, par.cbUConc, par.cbConcType, par.cbErrFilter,
-                                par.cbEclipsesAt, par.cbWhichAge,
+                                par.cbEllipsesAt, par.cbWhichAge,
                                 par.cbWhichConc, par.entDiscAgeFixedLim, par.cbPbc, par.entAgeCutoff,
                                 par.entHistBinwidth, par.cbDensityPlotType, par.entAgeAndersen, par.cbDiscIntersect]
 
@@ -557,7 +557,7 @@ def set_all_ui_elements(par):
     par.cbPbc.configure(state="readonly")
     par.cbUConc.configure(state="readonly")
     par.cbConcType.configure(state="readonly")
-    par.cbEclipsesAt.configure(state="readonly")
+    par.cbEllipsesAt.configure(state="readonly")
     par.cbDensityPlotType.configure(state="readonly")
     par.entHistBinwidth.configure(state="disabled")
     par.cbErrFilter.configure(state="readonly")

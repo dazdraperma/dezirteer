@@ -443,13 +443,13 @@ class OperationWindow(Frame):
         self.apply_style(self.lbPbc)
         self.lbPbc.configure(font=font9)
         self.lbPbc.configure(state=DISABLED)
-        self.lbPbc.configure(text='Apply common Pb corr.?')
+        self.lbPbc.configure(text='Use common Pb corr. ages?')
 
         self.cbPbc = ttk.Combobox(self.frAgeDisc)
         self.cbPbc.grid(row=6, column=0, sticky='ew')
         self.cbPbc.configure(width=15)
         self.cbPbc.configure(takefocus="")
-        self.cbPbc.configure(values=('None', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
+        self.cbPbc.configure(values=('No', '204Pbc', '207Pbc', '208Pbc', 'Ander.'))
         self.cbPbc.current(0)
         self.cbPbc.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(4, self.cbPbc.current(),
                                                                                    pars_onChange, self))
@@ -730,46 +730,23 @@ class OperationWindow(Frame):
         self.cbConcType.config(width=8)
         self.cbConcType.current(0)
 
-        self.lbEclipsesAt = Label(self.frGraphSettings)
-        self.lbEclipsesAt.grid(row=1, column=2, pady=5, padx=5, sticky='w')
-        self.apply_style(self.lbEclipsesAt)
-        self.lbEclipsesAt.configure(text='Eclipses at')
+        self.lbEllipsesAt = Label(self.frGraphSettings)
+        self.lbEllipsesAt.grid(row=1, column=2, pady=5, padx=5, sticky='w')
+        self.apply_style(self.lbEllipsesAt)
+        self.lbEllipsesAt.configure(text='Ellipses at')
 
-        self.cbEclipsesAt = ttk.Combobox(self.frGraphSettings)
-        self.cbEclipsesAt.grid(row=1, column=3, padx=5, sticky='w')
-        self.cbEclipsesAt.configure(width=5)
-        self.cbEclipsesAt.configure(takefocus="")
-        self.cbEclipsesAt.configure(state=DISABLED)
-        self.cbEclipsesAt.configure(values=('1σ', '2σ'))
-        self.cbEclipsesAt.bind('<<ComboboxSelected>>',
-                             lambda event: gui_support.onGraphChange(g_graph_settings, 2, self.cbEclipsesAt.current()+1))
-        self.cbEclipsesAt.config(width=3)
-        self.cbEclipsesAt.current(0)
+        self.cbEllipsesAt = ttk.Combobox(self.frGraphSettings)
+        self.cbEllipsesAt.grid(row=1, column=3, padx=5, sticky='w')
+        self.cbEllipsesAt.configure(width=5)
+        self.cbEllipsesAt.configure(takefocus="")
+        self.cbEllipsesAt.configure(state=DISABLED)
+        self.cbEllipsesAt.configure(values=('1σ', '2σ'))
+        self.cbEllipsesAt.bind('<<ComboboxSelected>>',
+                             lambda event: gui_support.onGraphChange(g_graph_settings, 2, self.cbEllipsesAt.current()+1))
+        self.cbEllipsesAt.config(width=3)
+        self.cbEllipsesAt.current(0)
 
-        '''self.chbFitDiscordia = Checkbutton(self.frGraphSettings)
-        self.chbFitDiscordia.grid(row=5, pady=5, sticky='w')
-        self.apply_style(self.chbFitDiscordia)
-        self.chbFitDiscordia.configure(justify=LEFT)
-        self.chbFitDiscordia.configure(text="Fit discordia?")
-        self.chbFitDiscordia.configure(variable=gui_support.varFitDiscordia)
-        self.chbFitDiscordia.configure(command=lambda:
-        gui_support.onChange(11, gui_support.varFitDiscordia.get(), pars_onChange))
 
-        self.chbAnchored = Checkbutton(self.frGraphSettings)
-        self.chbAnchored.grid(row=6, column=0, pady=5, sticky='w')
-        self.apply_style(self.chbAnchored)
-        self.chbAnchored.configure(justify=LEFT)
-        self.chbAnchored.configure(text='Anchored(Ma):')
-        self.chbAnchored.configure(variable=gui_support.varAnchored)
-
-        self.entAnchoredAge = Entry(self.frGraphSettings)
-        self.entAnchoredAge.grid(row=6, column=1, columnspan=2, pady=5, sticky='w')
-        self.entAnchoredAge.configure(background="white")
-        self.entAnchoredAge.configure(disabledforeground="#a3a3a3")
-        self.entAnchoredAge.configure(font="TkFixedFont")
-        self.entAnchoredAge.configure(foreground="#000000")
-        self.entAnchoredAge.configure(insertbackground="black")
-        self.entAnchoredAge.configure(width=5)'''
 
         self.lbDensityPlot = Label(self.frGraphSettings)
         self.lbDensityPlot.grid(row=2, columnspan=3, pady=5, sticky='ew')
@@ -1017,7 +994,7 @@ class OperationWindow(Frame):
         gui_elements.append(self.entUconcCutoff.get())      #12
         gui_elements.append(self.cbUConc.get())             #13
         gui_elements.append(self.cbConcType.get())          #14
-        gui_elements.append(self.cbEclipsesAt.get())        #15
+        gui_elements.append(self.cbEllipsesAt.get())        #15
         gui_elements.append(self.cbDensityPlotType.get())   #16
         gui_elements.append(self.entHistBinwidth.get())     #17
         gui_elements.append(self.entKDEBandwidth.get())     #18
@@ -1066,7 +1043,7 @@ class OperationWindow(Frame):
 
         self.cbUConc.set(args[13])
         self.cbConcType.set(args[14])
-        self.cbEclipsesAt.set(args[15])
+        self.cbEllipsesAt.set(args[15])
         self.cbDensityPlotType.set(args[16])
 
         self.entHistBinwidth.delete(0, END)
@@ -1419,7 +1396,7 @@ class OperationWindow(Frame):
         current_set = [g_grainset.good_set, g_grainset.bad_set]
         for i in (0, 1):
             for zir in current_set[i]:
-                sigma_level = g_graph_settings.eclipses_at
+                sigma_level = g_graph_settings.ellipses_at
 
                 # conventional concordia
                 if g_graph_settings.conc_type == 0:
@@ -1453,17 +1430,20 @@ class OperationWindow(Frame):
                 if i == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
                     if args != "":
                         if zir.analysis_name == args[0]:
-                            oval_color = 'black'
+                            oval_color = 'grey'
                             oval_fill = True
                             shall_plot = True
+                            line_thickness = 1
                         else:
-                            oval_color = 'black'
+                            oval_color = 'grey'
                             oval_fill = False
                             shall_plot = True
+                            line_thickness = 1
                     else:
-                        oval_color = 'black'
+                        oval_color = 'grey'
                         oval_fill = False
                         shall_plot = True
+                        line_thickness = 1
 
                 elif i == 1 and (parse_sample_analysis(zir.analysis_name)[0] not in g_filters.sample_name_filter):
                     shall_plot = False
@@ -1474,17 +1454,20 @@ class OperationWindow(Frame):
                             oval_color = 'blue'
                             oval_fill = True
                             shall_plot = True
+                            line_thickness = 2
                         else:
-                            oval_color = 'red'
+                            oval_color = 'green'
                             oval_fill = False
                             shall_plot = True
+                            line_thickness = 2
                     else:
-                        oval_color = 'red'
+                        oval_color = 'green'
                         oval_fill = False
                         shall_plot = True
+                        line_thickness = 2
                 if shall_plot:
                     el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
-                             fill=oval_fill)
+                             fill=oval_fill, linewidth=line_thickness)
                     self.ax_conc.add_patch(el)
 
     def plot_hist(self, min_age, max_age):

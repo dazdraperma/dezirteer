@@ -1051,6 +1051,18 @@ class Analysis(object):
         temp_76_204pbc_age = pbc_corr(self, 1, 3)
         self.__age76_204corr = [temp_76_204pbc_age[0], temp_76_204pbc_age[1], temp_76_204pbc_age[2]]
 
+        temp_68_204pbc_rat = pbc_corr(self, 1, 4)
+        self.__rat68_204corr = [temp_68_204pbc_rat[0], temp_68_204pbc_rat[1], temp_68_204pbc_rat[2]]
+
+        temp_75_204pbc_rat = pbc_corr(self, 1, 5)
+        self.__rat75_204corr = [temp_75_204pbc_rat[0], temp_75_204pbc_rat[1], temp_75_204pbc_rat[2]]
+
+        temp_82_204pbc_rat = pbc_corr(self, 1, 6)
+        self.__rat82_204corr = [temp_82_204pbc_rat[0], temp_82_204pbc_rat[1], temp_82_204pbc_rat[2]]
+
+        temp_76_204pbc_rat = pbc_corr(self, 1, 7)
+        self.__rat76_204corr = [temp_76_204pbc_rat[0], temp_76_204pbc_rat[1], temp_76_204pbc_rat[2]]
+
         can_correction_be_done = self.channels_for_pbc()
 
         if can_correction_be_done[1]:
@@ -1252,6 +1264,42 @@ class Analysis(object):
     @age68_204corr.setter
     def age68_204corr(self, value):
         self.__age68_204corr = value
+
+    # --------------------------
+    @property
+    def rat68_204corr(self):
+        return self.__rat68_204corr
+
+    @rat68_204corr.setter
+    def rat68_204corr(self, value):
+        self.__rat68_204corr = value
+
+    # --------------------------
+    @property
+    def rat75_204corr(self):
+        return self.__rat75_204corr
+
+    @rat75_204corr.setter
+    def rat75_204corr(self, value):
+        self.__rat75_204corr = value
+
+    # --------------------------
+    @property
+    def rat82_204corr(self):
+        return self.__rat82_204corr
+
+    @rat82_204corr.setter
+    def rat82_204corr(self, value):
+        self.__rat82_204corr = value
+
+    # --------------------------
+    @property
+    def rat76_204corr(self):
+        return self.__rat76_204corr
+
+    @rat76_204corr.setter
+    def rat76_204corr(self, value):
+        self.__rat76_204corr = value
     #--------------------------
     @property
     def age75_204corr(self):
