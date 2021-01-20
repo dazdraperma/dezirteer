@@ -1409,7 +1409,6 @@ class OperationWindow(Frame):
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
-
         current_set = [g_grainset.good_set, g_grainset.bad_set]
         plot_204_ellipses = gui_support.varInclude204Ellipses.get()
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
@@ -1456,33 +1455,26 @@ class OperationWindow(Frame):
                         oval_color = 'grey'
                         shall_plot = True
                         line_thickness = 1
+                        line_style = '-.'
                     else:
                         shall_plot = False
-
-
-                #elif i == 1 and (parse_sample_analysis(zir.analysis_name)[0] not in g_filters.sample_name_filter):
-                #    shall_plot = False
 
                 else:
                     if args != "":
                         if zir.analysis_name == args[0]:
-                            oval_color = 'green'
                             oval_fill = True
-                            shall_plot = True
-                            line_thickness = 1
                         else:
-                            oval_color = 'green'
                             oval_fill = False
-                            shall_plot = True
-                            line_thickness = 1
                     else:
-                        oval_color = 'green'
                         oval_fill = False
-                        shall_plot = True
-                        line_thickness = 1
+                    oval_color = 'green'
+                    shall_plot = True
+                    line_thickness = 1
+                    line_style = '-'
+
                 if shall_plot:
                     el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
-                             fill=oval_fill, linewidth=line_thickness)
+                             fill=oval_fill, linewidth=line_thickness, linestyle=line_style)
                     self.ax_conc.add_patch(el)
 
     def plot_hist(self, min_age, max_age):
