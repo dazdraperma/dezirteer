@@ -1063,6 +1063,12 @@ class Analysis(object):
         temp_76_204pbc_rat = pbc_corr(self, 1, 7)
         self.__rat76_204corr = [temp_76_204pbc_rat[0], temp_76_204pbc_rat[1], temp_76_204pbc_rat[2]]
 
+        temp_rho_204 = calc_rho(self.rat68_204corr[0], self.rat68_204corr[1],
+                                self.rat75_204corr[0], self.rat75_204corr[1],
+                                self.rat76_204corr[0], self.rat76_204corr[1])
+        self.__corr_coef_75_68_204 = temp_rho_204[0]
+        self.__corr_coef_86_76_204 = temp_rho_204[1]
+
         can_correction_be_done = self.channels_for_pbc()
 
         if can_correction_be_done[1]:
@@ -1343,10 +1349,13 @@ class Analysis(object):
     def age_208corr(self, value):
         self.__age_208corr = value
 
-    def u238_pb206(self):
-        rat238206 = 1 / self.pb206_u238[0]
-        return [rat238206, rat238206 * (self.pb206_u238[1] / self.pb206_u238[0]),
-                rat238206 * (self.pb206_u238[2] / self.pb206_u238[0])]
+    def u238_pb206(self, corr204):
+        if corr204:
+            pb206_u238 = self.rat68_204corr
+        else:
+            pb206_u238 = self.pb206_u238
+        rat238206 = 1 / pb206_u238[0]
+        return [rat238206, rat238206 * (pb206_u238[1] /pb206_u238[0]), rat238206 * (pb206_u238[2] / pb206_u238[0])]
 
     # calculates age ± error from isotopic value and uncertainty
     def calc_age(self, isotopic_system, *args):
@@ -1809,7 +1818,7 @@ class AnalysesSet(object):
                 z_age = zircon.calc_age(l_is_grain_good[1], p_filter.use_pbc)
                 z_206_238 = zircon.pb206_u238
                 z_207_235 = zircon.pb207_u235
-                z_238_206 = zircon.u238_pb206()
+                z_238_206 = zircon.u238_pb206(False)
                 z_207_206 = zircon.pb207_pb206
 
                 if z_age[0] > max_age:

@@ -1411,6 +1411,10 @@ class OperationWindow(Frame):
         # plots ellipses on concordia-discordia diagram
         current_set = [g_grainset.good_set, g_grainset.bad_set]
         plot_204_ellipses = gui_support.varInclude204Ellipses.get()
+        if plot_204_ellipses == 1:
+            k = 1
+        else:
+            k = 0
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
         for i in (0, 1):
             for zir in current_set[i]:
@@ -1426,9 +1430,9 @@ class OperationWindow(Frame):
                 # Tera-Wasserburg concordia
                 else:
                     corr_coef = zir.corr_coef_86_76
-                    j = zir.u238_pb206()
-                    x_conc = j[0]
-                    x_err = j[gui_support.varUncType.get()]
+                    u238_pb206 = zir.u238_pb206(False)
+                    x_conc = u238_pb206[0]
+                    x_err = u238_pb206[gui_support.varUncType.get()]
                     y_conc = zir.pb207_pb206[0]
                     y_err = zir.pb207_pb206[gui_support.varUncType.get()]
 
