@@ -749,7 +749,7 @@ class OperationWindow(Frame):
         self.chbInclude204Ellipses = Checkbutton(self.frGraphSettings)
         self.chbInclude204Ellipses.grid(row=2, column=0, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbInclude204Ellipses)
-        self.chbInclude204Ellipses.configure(text="show 204Pbc(yellow)")
+        self.chbInclude204Ellipses.configure(text="show 204Pbc")
         self.chbInclude204Ellipses.configure(justify=LEFT)
         self.chbInclude204Ellipses.configure(state=DISABLED)
         self.chbInclude204Ellipses.configure(variable=gui_support.varInclude204Ellipses)
@@ -758,7 +758,7 @@ class OperationWindow(Frame):
         self.chbIncludeBadEllipses = Checkbutton(self.frGraphSettings)
         self.chbIncludeBadEllipses.grid(row=2, column=2, columnspan=2, sticky='w', pady=5)
         self.apply_style(self.chbIncludeBadEllipses)
-        self.chbIncludeBadEllipses.configure(text="show bad spots(grey)")
+        self.chbIncludeBadEllipses.configure(text="show bad spots")
         self.chbIncludeBadEllipses.configure(justify=LEFT)
         self.chbIncludeBadEllipses.configure(state=DISABLED)
         self.chbIncludeBadEllipses.configure(variable=gui_support.varIncludeBadEllipses)
@@ -1305,7 +1305,7 @@ class OperationWindow(Frame):
 
     #adds or removes text to the cum_plot, depending on the checked state of the chbShowCalc
     def plot_text(self, pval, dval):
-        global g_plot_txt
+        global g_plot_txt, g_conc_txt_green, g_conc_txt_blue, g_conc_txt_black
 
         if gui_support.varShowCalc.get() == 1:
                 text_to_show = \
@@ -1337,6 +1337,9 @@ class OperationWindow(Frame):
             text_to_show = ""
 
         g_plot_txt = self.ax_cum.text(0.05, 0.10, text_to_show, transform=self.ax_cum.transAxes)
+        g_conc_txt_green = self.ax_conc.text(0.65, 0.30, "Green:uncorr.", color="green", transform=self.ax_conc.transAxes)
+        g_conc_txt_blue = self.ax_conc.text(0.65, 0.20, "Blue:204Pbc", color="blue", transform=self.ax_conc.transAxes)
+        g_conc_txt_black = self.ax_conc.text(0.65, 0.10, "Dotted:bad", color="black", transform=self.ax_conc.transAxes)
         if g_graph_settings.pdp_kde_hist != 2: #if not histogram
             self.plot_peaks(self.min_max_ages()[0], self.min_max_ages()[1])
         self.canvas_cum.draw()
@@ -1697,15 +1700,7 @@ class OperationWindow(Frame):
             save_object(g_grainset, g_filename)
             g_new_grainset = load_object(g_filename)
             g_new_grainset == g_grainset
-            #self.set_ui_values()
 
-            #Testing the common lead routine
-
-            '''for zircon, zircon_age in g_grainset.good_set.items():
-            #     for i in range(2):
-            #         corr_age = pbc_corr(zircon, i)
-            #         print(corr_age)
-                print(pbc_corr(zircon, 1))'''
 
 # The following code is added to facilitate the Scrolled widgets
 class AutoScroll(object):
