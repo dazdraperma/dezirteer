@@ -1411,75 +1411,91 @@ class OperationWindow(Frame):
         # plots ellipses on concordia-discordia diagram
         current_set = [g_grainset.good_set, g_grainset.bad_set]
         plot_204_ellipses = gui_support.varInclude204Ellipses.get()
-        if plot_204_ellipses == 1:
-            k = 1
-        else:
-            k = 0
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
         for i in (0, 1):
-            for zir in current_set[i]:
-                sigma_level = g_graph_settings.ellipses_at
+            for k in range (0, plot_204_ellipses+1):
+                for zir in current_set[i]:
+                    sigma_level = g_graph_settings.ellipses_at
+                    if k == 1: #204-corrected
+                        corr_coef_75_68 = zir.corr_coef_75_68_204
+                        corr_coef_86_76 = zir.corr_coef_86_76_204
+                        pb207_u235 = zir.rat75_204corr
+                        pb206_u238 = zir.rat68_204corr
+                        u238_pb206 = zir.u238_pb206(True)
+                        pb207_pb206 = zir.rat76_204corr
+                    else: #not 204-corrected
+                        corr_coef_75_68 = zir.corr_coef_75_68
+                        corr_coef_86_76 = zir.corr_coef_86_76
+                        pb207_u235 = zir.pb207_u235
+                        pb206_u238 = zir.pb206_u238
+                        u238_pb206 = zir.u238_pb206(False)
+                        pb207_pb206 = zir.pb207_pb206
 
-                # conventional concordia
-                if g_graph_settings.conc_type == 0:
-                    corr_coef = zir.corr_coef_75_68
-                    x_conc = zir.pb207_u235[0]  # x-center of the oval
-                    y_conc = zir.pb206_u238[0]  # y-center of the oval
-                    x_err = zir.pb207_u235[gui_support.varUncType.get()]
-                    y_err = zir.pb206_u238[gui_support.varUncType.get()]
-                # Tera-Wasserburg concordia
-                else:
-                    corr_coef = zir.corr_coef_86_76
-                    u238_pb206 = zir.u238_pb206(False)
-                    x_conc = u238_pb206[0]
-                    x_err = u238_pb206[gui_support.varUncType.get()]
-                    y_conc = zir.pb207_pb206[0]
-                    y_err = zir.pb207_pb206[gui_support.varUncType.get()]
+                    # conventional concordia
+                    if g_graph_settings.conc_type == 0:
+                        corr_coef = corr_coef_75_68
+                        x_conc = pb207_u235[0]  # x-center of the oval
+                        y_conc = pb206_u238[0]  # y-center of the oval
+                        x_err = pb207_u235[gui_support.varUncType.get()]
+                        y_err = pb206_u238[gui_support.varUncType.get()]
+                    # Tera-Wasserburg concordia
+                    else:
+                        corr_coef = corr_coef_86_76
+                        #u238_pb206 = u238_pb206(False)
+                        x_conc = u238_pb206[0]
+                        x_err = u238_pb206[gui_support.varUncType.get()]
+                        y_conc = pb207_pb206[0]
+                        y_err = pb207_pb206[gui_support.varUncType.get()]
 
-                a1 = x_err * corr_coef * sqrt(2) * sigma_level
-                a2 = y_err * corr_coef * sqrt(2) * sigma_level
-                ang = atan(tan(2 * (atan(a2 / a1))) * corr_coef) / 2
-                chi_sq_fact = stats.chi2.ppf(conf_lim(sigma_level), 2)
-                c1 = 2 * (1 - corr_coef ** 2) * chi_sq_fact
-                c2 = 1 / cos(2 * ang)
-                vx = x_err ** 2
-                vy = y_err ** 2
-                test_major_axis = c1 / ((1 + c2) / vx + (1 - c2) / vy)
-                a = sqrt(test_major_axis)
-                test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
-                b = sqrt(test_minor_axis)
+                    if (x_conc>0) and (x_err>0) and (y_conc>0) and (y_err>0):
+                        a1 = x_err * corr_coef * sqrt(2) * sigma_level
+                        a2 = y_err * corr_coef * sqrt(2) * sigma_level
+                        ang = atan(tan(2 * (atan(a2 / a1))) * corr_coef) / 2
+                        chi_sq_fact = stats.chi2.ppf(conf_lim(sigma_level), 2)
+                        c1 = 2 * (1 - corr_coef ** 2) * chi_sq_fact
+                        c2 = 1 / cos(2 * ang)
+                        vx = x_err ** 2
+                        vy = y_err ** 2
+                        test_major_axis = c1 / ((1 + c2) / vx + (1 - c2) / vy)
+                        a = sqrt(test_major_axis)
+                        test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
+                        b = sqrt(test_minor_axis)
+                        if k == 0:
+                            oval_color = "green"
+                        else:
+                            oval_color = "blue"
 
-                if i == 1:
-                    if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
-                        if args != "":
+                        if i == 1: #bad grains
+                            if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
+                                if args != "":
+                                        if zir.analysis_name == args[0]:
+                                            oval_fill = True
+                                        else:
+                                            oval_fill = False
+                                #oval_color = 'grey'
+                                shall_plot = True
+                                line_thickness = 1
+                                line_style = ':'
+                            else:
+                                shall_plot = False
+
+                        else: #good grains
+                            if args != "":
                                 if zir.analysis_name == args[0]:
                                     oval_fill = True
                                 else:
                                     oval_fill = False
-                        oval_color = 'grey'
-                        shall_plot = True
-                        line_thickness = 1
-                        line_style = '-.'
-                    else:
-                        shall_plot = False
+                            else:
+                                oval_fill = False
+                            #oval_color = 'green'
+                            shall_plot = True
+                            line_thickness = 1
+                            line_style = '-'
 
-                else:
-                    if args != "":
-                        if zir.analysis_name == args[0]:
-                            oval_fill = True
-                        else:
-                            oval_fill = False
-                    else:
-                        oval_fill = False
-                    oval_color = 'green'
-                    shall_plot = True
-                    line_thickness = 1
-                    line_style = '-'
-
-                if shall_plot:
-                    el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
-                             fill=oval_fill, linewidth=line_thickness, linestyle=line_style)
-                    self.ax_conc.add_patch(el)
+                        if shall_plot:
+                            el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
+                                     fill=oval_fill, linewidth=line_thickness, linestyle=line_style)
+                            self.ax_conc.add_patch(el)
 
     def plot_hist(self, min_age, max_age):
         global g_prob_graph_to_draw

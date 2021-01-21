@@ -1349,6 +1349,26 @@ class Analysis(object):
     def age_208corr(self, value):
         self.__age_208corr = value
 
+
+    #----------------------------
+    @property
+    def corr_coef_75_68_204(self):
+        return self.__corr_coef_75_68_204
+
+    @corr_coef_75_68_204.setter
+    def corr_coef_75_68_204(self, value):
+        self.__corr_coef_75_68_204 = value
+    #----------------------------------------
+
+    @property
+    def corr_coef_86_76_204(self):
+        return self.__corr_coef_86_76_204
+
+    @corr_coef_86_76_204.setter
+    def corr_coef_86_76_204(self, value):
+        self.__corr_coef_86_76_204 = value
+
+
     def u238_pb206(self, corr204):
         if corr204:
             pb206_u238 = self.rat68_204corr
