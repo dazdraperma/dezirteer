@@ -733,7 +733,7 @@ class OperationWindow(Frame):
         self.lbEllipsesAt = Label(self.frGraphSettings)
         self.lbEllipsesAt.grid(row=1, column=2, pady=5, padx=5, sticky='w')
         self.apply_style(self.lbEllipsesAt)
-        self.lbEllipsesAt.configure(text='Ellipses at')
+        self.lbEllipsesAt.configure(text='Ellipses at:')
 
         self.cbEllipsesAt = ttk.Combobox(self.frGraphSettings)
         self.cbEllipsesAt.grid(row=1, column=3, padx=5, sticky='w')
@@ -757,29 +757,8 @@ class OperationWindow(Frame):
         self.cbShowUncorrCorrBothEllipses.configure(takefocus="")
         self.cbShowUncorrCorrBothEllipses.configure(state=DISABLED)
         self.cbShowUncorrCorrBothEllipses.configure(values=('Uncorr.', '204Pb-corr.', 'Both'))
-        #self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0,
-        #                                                                                     self.cbConcType.current()))
         self.cbShowUncorrCorrBothEllipses.config(width=8)
         self.cbShowUncorrCorrBothEllipses.current(0)
-
-
-        '''self.chbIncludeUncorrEllipses = Checkbutton(self.frGraphSettings)
-        self.chbIncludeUncorrEllipses.grid(row=2, column=0, columnspan=1, sticky='w', pady=5)
-        self.apply_style(self.chbIncludeUncorrEllipses)
-        self.chbIncludeUncorrEllipses.configure(text="Uncorr.")
-        self.chbIncludeUncorrEllipses.configure(justify=LEFT)
-        self.chbIncludeUncorrEllipses.configure(state=DISABLED)
-        self.chbIncludeUncorrEllipses.configure(variable=gui_support.varIncludeUncorrEllipses)
-        # self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))
-
-        self.chbInclude204Ellipses = Checkbutton(self.frGraphSettings)
-        self.chbInclude204Ellipses.grid(row=2, column=1, columnspan=1, sticky='w', pady=5)
-        self.apply_style(self.chbInclude204Ellipses)
-        self.chbInclude204Ellipses.configure(text="204Pbc")
-        self.chbInclude204Ellipses.configure(justify=LEFT)
-        self.chbInclude204Ellipses.configure(state=DISABLED)
-        self.chbInclude204Ellipses.configure(variable=gui_support.varInclude204Ellipses)
-        #self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))'''
 
         self.chbIncludeBadEllipses = Checkbutton(self.frGraphSettings)
         self.chbIncludeBadEllipses.grid(row=2, column=2, columnspan=2, sticky='w', pady=5)
@@ -788,7 +767,6 @@ class OperationWindow(Frame):
         self.chbIncludeBadEllipses.configure(justify=LEFT)
         self.chbIncludeBadEllipses.configure(state=DISABLED)
         self.chbIncludeBadEllipses.configure(variable=gui_support.varIncludeBadEllipses)
-        # self.chbIncludeBadEllipses.configure(command=lambda: gui_support.onChange(22,gui_support.varIncludeBadEllipses.get(),pars_onChange, self))
 
 
         self.lbDensityPlot = Label(self.frGraphSettings)
@@ -1049,7 +1027,12 @@ class OperationWindow(Frame):
         gui_elements.append(gui_support.varMaxAgeCrop.get())    #24
         gui_elements.append(self.lboxSamples.curselection()) #25
         gui_elements.append(gui_support.varLimitAgeSpectrum.get()) #26
-        gui_elements.append(self.lbShowStatus.cget("fg"))
+        gui_elements.append(self.lbShowStatus.cget("fg"))    #27
+        #-------------------------------------------
+        gui_elements.append(gui_support.varDiscPerc.get())    #28
+        gui_elements.append(self.cbDiscIntersect.get())    #29
+        gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
+        gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
         return gui_elements
 
     def set_ui_values(self, args):
@@ -1116,7 +1099,10 @@ class OperationWindow(Frame):
         gui_support.varLimitAgeSpectrum.set(args[26])
 
         self.lbShowStatus.configure(fg=args[27])
-
+        gui_support.varDiscPerc.set(args[28])
+        self.cbDiscIntersect.set(args[29])
+        self.cbShowUncorrCorrBothEllipses.set(args[30])
+        gui_support.varIncludeBadEllipses.set(args[31])
 
         #self.chbMaxAgeCrop.select()
 
@@ -1469,21 +1455,6 @@ class OperationWindow(Frame):
                         u238_pb206 = zir.u238_pb206(True)
                         pb207_pb206 = zir.rat76_204corr
                         oval_color = "blue"
-
-                    '''if k == 1 or (k == 0 and which_ellipse_to_plot == 1): #204-corrected
-                        corr_coef_75_68 = zir.corr_coef_75_68_204
-                        corr_coef_86_76 = zir.corr_coef_86_76_204
-                        pb207_u235 = zir.rat75_204corr
-                        pb206_u238 = zir.rat68_204corr
-                        u238_pb206 = zir.u238_pb206(True)
-                        pb207_pb206 = zir.rat76_204corr
-                    elif k == 0 and (which_ellipse_to_plot ==): #not 204-corrected
-                        corr_coef_75_68 = zir.corr_coef_75_68
-                        corr_coef_86_76 = zir.corr_coef_86_76
-                        pb207_u235 = zir.pb207_u235
-                        pb206_u238 = zir.pb206_u238
-                        u238_pb206 = zir.u238_pb206(False)
-                        pb207_pb206 = zir.pb207_pb206'''
 
                     # conventional concordia
                     if g_graph_settings.conc_type == 0:
