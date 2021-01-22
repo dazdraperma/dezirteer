@@ -746,14 +746,40 @@ class OperationWindow(Frame):
         self.cbEllipsesAt.config(width=3)
         self.cbEllipsesAt.current(0)
 
+        self.lbShowUncorrCorrBothEllipses = Label(self.frGraphSettings)
+        self.lbShowUncorrCorrBothEllipses.grid(row=2, column=0, columnspan=1,  sticky='w')
+        self.apply_style(self.lbShowUncorrCorrBothEllipses)
+        self.lbShowUncorrCorrBothEllipses.configure(text='204Pbc ellipses?')
+
+        self.cbShowUncorrCorrBothEllipses = ttk.Combobox(self.frGraphSettings)
+        self.cbShowUncorrCorrBothEllipses.grid(row=2, column=1, columnspan=2, sticky='w', pady=5)
+        self.cbShowUncorrCorrBothEllipses.configure(width=15)
+        self.cbShowUncorrCorrBothEllipses.configure(takefocus="")
+        self.cbShowUncorrCorrBothEllipses.configure(state=DISABLED)
+        self.cbShowUncorrCorrBothEllipses.configure(values=('Uncorr.', '204Pb-corr.', 'Both'))
+        #self.cbConcType.bind('<<ComboboxSelected>>', lambda event: gui_support.onGraphChange(g_graph_settings, 0,
+        #                                                                                     self.cbConcType.current()))
+        self.cbShowUncorrCorrBothEllipses.config(width=8)
+        self.cbShowUncorrCorrBothEllipses.current(0)
+
+
+        '''self.chbIncludeUncorrEllipses = Checkbutton(self.frGraphSettings)
+        self.chbIncludeUncorrEllipses.grid(row=2, column=0, columnspan=1, sticky='w', pady=5)
+        self.apply_style(self.chbIncludeUncorrEllipses)
+        self.chbIncludeUncorrEllipses.configure(text="Uncorr.")
+        self.chbIncludeUncorrEllipses.configure(justify=LEFT)
+        self.chbIncludeUncorrEllipses.configure(state=DISABLED)
+        self.chbIncludeUncorrEllipses.configure(variable=gui_support.varIncludeUncorrEllipses)
+        # self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))
+
         self.chbInclude204Ellipses = Checkbutton(self.frGraphSettings)
-        self.chbInclude204Ellipses.grid(row=2, column=0, columnspan=2, sticky='w', pady=5)
+        self.chbInclude204Ellipses.grid(row=2, column=1, columnspan=1, sticky='w', pady=5)
         self.apply_style(self.chbInclude204Ellipses)
-        self.chbInclude204Ellipses.configure(text="show 204Pbc")
+        self.chbInclude204Ellipses.configure(text="204Pbc")
         self.chbInclude204Ellipses.configure(justify=LEFT)
         self.chbInclude204Ellipses.configure(state=DISABLED)
         self.chbInclude204Ellipses.configure(variable=gui_support.varInclude204Ellipses)
-        #self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))
+        #self.chbInclude204Ellipses.configure(command=lambda: gui_support.onChange(22,gui_support.varInclude204Ellipses.get(),pars_onChange, self))'''
 
         self.chbIncludeBadEllipses = Checkbutton(self.frGraphSettings)
         self.chbIncludeBadEllipses.grid(row=2, column=2, columnspan=2, sticky='w', pady=5)
@@ -1413,26 +1439,51 @@ class OperationWindow(Frame):
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
         current_set = [g_grainset.good_set, g_grainset.bad_set]
-        plot_204_ellipses = gui_support.varInclude204Ellipses.get()
+        which_ellipse_to_plot = self.cbShowUncorrCorrBothEllipses.current()
+        if which_ellipse_to_plot == 2:
+            j = 2
+        else:
+            j = 1
+        #plot_good_ellipses = gui_support.varIncludeUncorrEllipses.get()
+        #plot_204_ellipses = gui_support.varInclude204Ellipses.get()
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
+
         for i in (0, 1):
-            for k in range (0, plot_204_ellipses+1):
+            for k in range(0, j):
                 for zir in current_set[i]:
                     sigma_level = g_graph_settings.ellipses_at
-                    if k == 1: #204-corrected
-                        corr_coef_75_68 = zir.corr_coef_75_68_204
-                        corr_coef_86_76 = zir.corr_coef_86_76_204
-                        pb207_u235 = zir.rat75_204corr
-                        pb206_u238 = zir.rat68_204corr
-                        u238_pb206 = zir.u238_pb206(True)
-                        pb207_pb206 = zir.rat76_204corr
-                    else: #not 204-corrected
+                    if which_ellipse_to_plot == 0 or (which_ellipse_to_plot == 2 and k == 0):
                         corr_coef_75_68 = zir.corr_coef_75_68
                         corr_coef_86_76 = zir.corr_coef_86_76
                         pb207_u235 = zir.pb207_u235
                         pb206_u238 = zir.pb206_u238
                         u238_pb206 = zir.u238_pb206(False)
                         pb207_pb206 = zir.pb207_pb206
+                        oval_color = "green"
+
+                    elif which_ellipse_to_plot == 1 or (which_ellipse_to_plot == 2 and k == 1):
+                        corr_coef_75_68 = zir.corr_coef_75_68_204
+                        corr_coef_86_76 = zir.corr_coef_86_76_204
+                        pb207_u235 = zir.rat75_204corr
+                        pb206_u238 = zir.rat68_204corr
+                        u238_pb206 = zir.u238_pb206(True)
+                        pb207_pb206 = zir.rat76_204corr
+                        oval_color = "blue"
+
+                    '''if k == 1 or (k == 0 and which_ellipse_to_plot == 1): #204-corrected
+                        corr_coef_75_68 = zir.corr_coef_75_68_204
+                        corr_coef_86_76 = zir.corr_coef_86_76_204
+                        pb207_u235 = zir.rat75_204corr
+                        pb206_u238 = zir.rat68_204corr
+                        u238_pb206 = zir.u238_pb206(True)
+                        pb207_pb206 = zir.rat76_204corr
+                    elif k == 0 and (which_ellipse_to_plot ==): #not 204-corrected
+                        corr_coef_75_68 = zir.corr_coef_75_68
+                        corr_coef_86_76 = zir.corr_coef_86_76
+                        pb207_u235 = zir.pb207_u235
+                        pb206_u238 = zir.pb206_u238
+                        u238_pb206 = zir.u238_pb206(False)
+                        pb207_pb206 = zir.pb207_pb206'''
 
                     # conventional concordia
                     if g_graph_settings.conc_type == 0:
@@ -1450,7 +1501,7 @@ class OperationWindow(Frame):
                         y_conc = pb207_pb206[0]
                         y_err = pb207_pb206[gui_support.varUncType.get()]
 
-                    if (x_conc>0) and (x_err>0) and (y_conc>0) and (y_err>0):
+                    if (x_conc > 0) and (x_err > 0) and (y_conc > 0) and (y_err > 0):
                         a1 = x_err * corr_coef * sqrt(2) * sigma_level
                         a2 = y_err * corr_coef * sqrt(2) * sigma_level
                         ang = atan(tan(2 * (atan(a2 / a1))) * corr_coef) / 2
@@ -1463,10 +1514,7 @@ class OperationWindow(Frame):
                         a = sqrt(test_major_axis)
                         test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
                         b = sqrt(test_minor_axis)
-                        if k == 0:
-                            oval_color = "green"
-                        else:
-                            oval_color = "blue"
+
 
                         if i == 1: #bad grains
                             if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):

@@ -236,7 +236,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
-    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses
+    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -289,6 +289,8 @@ def set_Tk_var():
     varInclude204Ellipses.set(0)
     varIncludeBadEllipses = IntVar()
     varIncludeBadEllipses.set(0)
+    varIncludeUncorrEllipses = IntVar()
+    varIncludeUncorrEllipses.set(1)
 
 
 def init(pTop, pGui, *args, **kwargs):
@@ -549,7 +551,7 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
 def set_all_ui_elements(par):
     features_custom_state = [par.chbInclude207235Err, par.entAgeMinCrop, par.entAgeMaxCrop, par.entErrFilter,
                                 par.entUconcCutoff, par.cbUConc, par.cbConcType, par.cbErrFilter,
-                                par.cbEllipsesAt, par.cbWhichAge,
+                                par.cbEllipsesAt, par.cbWhichAge, par.cbShowUncorrCorrBothEllipses,
                                 par.cbWhichConc, par.entDiscAgeFixedLim, par.cbPbc, par.entAgeCutoff,
                                 par.entHistBinwidth, par.cbDensityPlotType, par.entAgeAndersen, par.cbDiscIntersect]
 
@@ -558,6 +560,7 @@ def set_all_ui_elements(par):
             if child not in features_custom_state:
                 child.configure(state=NORMAL)
 
+    par.cbShowUncorrCorrBothEllipses.configure(state="readonly")
     par.cbPbc.configure(state="readonly")
     par.cbUConc.configure(state="readonly")
     par.cbConcType.configure(state="readonly")
