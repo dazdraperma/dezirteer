@@ -321,9 +321,18 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             file.write(p_colnames[i]+',')
             i += 1
         file.write("\n")
+        l_str = ''
+        table_array = line_with_data(p_grainset, p_filters)
         while j < len(p_grainset):
-            pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
-            l_str = ('\n' +
+            #pbc_corr_buff = pbc_corr(an_list[j], l_type_pbc)
+            l_str += '\n'
+            l_str += str(an_list[j]) + ','
+            k = 0
+            while k < len(table_array[j]):
+                l_str += str(table_array[j][k]) + ','
+                k += 1
+
+            '''l_str = ('\n' +
                        str(an_list[j]) + ',' +
 
                        str(an_list[j].th232_u238[0]) + ',' +
@@ -403,8 +412,9 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                        str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
 
                        str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[unc_type]))
+                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[unc_type]))'''
             file.write(l_str)
+            l_str = ''
             j += 1
         file.write("\n" * 2)
 
@@ -602,7 +612,6 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     p_table.heading("#0", text="Analysis name", anchor='c')
     table_array = line_with_data(p_grainset, p_filters)
 
-
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
         p_table.column(i, width="100", anchor="c")
@@ -610,8 +619,6 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     while j < len(grainset):
             p_table.insert('', 'end', text=(an_list[j]), values=(table_array[j]), tags=str(an_list[j].is_grain_good(filters)[0]))
             j += 1
-
-
     p_table.tag_configure("False", background="red")
     return good_grains
 
