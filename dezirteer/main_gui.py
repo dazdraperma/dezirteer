@@ -1028,7 +1028,6 @@ class OperationWindow(Frame):
         gui_elements.append(self.lboxSamples.curselection()) #25
         gui_elements.append(gui_support.varLimitAgeSpectrum.get()) #26
         gui_elements.append(self.lbShowStatus.cget("fg"))    #27
-        #-------------------------------------------
         gui_elements.append(gui_support.varDiscPerc.get())    #28
         gui_elements.append(self.cbDiscIntersect.get())    #29
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
@@ -1088,23 +1087,17 @@ class OperationWindow(Frame):
         self.entAgeMaxCrop.insert(0, args[21])
 
         gui_support.varShowCalc.set(args[22])
-
         gui_support.varKeepPrev.set(args[23])
-
         self.fill_listbox()
 
         for index in args[25]:
             self.lboxSamples.selection_set(index)
-
         gui_support.varLimitAgeSpectrum.set(args[26])
-
         self.lbShowStatus.configure(fg=args[27])
         gui_support.varDiscPerc.set(args[28])
         self.cbDiscIntersect.set(args[29])
         self.cbShowUncorrCorrBothEllipses.set(args[30])
         gui_support.varIncludeBadEllipses.set(args[31])
-
-        #self.chbMaxAgeCrop.select()
 
     def show_frame(self):
         winCalc = Toplevel()

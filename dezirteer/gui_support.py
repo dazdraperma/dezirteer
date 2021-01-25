@@ -452,6 +452,138 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
     except AttributeError:
         pass
 
+def line_with_data (p_grainset, p_filters):
+    global varAgeAndersen
+    if p_grainset.analyses_list == []:
+        pass
+    j = 0
+    unc_type = int(p_filters.unc_type)
+    an_list = p_grainset.analyses_list
+    good_grains = p_grainset.good_bad_sets(p_filters)
+    grainset = p_grainset
+    filters = p_filters
+    l_type_pbc = p_filters.use_pbc[0]
+    one_analysis = []
+    list_of_analyses = []
+    while j < len(grainset):
+        one_analysis = []
+        th232_u238 = an_list[j].th232_u238
+        pb208_th232 = an_list[j].pb208_th232
+        pb207_pb206 = an_list[j].pb207_pb206
+        pb207_u235 = an_list[j].pb207_u235
+        pb206_u238 = an_list[j].pb206_u238
+        corr_coef_75_68 = an_list[j].corr_coef_75_68
+        corr_coef_86_76 = an_list[j].corr_coef_86_76
+        u_conc = an_list[j].u_conc
+        pbc = an_list[j].pbc
+        pb206_pb204 = an_list[j].pb206_pb204
+        pb207_pb204 = an_list[j].pb207_pb204
+        pb208_pb204 = an_list[j].pb208_pb204
+        th232_pb204 = an_list[j].th232_pb204
+        u238_pb204 = an_list[j].u238_pb204
+        age_208_232 = an_list[j].age82
+        age_207_206 = an_list[j].age76
+        age_207_235 = an_list[j].age75
+        age_206_238 = an_list[j].age68
+        pbc204_age_206_238 = an_list[j].age68_204corr
+        pbc204_age_207_235 = an_list[j].age75_204corr
+        pbc204_age_208_232 = an_list[j].age82_204corr
+        pbc204_age_207_206 = an_list[j].age76_204corr
+        pbc207_age = an_list[j].age_207corr
+        pbc208_age = an_list[j].age_208corr
+        if p_filters.use_pbc[0] == 4:
+            pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
+        else:
+            pbcAnd_age = [-1, -1, -1]
+        disc_76_68 = 100 * an_list[j].calc_discordance(2, p_filters.disc_type[1], p_filters.use_pbc)
+        disc_75_68 = 100 * an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
+        is_grain_good = an_list[j].is_grain_good(filters)
+        best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
+
+        #one_analysis.append(an_list[j])
+        one_analysis.append(round(th232_u238[0], 4))
+        one_analysis.append(round(th232_u238[1], 4))
+        one_analysis.append(round(th232_u238[2], 4))
+        one_analysis.append(round(pb208_th232[0], 4))
+        one_analysis.append(round(pb208_th232[1], 4))
+        one_analysis.append(round(pb207_pb206[0], 4))
+        one_analysis.append(round(pb207_pb206[1], 4))
+        one_analysis.append(round(pb208_th232[2], 4))
+        one_analysis.append(round(pb207_pb206[2], 4))
+        one_analysis.append(round(pb207_u235[0], 4))
+        one_analysis.append(round(pb207_u235[1], 4))
+        one_analysis.append(round(pb207_u235[2], 4))
+        one_analysis.append(round(pb206_u238[0], 4))
+        one_analysis.append(round(pb206_u238[1], 4))
+        one_analysis.append(round(pb206_u238[2], 4))
+        one_analysis.append(round(corr_coef_75_68, 2))
+        one_analysis.append(round(corr_coef_86_76, 2))
+        one_analysis.append(round(u_conc[0], 4))
+        one_analysis.append(round(u_conc[1], 4))
+        one_analysis.append(round(u_conc[2], 4))
+        one_analysis.append(round(pbc[0], 4))
+        one_analysis.append(round(pbc[1], 4))
+        one_analysis.append(round(pbc[2], 4))
+        one_analysis.append(round(pb206_pb204[0], 1))
+        one_analysis.append(round(pb206_pb204[1], 1))
+        one_analysis.append(round(pb206_pb204[2], 1))
+        one_analysis.append(round(pb207_pb204[0], 1))
+        one_analysis.append(round(pb207_pb204[1], 1))
+        one_analysis.append(round(pb207_pb204[2], 1))
+        one_analysis.append(round(pb208_pb204[0], 1))
+        one_analysis.append(round(pb208_pb204[1], 1))
+        one_analysis.append(round(pb208_pb204[2], 1))
+        one_analysis.append(round(th232_pb204[0], 1))
+        one_analysis.append(round(th232_pb204[1], 1))
+        one_analysis.append(round(th232_pb204[2], 1))
+        one_analysis.append(round(u238_pb204[0], 1))
+        one_analysis.append(round(u238_pb204[1], 1))
+        one_analysis.append(round(u238_pb204[2], 1))
+        one_analysis.append(int(age_208_232[0]))
+        one_analysis.append(int(age_208_232[1]))
+        one_analysis.append(int(age_208_232[2]))
+        one_analysis.append(int(age_207_206[0]))
+        one_analysis.append(int(age_207_206[1]))
+        one_analysis.append(int(age_207_206[2]))
+        one_analysis.append(int(age_207_235[0]))
+        one_analysis.append(int(age_207_235[1]))
+        one_analysis.append(int(age_207_235[2]))
+        one_analysis.append(int(age_206_238[0]))
+        one_analysis.append(int(age_206_238[1]))
+        one_analysis.append(int(age_206_238[2]))
+        one_analysis.append(g_corr_type[l_type_pbc])
+        one_analysis.append(int(pbc204_age_206_238[0]))
+        one_analysis.append(int(pbc204_age_206_238[1]))
+        one_analysis.append(int(pbc204_age_206_238[2]))
+        one_analysis.append(int(pbc204_age_207_235[0]))
+        one_analysis.append(int(pbc204_age_207_235[1]))
+        one_analysis.append(int(pbc204_age_207_235[2]))
+        one_analysis.append(int(pbc204_age_208_232[0]))
+        one_analysis.append(int(pbc204_age_208_232[1]))
+        one_analysis.append(int(pbc204_age_208_232[2]))
+        one_analysis.append(int(pbc204_age_207_206[0]))
+        one_analysis.append(int(pbc204_age_207_206[1]))
+        one_analysis.append(int(pbc204_age_207_206[2]))
+        one_analysis.append(int(pbc207_age[0]))
+        one_analysis.append(int(pbc207_age[1]))
+        one_analysis.append(int(pbc207_age[2]))
+        one_analysis.append(int(pbc208_age[0]))
+        one_analysis.append(int(pbc208_age[1]))
+        one_analysis.append(int(pbc208_age[2]))
+        one_analysis.append(int(pbcAnd_age[0]))
+        one_analysis.append(int(pbcAnd_age[1]))
+        one_analysis.append(int(pbcAnd_age[2]))
+        one_analysis.append(str(varAgeAndersen.get()))
+        one_analysis.append(int(disc_76_68))
+        one_analysis.append(int(disc_75_68))
+        one_analysis.append(str(is_grain_good[0]))
+        one_analysis.append(str(is_grain_good[1]))
+        one_analysis.append(int(best_age[0]))
+        one_analysis.append(int(best_age[unc_type]))
+        list_of_analyses.append(one_analysis)
+        one_analysis = []
+        j += 1
+    return list_of_analyses
 
 def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     global varAgeAndersen
@@ -468,81 +600,17 @@ def fill_data_table(p_table, p_grainset, p_filters, p_colnames, *args):
     filters = p_filters
     l_type_pbc = p_filters.use_pbc[0]
     p_table.heading("#0", text="Analysis name", anchor='c')
+    table_array = line_with_data(p_grainset, p_filters)
+
+
     while i < len(p_colnames):
         p_table.heading(p_colnames[i], text=p_colnames[i], anchor='c')
         p_table.column(i, width="100", anchor="c")
-        while j < len(grainset):
-            th232_u238 = an_list[j].th232_u238
-            pb208_th232 = an_list[j].pb208_th232
-            pb207_pb206 = an_list[j].pb207_pb206
-            pb207_u235 = an_list[j].pb207_u235
-            pb206_u238 = an_list[j].pb206_u238
-            corr_coef_75_68 = an_list[j].corr_coef_75_68
-            corr_coef_86_76 = an_list[j].corr_coef_86_76
-            u_conc = an_list[j].u_conc
-            pbc = an_list[j].pbc
-            pb206_pb204 = an_list[j].pb206_pb204
-            pb207_pb204 = an_list[j].pb207_pb204
-            pb208_pb204 = an_list[j].pb208_pb204
-            th232_pb204 = an_list[j].th232_pb204
-            u238_pb204 = an_list[j].u238_pb204
-            age_208_232 = an_list[j].age82
-            age_207_206 = an_list[j].age76
-            age_207_235 = an_list[j].age75
-            age_206_238 = an_list[j].age68
-            pbc204_age_206_238 = an_list[j].age68_204corr
-            pbc204_age_207_235 = an_list[j].age75_204corr
-            pbc204_age_208_232 = an_list[j].age82_204corr
-            pbc204_age_207_206 = an_list[j].age76_204corr
-            pbc207_age = an_list[j].age_207corr
-            pbc208_age = an_list[j].age_208corr
-            if p_filters.use_pbc[0] == 4:
-                pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
-            else:
-                pbcAnd_age = [-1, -1, -1]
-            disc_76_68 = 100*an_list[j].calc_discordance(2, p_filters.disc_type[1],  p_filters.use_pbc)
-            disc_75_68 = 100*an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
-            is_grain_good = an_list[j].is_grain_good(filters)
-            best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
-            p_table.insert('', 'end', text=(an_list[j]), values=(
-                    round(th232_u238[0], 4), round(th232_u238[1], 4), round(th232_u238[2], 4),
-                    round(pb208_th232[0], 4), round(pb208_th232[1], 4), round(pb208_th232[2], 4),
-                    round(pb207_pb206[0], 4), round(pb207_pb206[1], 4), round(pb207_pb206[2], 4),
-                    round(pb207_u235[0], 4), round(pb207_u235[1], 4), round(pb207_u235[2], 4),
-                    round(pb206_u238[0], 4), round(pb206_u238[1], 4), round(pb206_u238[2], 4),
-                    round(corr_coef_75_68, 2), round(corr_coef_86_76, 2),
-                    round(u_conc[0], 4), round(u_conc[1], 4), round(u_conc[2], 4),
-                    round(pbc[0], 4), round(pbc[1], 4), round(pbc[2], 4),
-                    round(pb206_pb204[0], 1), round(pb206_pb204[1], 1), round(pb206_pb204[2], 1),
-                    round(pb207_pb204[0], 1), round(pb207_pb204[1], 1), round(pb207_pb204[2], 1),
-                    round(pb208_pb204[0], 1), round(pb208_pb204[1], 1), round(pb208_pb204[2], 1),
-                    round(th232_pb204[0], 1), round(th232_pb204[1], 1), round(th232_pb204[2], 1),
-                    round(u238_pb204[0], 1), round(u238_pb204[1], 1), round(u238_pb204[2], 1),
-                    int(age_208_232[0]), int(age_208_232[1]), int(age_208_232[2]),
-                    int(age_207_206[0]), int(age_207_206[1]), int(age_207_206[2]),
-                    int(age_207_235[0]), int(age_207_235[1]), int(age_207_235[2]),
-                    int(age_206_238[0]), int(age_206_238[1]), int(age_206_238[2]),
-                    g_corr_type[l_type_pbc],
-                    int(pbc204_age_206_238[0]), int(pbc204_age_206_238[1]), int(pbc204_age_206_238[2]),
-                    int(pbc204_age_207_235[0]), int(pbc204_age_207_235[1]), int(pbc204_age_207_235[2]),
-                    int(pbc204_age_208_232[0]), int(pbc204_age_208_232[1]), int(pbc204_age_208_232[2]),
-                    int(pbc204_age_207_206[0]), int(pbc204_age_207_206[1]), int(pbc204_age_207_206[2]),
-                    int(pbc207_age[0]), int(pbc207_age[1]), int(pbc207_age[2]),
-                    int(pbc208_age[0]), int(pbc208_age[1]), int(pbc208_age[2]),
-
-                    int(pbcAnd_age[0]), int(pbcAnd_age[1]), int(pbcAnd_age[2]),
-                    str(varAgeAndersen.get()),
-                    #int(pbc_corr(an_list[j], 4)[0]),
-                    #int(pbc_corr(an_list[j], 4)[1]),
-                    #int(pbc_corr(an_list[j], 4)[2]),
-                    int(disc_76_68), int(disc_75_68),
-                    str(is_grain_good[0]), str(is_grain_good[1]),
-                    int(best_age[0]), int(best_age[unc_type])
-                    ),
-                    tags=str(an_list[j].is_grain_good(filters)[0]))
-
-            j += 1
         i += 1
+    while j < len(grainset):
+            p_table.insert('', 'end', text=(an_list[j]), values=(table_array[j]), tags=str(an_list[j].is_grain_good(filters)[0]))
+            j += 1
+
 
     p_table.tag_configure("False", background="red")
     return good_grains
