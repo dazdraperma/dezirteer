@@ -474,7 +474,8 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             j += 1
         file.write("\n" * 2)
 
-        file.write("filter by U conc?, " + filter_by_uconc + '\n' +
+        file.write("Filters and computations used \n" +
+            "filter by U conc?, " + filter_by_uconc + '\n' +
                    "correction by Pbc, " + use_pbc + '\n' +
                    "filter by measurement's error, " + filter_by_err + '\n' +
                    "Degree of discordance or concordia intersect?, " + filter_by_disc + '\n' +
@@ -565,6 +566,10 @@ def line_with_data (p_grainset, p_filters):
         disc_76_68 = 100 * an_list[j].calc_discordance(2, p_filters.disc_type[1], p_filters.use_pbc)
         disc_75_68 = 100 * an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
         is_grain_good = an_list[j].is_grain_good(filters)
+        if is_grain_good[1] == 3:
+            best_age_system = "207Pb/206Pb"
+        else:
+            best_age_system = "206Pb/238U"
         best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
 
         #one_analysis.append(an_list[j])
@@ -644,7 +649,8 @@ def line_with_data (p_grainset, p_filters):
         one_analysis.append(int(disc_76_68))
         one_analysis.append(int(disc_75_68))
         one_analysis.append(str(is_grain_good[0]))
-        one_analysis.append(str(is_grain_good[1]))
+        one_analysis.append(best_age_system)
+        #one_analysis.append(str(is_grain_good[1]))
         one_analysis.append(int(best_age[0]))
         one_analysis.append(int(best_age[unc_type]))
         list_of_analyses.append(one_analysis)
