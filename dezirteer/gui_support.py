@@ -309,6 +309,62 @@ def destroy_window():
 
 def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename, p_probcum_filename):
     try:
+        if p_filters.filter_by_uconc[0] == True:
+            filter_by_uconc = "yes: max cutoff value at " + str(p_filters.filter_by_uconc[1])
+        else:
+            filter_by_uconc = "no"
+
+        if p_filters.use_pbc[0] == 0:
+            use_pbc = "no"
+        elif p_filters.use_pbc[0] == 1:
+            use_pbc = "yes: 204Pbc"
+        elif p_filters.use_pbc[0] == 2:
+            use_pbc = "yes: 207Pbc"
+        elif p_filters.use_pbc[0] == 3:
+            use_pbc = "yes: 204Pbc"
+        else:
+            use_pbc = "yes: Andersen. Age of Pb loss: " + str(p_filters.use_pbc[1])
+
+        if varDiscPerc.get() == 0:
+            filter_by_disc = "degree of discordance: +" + str(p_filters.pos_disc_filter) + "; " + str(p_filters.neg_disc_filter)
+        else:
+            filter_by_disc = "uncertainties: at " + str(p_filters.intersectAt) + "sigma"
+
+        if p_filters.filter_by_err[0] == 0:
+            filter_by_err = "no"
+        else:
+            if varInclude207235Err.get() == 0:
+                include_75_error = "7/5 error not used"
+            else:
+                include_75_error = "7/5 error used"
+            filter_by_err = "yes: cutoff value at " + str(p_filters.filter_by_err[1]) + '; ' + include_75_error
+
+        if p_filters.use_pbc[0] in (2, 3, 4):
+            which_age = "Pb-corrected age used"
+            which_age_cutoff = ""
+            disc_type = "Discordance not calculated"
+        else:
+            if p_filters.which_age[0] == 0:
+                which_age = "from lesser error"
+                which_age_cutoff = ""
+            elif p_filters.which_age[0] == 1:
+                which_age = "fixed limit: cutoff at "
+                which_age_cutoff = str(p_filters.which_age[1]) + "ma"
+            elif p_filters.which_age[0] == 2:
+                which_age = "207Pb/206Pb"
+                which_age_cutoff = ""
+            else:
+                which_age = "206Pb/238U"
+                which_age_cutoff = ""
+            if p_filters.disc_type[0] == 1:
+                disc_type = "fixed limit at " + str(p_filters.disc_type[1]) + 'ma'
+            elif p_filters.disc_type[0] == 2:
+                disc_type = "between 68 and 76"
+            elif p_filters.disc_type[0] == 3:
+                disc_type = "between 68 and 57"
+            else:
+                disc_type = "lesser of 2"
+
         file = p_filename
         i = 0
         j = 0
@@ -418,18 +474,18 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             j += 1
         file.write("\n" * 2)
 
-        file.write("filter by U conc?, "
-                   "Uconc filter value (if used), "
-                   "correction by Pbc, "
-                   "filter by measurement's error, "
-                   "measurement's error value (if used), "
-                   "Positive discordance filter, "
-                   "Negative discordance filter, "
-                   "Which age was used, "
-                   "age cutoff (if used), "
-                   "How was discordance calculated, "
-                   "age cutoff for discordance calculation (if used) \n " +
-            str(p_filters.filter_by_uconc[0]) + ',' +
+        file.write("filter by U conc?, " + filter_by_uconc + '\n' +
+                   "correction by Pbc, " + use_pbc + '\n' +
+                   "filter by measurement's error, " + filter_by_err + '\n' +
+                   "Degree of discordance or concordia intersect?, " + filter_by_disc + '\n' +
+                   "Which age was used, " + which_age + which_age_cutoff + '\n' +
+                   "How was discordance calculated, " + disc_type + '\n'
+                   )
+
+
+
+        '''
+                   str(p_filters.filter_by_uconc[0]) + ',' +
                    str(p_filters.filter_by_uconc[1]) + ',' +
                    str(p_filters.use_pbc) + ',' +
                    str(p_filters.filter_by_err[0]) + ',' +
@@ -440,6 +496,7 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                    str(p_filters.which_age[1]) + ',' +
                    str(p_filters.disc_type[0]) + ',' +
                    str(p_filters.disc_type[1]))
+        '''
 
         file.close()
 
