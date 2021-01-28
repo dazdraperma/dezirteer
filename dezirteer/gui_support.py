@@ -559,6 +559,12 @@ def line_with_data (p_grainset, p_filters):
         pbc204_age_207_206 = an_list[j].age76_204corr
         pbc207_age = an_list[j].age_207corr
         pbc208_age = an_list[j].age_208corr
+        rat68_204corr = an_list[j].rat68_204corr
+        rat75_204corr = an_list[j].rat75_204corr
+        rat82_204corr = an_list[j].rat82_204corr
+        rat76_204corr = an_list[j].rat76_204corr
+
+
         if p_filters.use_pbc[0] == 4:
             pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
         else:
@@ -624,6 +630,20 @@ def line_with_data (p_grainset, p_filters):
         one_analysis.append(int(age_206_238[1]))
         one_analysis.append(int(age_206_238[2]))
         one_analysis.append(g_corr_type[l_type_pbc])
+
+        one_analysis.append(round(rat68_204corr[0], 4))
+        one_analysis.append(round(rat68_204corr[1], 4))
+        one_analysis.append(round(rat68_204corr[2], 4))
+        one_analysis.append(round(rat75_204corr[0], 4))
+        one_analysis.append(round(rat75_204corr[1], 4))
+        one_analysis.append(round(rat75_204corr[2], 4))
+        one_analysis.append(round(rat82_204corr[0], 4))
+        one_analysis.append(round(rat82_204corr[1], 4))
+        one_analysis.append(round(rat82_204corr[2], 4))
+        one_analysis.append(round(rat76_204corr[0], 4))
+        one_analysis.append(round(rat76_204corr[1], 4))
+        one_analysis.append(round(rat76_204corr[2], 4))
+
         one_analysis.append(int(pbc204_age_206_238[0]))
         one_analysis.append(int(pbc204_age_206_238[1]))
         one_analysis.append(int(pbc204_age_206_238[2]))

@@ -1839,6 +1839,22 @@ def main():
 
                         'Corr.type',
 
+                        'Pb204-corr. 68 rat',
+                        'Pb204-corr. 68 rat Err 1s(Int)',
+                        'Pb204-corr. 68 rat Err 1s(Prop)',
+
+                        'Pb204-corr. 75 rat',
+                        'Pb204-corr. 75 rat Err 1s(Int)',
+                        'Pb204-corr. 75 rat Err 1s(Prop)',
+
+                        'Pb204-corr. 82 rat',
+                        'Pb204-corr. 82 rat Err 1s(Int)',
+                        'Pb204-corr. 82 rat Err 1s(Prop)',
+
+                        'Pb204-corr. 76 rat',
+                        'Pb204-corr. 76 rat Err 1s(Int)',
+                        'Pb204-corr. 76 rat Err 1s(Prop)',
+
                         'Pb204-corr. 68 age',
                         'Pb204-corr. 68 age Err 1s(Int)',
                         'Pb204-corr. 68 age Err 1s(Prop)',
