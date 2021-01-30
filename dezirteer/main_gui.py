@@ -1347,7 +1347,7 @@ class OperationWindow(Frame):
                 max_conc_y = g_grainset.max_207_206
 
         else:
-            min_age = 1
+            min_age = 0
             max_age = EarthAge
             min_conc_x = 0
             min_conc_y = 0
@@ -1397,7 +1397,8 @@ class OperationWindow(Frame):
         g_conc_txt_blue = self.ax_conc.text(0.65, 0.20, "Blue:204Pbc", color="blue", transform=self.ax_conc.transAxes)
         g_conc_txt_black = self.ax_conc.text(0.65, 0.10, "Dotted:bad", color="black", transform=self.ax_conc.transAxes)
         if g_graph_settings.pdp_kde_hist != 2: #if not histogram
-            self.plot_peaks(self.min_max_ages()[0], self.min_max_ages()[1])
+            min_max_ages = self.min_max_ages()
+            self.plot_peaks(min_max_ages[0], min_max_ages[1])
         self.canvas_cum.draw()
         self.canvas_prob.draw()
 
@@ -1589,7 +1590,7 @@ class OperationWindow(Frame):
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
 
-    def plot_peaks(self,min_age, max_age):
+    def plot_peaks(self, min_age, max_age):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
         # min_max_age = self.min_max_ages()
@@ -1597,8 +1598,8 @@ class OperationWindow(Frame):
         # max_age = min_max_age[1]
         self.ax_prob.clear()
         self.canvas_prob.draw()
-        self.ax_prob.plot(list(range(min_age, max_age)), g_prob_graph_to_draw[min_age: max_age])
-
+        max_age -= 1
+        self.ax_prob.plot(list(range(min_age, max_age, 2)), g_prob_graph_to_draw[min_age: max_age])
         if gui_support.varShowCalc.get() == 1:
             i = 0
             self.ax_prob.set_title(g_prob_title)
@@ -1616,7 +1617,8 @@ class OperationWindow(Frame):
 
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
-        self.ax_cum.plot(list(range(min_age, max_age)), g_cum_graph_to_draw[min_age: max_age])
+        max_age -= 2
+        self.ax_cum.plot(list(range(min_age, max_age, 2)), g_cum_graph_to_draw[min_age: max_age])
         self.plot_peaks(min_age, max_age) #ax_prob.plot is done here
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
@@ -1689,11 +1691,7 @@ class OperationWindow(Frame):
             #total_kde = end_kde - start_kde
             #print("kde: " + str(total_kde))
 
-            '''start_ckde = time.time()
-            g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
-            end_ckde = time.time()
-            total_ckde = end_ckde - start_ckde
-            print("ckde: " + str(total_ckde))'''
+
 
         elif g_graph_settings.pdp_kde_hist == 1:
             #start_pdp = time.time()
@@ -1703,17 +1701,13 @@ class OperationWindow(Frame):
             #total_pdp = end_pdp - start_pdp
             #print("pdp: " + str(total_pdp))
 
-            '''start_cpdp = time.time()
-            g_cpdp = g_grainset.cpdp(gui_support.varUncType.get())
-            end_cpdp = time.time()
-            total_cpdp = end_cpdp - start_cpdp
-            print("cpdp: " + str(total_cpdp))'''
         set_pval_dval()
 
         # cropping age interval: either full, or cropped from min_age to max_age
         age_lim = self.min_max_ages()
         if gui_support.varMinAgeCrop.get() == 1:
             min_age = int(self.entAgeMinCrop.get())
+
             min_conc_x = calc_ratio(float(self.entAgeMinCrop.get()))[1]
             min_conc_y = calc_ratio(float(self.entAgeMinCrop.get()))[0]
         else:
@@ -1728,6 +1722,14 @@ class OperationWindow(Frame):
             max_age = age_lim[1]
             max_conc_x = age_lim[3]
             max_conc_y = age_lim[5]
+
+        if min_age < 0:
+            min_age = 2
+        elif min_age == 0:
+            min_age += 2
+        elif (min_age > 0) and (min_age % 2 != 0):
+            min_age += 1
+
 
         self.clear_prev_or_remove_text()
 

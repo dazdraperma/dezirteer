@@ -1472,6 +1472,7 @@ class AnalysesSet(object):
 
     # fills and returns a list of kde's for ages from 0 to EarthAge
     def kde(self, p_bandwidth):
+        multiplier = 1
         index = 0
         # stores non-normalized kde values:
         temp_list = []
@@ -1488,9 +1489,9 @@ class AnalysesSet(object):
                 #print("kde at i=" + str(index) + "equals to " + str(total_kde))
                 temp_list.append(curr_kde)
                 ckde += curr_kde
-                if index > 1 and temp_list[index - 2] < temp_list[index - 1] and temp_list[index] < temp_list[index - 1]:  # peak recognizing
+                if index > 2 and temp_list[int(index/2 - 2)] < temp_list[int(index/2 - 1)] and temp_list[int(index/2)] < temp_list[int(index/2 - 1)]:  # peak recognizing
                     list_peaks.append(index - 1)
-                index += 1
+                index += 2
             list_kde = [i * (1 / ckde) for i in temp_list]
 
             list_ckde.append(list_kde[0])
@@ -1528,26 +1529,23 @@ class AnalysesSet(object):
         if bool(self.good_set):
             while index < EarthAge:
                 list_pdp.append(self.pdp_calc(index, unc_type))
-                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[index - 1]:  # peak recognizing
+                if index > 2 and list_pdp[int(index/2 - 2)] < list_pdp[int(index/2 - 1)] and list_pdp[int(index/2)] < list_pdp[int(index/2 - 1)]:  # peak recognizing
                     list_peaks.append(index - 1)
-                index += 1
+                index += 2
             list_cpdp.append(list_pdp[0])
             for index in range(1, len(list_pdp)):
                 list_cpdp.append(list_cpdp[index - 1] + list_pdp[index])
             return [list_pdp, list_peaks, list_cpdp]
     # fills and returns a list of cumulative pdp's for ages from 0 to EarthAge
 
-    def cpdp(self, unc_type):
+    '''def cpdp(self, unc_type):
         if bool(self.good_set):
             pdp = self.pdp(unc_type)[0]
             list_pdp = []
             list_pdp.append(pdp[0])
             for index in range(1, len(pdp)):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
-            return list_pdp
-
-
-
+            return list_pdp'''
 
 # calculates KS d-value
 def d_value(list1, list2):
