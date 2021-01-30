@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 from bisect import *
 from const import *
 import operator
@@ -1456,15 +1457,8 @@ class AnalysesSet(object):
         self.__max_207_206 = max_207_206
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
 
-    # calculates probability density function for a given age
-    def pdp_calc(self, p_age_needed, unc_type):
-        if bool(self.good_set):
-            sum_gauss = 0
-            for key, value in self.good_set.items():
-                error = 2 * value[unc_type]
-                age = value[0]
-                sum_gauss = sum_gauss + (1 / (error * sqrt2pi)) * exp((-(p_age_needed - age) ** 2) / (2 * error ** 2))
-            return 1 / len(self.good_set) * sum_gauss
+
+
 
     # calculates kernel density estimate for a given age
     def kde_calc(self, p_age_needed, p_bandwidth):
@@ -1476,40 +1470,73 @@ class AnalysesSet(object):
                     (-(p_age_needed - age) ** 2) / (2 * (p_bandwidth) ** 2))
             return 1 / (p_bandwidth * len(self.good_set)) * sum_gauss
 
-    # fills and returns a list of pdp's for ages from 0 to EarthAge
-    def pdp(self, unc_type):
-        index = 0
-        list_pdp = []
-        list_peaks = []
-        if bool(self.good_set):
-            while index < EarthAge:
-                list_pdp.append(self.pdp_calc(index, unc_type))
-                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[index - 1]:  # peak recognizing
-                    list_peaks.append(index - 1)
-                index += 1
-            return [list_pdp, list_peaks]
-
     # fills and returns a list of kde's for ages from 0 to EarthAge
     def kde(self, p_bandwidth):
         index = 0
         # stores non-normalized kde values:
         temp_list = []
         list_peaks = []
+        list_ckde = []
         # stores cumulate kde
         ckde = 0
         if bool(self.good_set):
             while index < EarthAge:
+                #start_kde = time.time()
                 curr_kde = self.kde_calc(index, p_bandwidth)
+                #end_kde = time.time()
+                #total_kde = end_kde - start_kde
+                #print("kde at i=" + str(index) + "equals to " + str(total_kde))
                 temp_list.append(curr_kde)
                 ckde += curr_kde
-                if index > 1 and temp_list[index - 2] < temp_list[index - 1] and temp_list[index] < temp_list[
-                    index - 1]:  # peak recognizing
+                if index > 1 and temp_list[index - 2] < temp_list[index - 1] and temp_list[index] < temp_list[index - 1]:  # peak recognizing
                     list_peaks.append(index - 1)
                 index += 1
             list_kde = [i * (1 / ckde) for i in temp_list]
-            return [list_kde, list_peaks]
 
+            list_ckde.append(list_kde[0])
+            for index in range(1, len(list_kde)):
+                list_ckde.append(list_ckde[index - 1] + list_kde[index])
+            return [list_kde, list_peaks, list_ckde]
+
+    # fills and returns a list of cumulative kde's for ages from 0 to EarthAge
+    '''def ckde(self, p_bandwidth):
+        if bool(self.good_set):
+            kde = self.kde(p_bandwidth)[0]
+            list_ckde = []
+            list_ckde.append(kde[0])
+            for index in range(1, len(kde)):
+                list_ckde.append(list_ckde[index - 1] + kde[index])
+            return list_ckde'''
+
+
+    # calculates probability density function for a given age
+    def pdp_calc(self, p_age_needed, unc_type):
+        if bool(self.good_set):
+            sum_gauss = 0
+            for key, value in self.good_set.items():
+                error = 2 * value[unc_type]
+                age = value[0]
+                sum_gauss = sum_gauss + (1 / (error * sqrt2pi)) * exp((-(p_age_needed - age) ** 2) / (2 * error ** 2))
+            return 1 / len(self.good_set) * sum_gauss
+
+    # fills and returns a list of pdp's for ages from 0 to EarthAge
+    def pdp(self, unc_type):
+        index = 0
+        list_pdp = []
+        list_peaks = []
+        list_cpdp = []
+        if bool(self.good_set):
+            while index < EarthAge:
+                list_pdp.append(self.pdp_calc(index, unc_type))
+                if index > 1 and list_pdp[index - 2] < list_pdp[index - 1] and list_pdp[index] < list_pdp[index - 1]:  # peak recognizing
+                    list_peaks.append(index - 1)
+                index += 1
+            list_cpdp.append(list_pdp[0])
+            for index in range(1, len(list_pdp)):
+                list_cpdp.append(list_cpdp[index - 1] + list_pdp[index])
+            return [list_pdp, list_peaks, list_cpdp]
     # fills and returns a list of cumulative pdp's for ages from 0 to EarthAge
+
     def cpdp(self, unc_type):
         if bool(self.good_set):
             pdp = self.pdp(unc_type)[0]
@@ -1519,15 +1546,7 @@ class AnalysesSet(object):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
             return list_pdp
 
-    # fills and returns a list of cumulative kde's for ages from 0 to EarthAge
-    def ckde(self, p_bandwidth):
-        if bool(self.good_set):
-            kde = self.kde(p_bandwidth)[0]
-            list_ckde = []
-            list_ckde.append(kde[0])
-            for index in range(1, len(kde)):
-                list_ckde.append(list_ckde[index - 1] + kde[index])
-            return list_ckde
+
 
 
 # calculates KS d-value

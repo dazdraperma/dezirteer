@@ -1416,7 +1416,7 @@ class OperationWindow(Frame):
         global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
         if g_graph_settings.pdp_kde_hist == 0:
             g_prob_graph_to_draw = g_kde[0]
-            g_cum_graph_to_draw = g_ckde
+            g_cum_graph_to_draw = g_kde[2]
             g_prob_title = "Kernel Density Estimates (KDE)"
             g_cum_title = "Cumulative KDE"
         elif g_graph_settings.pdp_kde_hist == 1:
@@ -1681,37 +1681,33 @@ class OperationWindow(Frame):
         if g_graph_settings.pdp_kde_hist == 0:
             start_kde = time.time()
             g_kde = g_grainset.kde(g_graph_settings.bandwidth)
+            g_ckde = g_kde[2]
             end_kde = time.time()
             total_kde = end_kde - start_kde
             print("kde: " + str(total_kde))
 
-            start_ckde = time.time()
+            '''start_ckde = time.time()
             g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
             end_ckde = time.time()
             total_ckde = end_ckde - start_ckde
-            print("ckde: " + str(total_ckde))
+            print("ckde: " + str(total_ckde))'''
 
         elif g_graph_settings.pdp_kde_hist == 1:
             start_pdp = time.time()
             g_pdp = g_grainset.pdp(gui_support.varUncType.get())
+            g_cpdp = g_pdp[2]
             end_pdp = time.time()
             total_pdp = end_pdp - start_pdp
             print("pdp: " + str(total_pdp))
 
-            start_cpdp = time.time()
+            '''start_cpdp = time.time()
             g_cpdp = g_grainset.cpdp(gui_support.varUncType.get())
             end_cpdp = time.time()
             total_cpdp = end_cpdp - start_cpdp
-            print("cpdp: " + str(total_cpdp))
-
-
-
+            print("cpdp: " + str(total_cpdp))'''
         set_pval_dval()
 
-
-
         # cropping age interval: either full, or cropped from min_age to max_age
-
         age_lim = self.min_max_ages()
         if gui_support.varMinAgeCrop.get() == 1:
             min_age = int(self.entAgeMinCrop.get())
