@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import time
+import winsound
 import gui_support
 from sys import platform
 import matplotlib
@@ -364,6 +366,34 @@ class OperationWindow(Frame):
         self.rbPropagated.configure(text="Prop.")
         self.rbPropagated.configure(variable=gui_support.varUncType, value=2)
         self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(),
+                                                                         pars_onChange, self))
+
+        self.lbSpeedOrPbc1 = Label(self.frImport)
+        self.lbSpeedOrPbc1.grid(row=6, column=0)
+        self.apply_style(self.lbSpeedOrPbc1)
+        self.lbSpeedOrPbc1.configure(text='Calculate Pbc?')
+
+        self.lbSpeedOrPbc2 = Label(self.frImport)
+        self.lbSpeedOrPbc2.grid(row=8, columnspan=2, column=0)
+        self.apply_style(self.lbSpeedOrPbc2)
+        self.lbSpeedOrPbc2.configure(text='Note: Pbc decreases performance')
+
+        self.rbYesSpeedNoPbc = Radiobutton(self.frImport)
+        self.rbYesSpeedNoPbc.grid(row=6, column=1, sticky='sw')
+        self.apply_style(self.rbYesSpeedNoPbc)
+        self.rbYesSpeedNoPbc.configure(text="No Pbc")
+        self.rbYesSpeedNoPbc.configure(variable=gui_support.varSpeedOrPbc, value=0)
+        self.rbYesSpeedNoPbc.configure(indicatoron=0)
+        self.rbYesSpeedNoPbc.configure(command=lambda: gui_support.onChange(31, gui_support.varSpeedOrPbc.get(),
+                                                                         pars_onChange, self))
+
+        self.rbNoSpeedYesPbc = Radiobutton(self.frImport)
+        self.rbNoSpeedYesPbc.grid(row=7, column=1, sticky='sw')
+        self.apply_style(self.rbNoSpeedYesPbc)
+        self.rbNoSpeedYesPbc.configure(text="Do Pbc")
+        self.rbNoSpeedYesPbc.configure(variable=gui_support.varSpeedOrPbc, value=1)
+        self.rbNoSpeedYesPbc.configure(indicatoron=0)
+        self.rbNoSpeedYesPbc.configure(command=lambda: gui_support.onChange(31, gui_support.varSpeedOrPbc.get(),
                                                                          pars_onChange, self))
 
         # _______________frSample________________________________________________________________________________________
@@ -994,11 +1024,18 @@ class OperationWindow(Frame):
 
     #_____________Class Methods_________________________________________________________________________________________
     def enable_all_ui_elements(self):
+        start = time.time()
         for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
             for child in var_frame.winfo_children():
                 child.configure(state=NORMAL)
 
+        end = time.time()
+        total_time=end-start
+        print("enable_all_ui_elements time: " + str(total_time))
+
     def get_ui_values(self):
+        start = time.time()
+
         gui_elements = []
         gui_elements.append(self.lbShowStatus.cget("text")) #0
         gui_elements.append(gui_support.varUncType.get())   #1
@@ -1032,7 +1069,12 @@ class OperationWindow(Frame):
         gui_elements.append(self.cbDiscIntersect.get())    #29
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
         gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
+        end = time.time()
+        total_time = end - start
+        print("get_ui_values time: " + str(total_time))
         return gui_elements
+
+
 
     def set_ui_values(self, args):
         self.enable_all_ui_elements()
@@ -1122,6 +1164,7 @@ class OperationWindow(Frame):
                     g_plot_txt.remove()
                 keep_prev = False
                 g_filters.sample_name_filter = []
+                use_pbc = gui_support.varMinAgeCrop.get() == 1
 
                 #when run as a main app
 
@@ -1154,8 +1197,6 @@ class OperationWindow(Frame):
 
                     g_grainset = AnalysesSet(an_set, 'set#1')
                     g_grainset.good_bad_sets(g_filters)
-
-
 
                     pars_onChange = [g_filters, self.Table, g_grainset, g_list_col_names]
 
@@ -1608,6 +1649,8 @@ class OperationWindow(Frame):
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
+
+
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
         global g_cpdp, g_ckde, g_kde, g_pdp
         g_filters.sample_name_filter = []
@@ -1619,43 +1662,73 @@ class OperationWindow(Frame):
             is_editbox_float(self.entAgeMaxCrop, '_Filters__maxAgeCrop', EarthAge)
 
         #gets the user-selected items from the listbox
+
         item_indexes = self.lboxSamples.curselection()
         items = [self.lboxSamples.get(item_indexes) for item_indexes in item_indexes]
         g_filters.sample_name_filter = items
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters, g_list_col_names)
 
 
-        #checks if histogram is to be drawn
-        do_hist = (g_graph_settings.pdp_kde_hist == 2)
 
-        g_kde = g_grainset.kde(g_graph_settings.bandwidth)
-        g_pdp = g_grainset.pdp(gui_support.varUncType.get())
-        g_cpdp= g_grainset.cpdp(gui_support.varUncType.get())
-        g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
+
+        #checks if histogram is to be drawn
+        start_dohist = time.time()
+        do_hist = (g_graph_settings.pdp_kde_hist == 2)
+        end_dohist= time.time()
+        total_dohist = end_dohist - start_dohist
+        print("do_hist: " + str(total_dohist))
+
+        if g_graph_settings.pdp_kde_hist == 0:
+            start_kde = time.time()
+            g_kde = g_grainset.kde(g_graph_settings.bandwidth)
+            end_kde = time.time()
+            total_kde = end_kde - start_kde
+            print("kde: " + str(total_kde))
+
+            start_ckde = time.time()
+            g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
+            end_ckde = time.time()
+            total_ckde = end_ckde - start_ckde
+            print("ckde: " + str(total_ckde))
+
+        elif g_graph_settings.pdp_kde_hist == 1:
+            start_pdp = time.time()
+            g_pdp = g_grainset.pdp(gui_support.varUncType.get())
+            end_pdp = time.time()
+            total_pdp = end_pdp - start_pdp
+            print("pdp: " + str(total_pdp))
+
+            start_cpdp = time.time()
+            g_cpdp = g_grainset.cpdp(gui_support.varUncType.get())
+            end_cpdp = time.time()
+            total_cpdp = end_cpdp - start_cpdp
+            print("cpdp: " + str(total_cpdp))
+
+
 
         set_pval_dval()
 
+
+
         # cropping age interval: either full, or cropped from min_age to max_age
+
         age_lim = self.min_max_ages()
-        
         if gui_support.varMinAgeCrop.get() == 1:
             min_age = int(self.entAgeMinCrop.get())
-            min_conc_x =calc_ratio(float(self.entAgeMinCrop.get()))[1]
-            min_conc_y =calc_ratio(float(self.entAgeMinCrop.get()))[0]
+            min_conc_x = calc_ratio(float(self.entAgeMinCrop.get()))[1]
+            min_conc_y = calc_ratio(float(self.entAgeMinCrop.get()))[0]
         else:
             min_age = age_lim[0]
             min_conc_x = age_lim[2]
             min_conc_y = age_lim[4]
         if gui_support.varMaxAgeCrop.get() == 1:
             max_age = int(self.entAgeMaxCrop.get())
-            max_conc_x =calc_ratio(float(self.entAgeMaxCrop.get()))[1]
-            max_conc_y =calc_ratio(float(self.entAgeMaxCrop.get()))[0]
+            max_conc_x = calc_ratio(float(self.entAgeMaxCrop.get()))[1]
+            max_conc_y = calc_ratio(float(self.entAgeMaxCrop.get()))[0]
         else:    
             max_age = age_lim[1]
             max_conc_x = age_lim[3]
             max_conc_y = age_lim[5]
-
-        #print (str(g_grainset.min_206_238))
 
         self.clear_prev_or_remove_text()
 
@@ -1673,12 +1746,10 @@ class OperationWindow(Frame):
         yconc = conctype[6]
 
         # choosing kde/pdp/hist
+
         l_kde_pdp_hist = self.kde_pdp_hist()
         self.set_plot_types_and_titles(l_kde_pdp_hist)
-        '''prob_graph_to_draw = l_kde_pdp_hist[0]
-        cum_graph_to_draw = l_kde_pdp_hist[1]
-        prob_title = l_kde_pdp_hist[2]
-        cum_title = l_kde_pdp_hist[3]'''
+
 
         # set axis of all graphs
         self.set_axes(conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
@@ -1690,12 +1761,13 @@ class OperationWindow(Frame):
             user_selected_analysis = args
         else:
             user_selected_analysis = ""
+
+
         try:
             #plots ellipses on concordia-discordia diagram
             self.plot_conc_ellipses(user_selected_analysis)
 
             # plotting KDE/CKDE, PDP/CPDP or histogram
-
             self.prob_cum_hist_plot(do_hist, min_age, max_age)
 
         #except ValueError:
@@ -1708,10 +1780,9 @@ class OperationWindow(Frame):
 
         finally:
             self.plot_conc_text_peaks(min_age, max_age)
-            g_filename="C:\@\object_export_test.txt"
-            save_object(g_grainset, g_filename)
-            g_new_grainset = load_object(g_filename)
-            g_new_grainset == g_grainset
+            winsound.Beep(2500, 100)
+
+
 
 
 # The following code is added to facilitate the Scrolled widgets

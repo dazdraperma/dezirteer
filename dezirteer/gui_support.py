@@ -190,7 +190,8 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
         pars[0].discOrIntersect = p_value
     elif p_number_in_list == 30:
         pars[0].intersectAt = p_value+1
-
+    elif p_number_in_list == 31:
+        pars[0].speed_or_pbc == p_value
     sys.stdout.flush()
     fill_data_table(pars[1], pars[2], pars[0], pars[3])
     set_all_ui_elements(args[0])
@@ -237,6 +238,7 @@ def set_Tk_var():
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
     global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses
+    global varSpeedOrPbc
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -291,6 +293,8 @@ def set_Tk_var():
     varIncludeBadEllipses.set(0)
     varIncludeUncorrEllipses = IntVar()
     varIncludeUncorrEllipses.set(1)
+    varSpeedOrPbc = IntVar()
+    varSpeedOrPbc.set(0)
 
 
 def init(pTop, pGui, *args, **kwargs):
