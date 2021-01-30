@@ -238,7 +238,7 @@ def set_Tk_var():
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
     global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses
-    global varSpeedOrPbc
+    #global varSpeedOrPbc
     varUConc = IntVar()
     varUConc.set(1000)
     varDiscType = IntVar()
@@ -293,8 +293,8 @@ def set_Tk_var():
     varIncludeBadEllipses.set(0)
     varIncludeUncorrEllipses = IntVar()
     varIncludeUncorrEllipses.set(1)
-    varSpeedOrPbc = IntVar()
-    varSpeedOrPbc.set(0)
+    #varSpeedOrPbc = IntVar()
+    #varSpeedOrPbc.set(0)
 
 
 def init(pTop, pGui, *args, **kwargs):
@@ -311,7 +311,8 @@ def destroy_window():
     top_level = None
 
 
-def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename, p_probcum_filename):
+def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename, p_probcum_filename, p_prob, p_cum,
+                 p_bandwidth, p_kde_or_pdp):
     try:
         if p_filters.filter_by_uconc[0] == True:
             filter_by_uconc = "yes: max cutoff value at " + str(p_filters.filter_by_uconc[1])
@@ -391,88 +392,6 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             while k < len(table_array[j]):
                 l_str += str(table_array[j][k]) + ','
                 k += 1
-
-            '''l_str = ('\n' +
-                       str(an_list[j]) + ',' +
-
-                       str(an_list[j].th232_u238[0]) + ',' +
-                       str(an_list[j].th232_u238[1]) + ',' +
-                       str(an_list[j].th232_u238[2]) + ',' +
-
-                       str(an_list[j].pb208_th232[0]) + ',' +
-                       str(an_list[j].pb208_th232[1]) + ',' +
-                       str(an_list[j].pb208_th232[2]) + ',' +
-
-                       str(an_list[j].pb207_pb206[0]) + ',' +
-                       str(an_list[j].pb207_pb206[1]) + ',' +
-                       str(an_list[j].pb207_pb206[2]) + ',' +
-
-                       str(an_list[j].pb207_u235[0]) + ',' +
-                       str(an_list[j].pb207_u235[1]) + ',' +
-                       str(an_list[j].pb207_u235[2]) + ',' +
-
-                       str(an_list[j].pb206_u238[0]) + ',' +
-                       str(an_list[j].pb206_u238[1]) + ',' +
-                       str(an_list[j].pb206_u238[2]) + ',' +
-
-                       str(an_list[j].corr_coef_75_68) + ',' +
-                       str(an_list[j].corr_coef_86_76) + ',' +
-
-                       str(an_list[j].u_conc[0]) + ',' +
-                       str(an_list[j].u_conc[1]) + ',' +
-                       str(an_list[j].u_conc[2]) + ',' +
-
-                       str(an_list[j].pbc[0]) + ',' +
-                       str(an_list[j].pbc[1]) + ',' +
-                       str(an_list[j].pbc[2]) + ',' +
-
-                       str(an_list[j].pb206_pb204[0]) + ',' +
-                       str(an_list[j].pb206_pb204[1]) + ',' +
-                       str(an_list[j].pb206_pb204[2]) + ',' +
-
-                       str(an_list[j].pb207_pb204[0]) + ',' +
-                       str(an_list[j].pb207_pb204[1]) + ',' +
-                       str(an_list[j].pb207_pb204[2]) + ',' +
-
-                       str(an_list[j].pb208_pb204[0]) + ',' +
-                       str(an_list[j].pb208_pb204[1]) + ',' +
-                       str(an_list[j].pb208_pb204[2]) + ',' +
-
-                       str(an_list[j].th232_pb204[0]) + ',' +
-                       str(an_list[j].th232_pb204[1]) + ',' +
-                       str(an_list[j].th232_pb204[2]) + ',' +
-
-                       str(an_list[j].u238_pb204[0]) + ',' +
-                       str(an_list[j].u238_pb204[1]) + ',' +
-                       str(an_list[j].u238_pb204[2]) + ',' +
-
-                       str(an_list[j].calc_age(2, p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(2, p_filters.use_pbc)[1]) + ',' +
-                       str(an_list[j].calc_age(2, p_filters.use_pbc)[2]) + ',' +
-
-                       str(an_list[j].calc_age(3, p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(3, p_filters.use_pbc)[1]) + ',' +
-                       str(an_list[j].calc_age(3, p_filters.use_pbc)[2]) + ',' +
-
-                       str(an_list[j].calc_age(1, p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(1, p_filters.use_pbc)[1]) + ',' +
-                       str(an_list[j].calc_age(1, p_filters.use_pbc)[2]) + ',' +
-
-                       str(an_list[j].calc_age(0, p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(0, p_filters.use_pbc)[1]) + ',' +
-                       str(an_list[j].calc_age(0, p_filters.use_pbc)[2]) + ',' +
-                       g_corr_type[l_type_pbc] + ',' +
-                       str(int(pbc_corr_buff[0])) + ',' +
-                       str(int(pbc_corr_buff[1])) + ',' +
-                       str(int(pbc_corr_buff[2])) + ',' +
-                       str(an_list[j].calc_discordance(2, p_filters.disc_type[1])) + ',' +
-                       str(an_list[j].calc_discordance(3, p_filters.disc_type[1])) + ',' +
-
-                       str(an_list[j].is_grain_good(p_filters)[0]) + ',' +
-                       str(an_list[j].is_grain_good(p_filters)[1]) + ',' +
-
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[0]) + ',' +
-                       str(an_list[j].calc_age(an_list[j].is_grain_good(p_filters)[1], p_filters.use_pbc)[unc_type]))'''
             file.write(l_str)
             l_str = ''
             j += 1
@@ -487,39 +406,20 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
                    "How was discordance calculated, " + disc_type + '\n'
                    )
 
-
-
-        '''
-                   str(p_filters.filter_by_uconc[0]) + ',' +
-                   str(p_filters.filter_by_uconc[1]) + ',' +
-                   str(p_filters.use_pbc) + ',' +
-                   str(p_filters.filter_by_err[0]) + ',' +
-                   str(p_filters.filter_by_err[1]) + ',' +
-                   str(p_filters.pos_disc_filter) + ',' +
-                   str(p_filters.neg_disc_filter) + ',' +
-                   str(p_filters.which_age[0]) + ',' +
-                   str(p_filters.which_age[1]) + ',' +
-                   str(p_filters.disc_type[0]) + ',' +
-                   str(p_filters.disc_type[1]))
-        '''
-
         file.close()
-
-        probcum_file = open(p_probcum_filename, "w")
-        age = 0
-        bandwidth = p_graph_settings.bandwidth
-        pdp_list = p_grainset.pdp(int(p_filters.unc_type))
-        kde_list = p_grainset.kde(bandwidth)
-        cpdp_list = p_grainset.cpdp(int(p_filters.unc_type))
-        ckde_list = p_grainset.ckde(bandwidth)
-
-        probcum_file.write("Age" + ',' + "PDP" + ',' + "CPDP" + ',' + "KDE" + ',' + "CKDE" + ',' +
-                           'bandwidth=' + str(bandwidth))
-        while age < EarthAge:
-            probcum_file.write('\n' + str(age) + ',' + str(pdp_list[0][age]) + ',' + str(cpdp_list[age]) + ',' +
-                               str(kde_list[0][age]) + ',' + str(ckde_list[age]))
-            age += 1
-        probcum_file.close()
+        if (p_kde_or_pdp != "Hist") and (p_prob != []) and (p_cum != []):
+            probcum_file = open(p_probcum_filename, "w")
+            age = 0
+            bandwidth = p_bandwidth#p_graph_settings.bandwidth
+            prob_list = p_prob #p_grainset.pdp(int(p_filters.unc_type))
+            cum_list = p_cum#p_grainset.kde(bandwidth)
+            #cpdp_list = p_grainset.cpdp(int(p_filters.unc_type))
+            #ckde_list = p_grainset.ckde(bandwidth)
+            probcum_file.write("Age," + p_kde_or_pdp+"(Prob)," + p_kde_or_pdp+"(Cum)," + "bandwidth=" + bandwidth)
+            while age < EarthAge:
+                probcum_file.write('\n' + str(age) + ',' + str(prob_list[0][age]) + ',' + str(cum_list[age]))
+                age += 1
+            probcum_file.close()
 
     except AttributeError:
         pass

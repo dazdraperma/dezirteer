@@ -368,7 +368,7 @@ class OperationWindow(Frame):
         self.rbPropagated.configure(command=lambda: gui_support.onChange(23, gui_support.varUncType.get(),
                                                                          pars_onChange, self))
 
-        self.lbSpeedOrPbc1 = Label(self.frImport)
+        '''self.lbSpeedOrPbc1 = Label(self.frImport)
         self.lbSpeedOrPbc1.grid(row=6, column=0)
         self.apply_style(self.lbSpeedOrPbc1)
         self.lbSpeedOrPbc1.configure(text='Calculate Pbc?')
@@ -394,7 +394,7 @@ class OperationWindow(Frame):
         self.rbNoSpeedYesPbc.configure(variable=gui_support.varSpeedOrPbc, value=1)
         self.rbNoSpeedYesPbc.configure(indicatoron=0)
         self.rbNoSpeedYesPbc.configure(command=lambda: gui_support.onChange(31, gui_support.varSpeedOrPbc.get(),
-                                                                         pars_onChange, self))
+                                                                         pars_onChange, self))'''
 
         # _______________frSample________________________________________________________________________________________
         self.frSample = Frame(self.frOper)
@@ -1024,18 +1024,14 @@ class OperationWindow(Frame):
 
     #_____________Class Methods_________________________________________________________________________________________
     def enable_all_ui_elements(self):
-        start = time.time()
+
         for var_frame in (self.frImport, self.frAgeDisc, self.frFilter, self.frGraphSettings, self.frStatus):
             for child in var_frame.winfo_children():
                 child.configure(state=NORMAL)
 
-        end = time.time()
-        total_time=end-start
-        print("enable_all_ui_elements time: " + str(total_time))
+
 
     def get_ui_values(self):
-        start = time.time()
-
         gui_elements = []
         gui_elements.append(self.lbShowStatus.cget("text")) #0
         gui_elements.append(gui_support.varUncType.get())   #1
@@ -1069,9 +1065,7 @@ class OperationWindow(Frame):
         gui_elements.append(self.cbDiscIntersect.get())    #29
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
         gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
-        end = time.time()
-        total_time = end - start
-        print("get_ui_values time: " + str(total_time))
+
         return gui_elements
 
 
@@ -1239,13 +1233,29 @@ class OperationWindow(Frame):
         g_plot_txt = ""
 
     def export_dialog(self):
+        global g_kde, g_ckde, g_pdp, g_cpdp, g_graph_settings
         file_main = filedialog.asksaveasfile(mode='w', defaultextension=".csv", initialdir=g_directory,
                                              filetypes=(("Comma separated values files", "*.csv"),
                                                           ("All files", "*.*")))
         file_prob = os.path.dirname(str(file_main.name)) + '/' + \
                     os.path.splitext(os.path.basename(str(file_main.name)))[0]+'_prob_cum' + '.csv'
 
-        gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob)
+        if g_graph_settings.pdp_kde_hist == 0:
+            prob = g_kde
+            cum = g_ckde
+            bandwidth = str(g_graph_settings.bandwidth)
+            kde_or_pdp = "KDE"
+        elif g_graph_settings.pdp_kde_hist == 1:
+            prob = g_pdp
+            cum = g_cpdp
+            bandwidth = "n/a"
+            kde_or_pdp = "PDP"
+        else:
+            prob = []
+            cum = []
+            bandwidth = "n/a"
+            kde_or_pdp = "Hist"
+        gui_support.export_table(g_grainset, g_filters, g_list_col_names, g_graph_settings, file_main, file_prob, prob, cum, bandwidth, kde_or_pdp)
 
     def save_session(self):
 
@@ -1649,8 +1659,6 @@ class OperationWindow(Frame):
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
-
-
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
         global g_cpdp, g_ckde, g_kde, g_pdp
         g_filters.sample_name_filter = []
@@ -1669,22 +1677,17 @@ class OperationWindow(Frame):
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters, g_list_col_names)
 
 
-
-
         #checks if histogram is to be drawn
-        start_dohist = time.time()
+
         do_hist = (g_graph_settings.pdp_kde_hist == 2)
-        end_dohist= time.time()
-        total_dohist = end_dohist - start_dohist
-        print("do_hist: " + str(total_dohist))
 
         if g_graph_settings.pdp_kde_hist == 0:
-            start_kde = time.time()
+            #start_kde = time.time()
             g_kde = g_grainset.kde(g_graph_settings.bandwidth)
             g_ckde = g_kde[2]
-            end_kde = time.time()
-            total_kde = end_kde - start_kde
-            print("kde: " + str(total_kde))
+            #end_kde = time.time()
+            #total_kde = end_kde - start_kde
+            #print("kde: " + str(total_kde))
 
             '''start_ckde = time.time()
             g_ckde = g_grainset.ckde(g_graph_settings.bandwidth)
@@ -1693,12 +1696,12 @@ class OperationWindow(Frame):
             print("ckde: " + str(total_ckde))'''
 
         elif g_graph_settings.pdp_kde_hist == 1:
-            start_pdp = time.time()
+            #start_pdp = time.time()
             g_pdp = g_grainset.pdp(gui_support.varUncType.get())
             g_cpdp = g_pdp[2]
-            end_pdp = time.time()
-            total_pdp = end_pdp - start_pdp
-            print("pdp: " + str(total_pdp))
+            #end_pdp = time.time()
+            #total_pdp = end_pdp - start_pdp
+            #print("pdp: " + str(total_pdp))
 
             '''start_cpdp = time.time()
             g_cpdp = g_grainset.cpdp(gui_support.varUncType.get())
