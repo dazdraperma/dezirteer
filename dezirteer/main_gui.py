@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import time
-import winsound
+
 import gui_support
 from sys import platform
 import matplotlib
@@ -35,6 +35,8 @@ except ImportError:
     py3 = True
 from math_module import *
 from import_export import *
+if platform != "darwin":
+    import winsound
 
 def truncate(f, n):
     return floor(f * 10 ** n) / 10 ** n
