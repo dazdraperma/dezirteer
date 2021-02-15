@@ -355,8 +355,8 @@ def file_to_analysis(imp_file, index):
 
         #TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
         th232_u238.append(-1)
-        th232_u238.append( -1 / sigma_level)
-        th232_u238.append( -1 / sigma_level)
+        th232_u238.append(-1 / sigma_level)
+        th232_u238.append(-1 / sigma_level)
 
     elif imp_file[1] == 'glitter':  # glitter routine
         file_len = imp_file[2]
@@ -463,6 +463,11 @@ def file_to_analysis(imp_file, index):
         final_U_Th_Ratio.append(float(an[23]))
         final_U_Th_Ratio.append(float(an[24]) / sigma_level)
         final_U_Th_Ratio.append(float(an[24]) / sigma_level)
+
+        th232_u238.append(float(an[25]))
+        th232_u238.append(float(an[26]) / sigma_level)
+        th232_u238.append(float(an[26]) / sigma_level)
+
 
 
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
