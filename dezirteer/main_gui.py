@@ -1597,7 +1597,7 @@ class OperationWindow(Frame):
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
         # min_max_age = self.min_max_ages()
         # min_age = min_max_age[0]
-        # max_age = min_max_age[1]
+        # max_age = min_max_age[1]len(g_prob_graph_to_draw[min_age: max_age])
         self.ax_prob.clear()
         self.canvas_prob.draw()
         max_age -= 1

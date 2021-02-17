@@ -581,7 +581,7 @@ class Analysis(object):
         else:
             self.__age82 = [-1, -1, -1]
 
-        if pb207_pb206[0] > .04605:
+        if pb207_pb206[0] > .046162232:
             age76_temp = find_age(pb207_pb206[0]) * 1000000
             C1 = 1 / U238_U235
             C2 = LAMBDA_235
@@ -977,7 +977,7 @@ class Analysis(object):
 
                 elif isotopic_system == 3:
                     if do_correction == 0:
-                        # .04605 corresponds to age67 ~ 0
+                        # .046162232 corresponds to age67 ~ 0
                         age = self.age76[0]
                         age_err_int = self.age76[1]
                         age_err_prop = self.age76[2]
@@ -1032,7 +1032,10 @@ class Analysis(object):
         if (age_206_238 < 0) or (age_207_206 < 0):
             disc_68_76 = -999.99
         else:
-            disc_68_76 = 1 - age_206_238 / age_207_206
+            if age_207_206!=0:
+                disc_68_76 = 1 - age_206_238 / age_207_206
+            else:
+                disc_68_57 = -999.99
 
         #if disc_type == 0:
         #    return -1
@@ -1065,7 +1068,7 @@ class Analysis(object):
                      and (self.pb207_u235[0] > 0)
         #for_204pbc_optional = (self.pb208_pb204[0] > 0) and (self.pb208_th232[0] > 0)
         #for_204pbc = [for_204pbc_mandatory, for_204pbc_optional]
-        for_207pbc = (self.pb206_u238[0] > 0) and (self.pb207_pb206[0] > .04605)
+        for_207pbc = (self.pb206_u238[0] > 0) and (self.pb207_pb206[0] > .046162232)
         for_208pbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0)
         for_Andpbc = (self.th232_u238[0] > 0) and (self.pb206_u238[0] > 0) and (self.pb208_th232[0] > 0) and \
                      (self.pb207_u235[0] > 0)
