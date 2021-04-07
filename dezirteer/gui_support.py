@@ -486,53 +486,70 @@ def line_with_data (p_grainset, p_filters):
         one_analysis.append(round(th232_u238[0], 4))
         one_analysis.append(round(th232_u238[1], 4))
         one_analysis.append(round(th232_u238[2], 4))
+
         one_analysis.append(round(pb208_th232[0], 4))
         one_analysis.append(round(pb208_th232[1], 4))
+        one_analysis.append(round(pb208_th232[1], 4))
+
         one_analysis.append(round(pb207_pb206[0], 4))
         one_analysis.append(round(pb207_pb206[1], 4))
-        one_analysis.append(round(pb208_th232[2], 4))
         one_analysis.append(round(pb207_pb206[2], 4))
+
         one_analysis.append(round(pb207_u235[0], 4))
         one_analysis.append(round(pb207_u235[1], 4))
         one_analysis.append(round(pb207_u235[2], 4))
+
         one_analysis.append(round(pb206_u238[0], 4))
         one_analysis.append(round(pb206_u238[1], 4))
         one_analysis.append(round(pb206_u238[2], 4))
+
         one_analysis.append(round(corr_coef_75_68, 2))
         one_analysis.append(round(corr_coef_86_76, 2))
+
         one_analysis.append(round(u_conc[0], 4))
         one_analysis.append(round(u_conc[1], 4))
         one_analysis.append(round(u_conc[2], 4))
+
         one_analysis.append(round(pbc[0], 4))
         one_analysis.append(round(pbc[1], 4))
         one_analysis.append(round(pbc[2], 4))
+
         one_analysis.append(round(pb206_pb204[0], 1))
         one_analysis.append(round(pb206_pb204[1], 1))
         one_analysis.append(round(pb206_pb204[2], 1))
+
         one_analysis.append(round(pb207_pb204[0], 1))
         one_analysis.append(round(pb207_pb204[1], 1))
         one_analysis.append(round(pb207_pb204[2], 1))
+
         one_analysis.append(round(pb208_pb204[0], 1))
         one_analysis.append(round(pb208_pb204[1], 1))
         one_analysis.append(round(pb208_pb204[2], 1))
+
         one_analysis.append(round(th232_pb204[0], 1))
         one_analysis.append(round(th232_pb204[1], 1))
         one_analysis.append(round(th232_pb204[2], 1))
+
         one_analysis.append(round(u238_pb204[0], 1))
         one_analysis.append(round(u238_pb204[1], 1))
         one_analysis.append(round(u238_pb204[2], 1))
+
         one_analysis.append(int(age_208_232[0]))
         one_analysis.append(int(age_208_232[1]))
         one_analysis.append(int(age_208_232[2]))
+
         one_analysis.append(int(age_207_206[0]))
         one_analysis.append(int(age_207_206[1]))
         one_analysis.append(int(age_207_206[2]))
+
         one_analysis.append(int(age_207_235[0]))
         one_analysis.append(int(age_207_235[1]))
         one_analysis.append(int(age_207_235[2]))
+
         one_analysis.append(int(age_206_238[0]))
         one_analysis.append(int(age_206_238[1]))
         one_analysis.append(int(age_206_238[2]))
+
         one_analysis.append(g_corr_type[l_type_pbc])
 
         one_analysis.append(round(rat68_204corr[0], 4))
