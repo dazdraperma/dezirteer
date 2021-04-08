@@ -1600,8 +1600,18 @@ class OperationWindow(Frame):
         # max_age = min_max_age[1]len(g_prob_graph_to_draw[min_age: max_age])
         self.ax_prob.clear()
         self.canvas_prob.draw()
-        max_age -= 1
-        self.ax_prob.plot(list(range(min_age, max_age, 2)), g_prob_graph_to_draw[min_age: max_age])
+        l_min_age = min_age
+        l_max_age = max_age
+
+        if l_min_age % 2 != 0:
+            l_min_age -=1
+
+        if l_max_age % 2 != 0:
+            l_max_age -=1
+
+        #max_age -= 1
+        range_of_ages = range(l_min_age, l_max_age, 2)
+        self.ax_prob.plot(list(range_of_ages), g_prob_graph_to_draw[l_min_age//2: l_max_age//2])
         if gui_support.varShowCalc.get() == 1:
             i = 0
             self.ax_prob.set_title(g_prob_title)
@@ -1619,9 +1629,18 @@ class OperationWindow(Frame):
 
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
-        max_age -= 2
-        self.ax_cum.plot(list(range(min_age, max_age, 2)), g_cum_graph_to_draw[min_age: max_age])
-        self.plot_peaks(min_age, max_age) #ax_prob.plot is done here
+        #max_age -= 2
+        l_min_age = min_age
+        l_max_age = max_age
+
+        if l_min_age % 2 != 0:
+            l_min_age -= 1
+
+        if l_max_age % 2 != 0:
+            l_max_age -= 1
+        range_of_ages = range(l_min_age, l_max_age, 2)
+        self.ax_cum.plot(list(range_of_ages), g_cum_graph_to_draw[l_min_age//2: l_max_age//2])
+        self.plot_peaks(l_min_age, l_max_age) #ax_prob.plot is done here
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
         if not do_hist:

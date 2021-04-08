@@ -1032,7 +1032,7 @@ class Analysis(object):
         if (age_206_238 < 0) or (age_207_206 < 0):
             disc_68_76 = -999.99
         else:
-            if age_207_206!=0:
+            if age_207_206 != 0:
                 disc_68_76 = 1 - age_206_238 / age_207_206
             else:
                 disc_68_57 = -999.99
