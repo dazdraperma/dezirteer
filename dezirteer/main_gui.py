@@ -45,21 +45,35 @@ def truncate(f, n):
 #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
 #sets 0 values to both variables
 def set_pval_dval():
-    global g_prev_cum, g_grainset, g_pval_dval, g_ckde, g_cpdp
+    global g_prev_cum, g_prev_prob, g_grainset, g_pval_dval, g_ckde, g_cpdp
+    global g_kde, g_pdp
     if g_prev_cum == []:
         pval = 0
         dval = 0
+
     else:
         if g_graph_settings.pdp_kde_hist == 0:
             curr_cum = g_ckde
+
         elif g_graph_settings.pdp_kde_hist == 1:
             curr_cum = g_cpdp
+
         else:
             curr_cum = []
         dval = d_value(curr_cum, g_prev_cum)
         pval = p_value(dval, g_number_of_good_grains[0], g_prev_n[0])
-    g_pval_dval = [pval, dval]
-    #return [pval, dval]
+
+    if g_prev_prob == []:
+        like = 0
+    else:
+        if g_graph_settings.pdp_kde_hist == 0:
+            curr_prob = g_kde
+        elif g_graph_settings.pdp_kde_hist == 1:
+            curr_prob = g_pdp
+        else:
+            curr_prob = []
+        like = likeness(curr_prob, g_prev_prob)
+    g_pval_dval = [pval, dval, like]
 
 
 def peaks():
@@ -109,6 +123,11 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 4].configure(text="KS d-val")
         list_of_labels[counter * 2 + 5].grid(row=counter + 2, column=1, pady=5, padx=5, sticky='w')
         list_of_labels[counter * 2 + 5].configure(text=round(g_pval_dval[1], 2))
+
+        list_of_labels[counter * 2 + 6].grid(row=counter + 3, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 6].configure(text="Likeness")
+        list_of_labels[counter * 2 + 7].grid(row=counter + 3, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 7].configure(text=round(g_pval_dval[2], 2))
 
 
 class OperationWindow(Frame):
@@ -1222,9 +1241,10 @@ class OperationWindow(Frame):
 
     #clears the graph after user presses the btClear
     def clear_graph(self):
-        global g_plot_txt, g_prev_n, g_prev_cum
+        global g_plot_txt, g_prev_n, g_prev_cum, g_prev_prob
         g_prev_n = 0
         g_prev_cum = []
+        g_prev_prob = []
         self.ax_conc.clear()
         self.ax_prob.clear()
         self.ax_cum.clear()
@@ -1364,7 +1384,7 @@ class OperationWindow(Frame):
 
     #adds or removes text to the cum_plot, depending on the checked state of the chbShowCalc
     def plot_text(self, pval, dval):
-        global g_plot_txt, g_conc_txt_green, g_conc_txt_blue, g_conc_txt_black
+        global g_plot_txt, g_conc_txt_green, g_conc_txt_blue, g_conc_txt_black, g_pval_dval
 
         if gui_support.varShowCalc.get() == 1:
                 text_to_show = \
@@ -1377,6 +1397,7 @@ class OperationWindow(Frame):
                 "MSWD="+str(round(g_number_of_good_grains[4], 2))+"\n" \
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
+                "Likeness="+str(round(g_pval_dval[2], 2))+"\n" \
                 "peaks at "
                 i = 1
                 for p in peaks():
@@ -1660,7 +1681,7 @@ class OperationWindow(Frame):
         g_plot_txt = ""
 
     def plot_conc_text_peaks(self,min_age, max_age):
-        global g_prev_n, g_prev_cum, g_pval_dval, g_ckde, g_cpdp
+        global g_prev_n, g_prev_cum, g_prev_prob, g_pval_dval, g_ckde, g_cpdp, g_pdp, g_kde
 
         self.plot_text(g_pval_dval[0], g_pval_dval[1])
         self.canvas_conc.draw()
@@ -1670,8 +1691,10 @@ class OperationWindow(Frame):
         g_prev_n = g_number_of_good_grains
         if g_graph_settings.pdp_kde_hist == 0:
             g_prev_cum = g_ckde
+            g_prev_prob = g_kde
         else:
             g_prev_cum = g_cpdp
+            g_prev_prob = g_pdp
 
     def set_plot_types_and_titles(self, kde_pdp_hist):
         global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
@@ -1683,7 +1706,7 @@ class OperationWindow(Frame):
     #draws the graph based on the data and user settings. Clears the previous graph, or draws on top of it,
     #depending on user settings
     def clear_and_plot(self, *args):
-        global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_n, g_pval_dval
+        global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_prob, g_prev_n, g_pval_dval
         global g_cpdp, g_ckde, g_kde, g_pdp
         g_filters.sample_name_filter = []
 
@@ -1896,7 +1919,7 @@ def is_editbox_float(edit_box, to_assign_to, to_replace_with):
 
 def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
-    global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_n
+    global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_prob, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version, g_release_date, g_current_date, g_days_since_release
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
     g_dezirteer_version = __version__
@@ -1910,6 +1933,7 @@ def main():
     g_ckde = []
     g_pval_dval = [-1, -1]
     g_prev_cum = []
+    g_prev_prob = []
     g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
     g_list_col_names = ['232Th/238U', '232/238Err 1s(Int)', '232/238Err 1s(Prop)',
                         '208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
