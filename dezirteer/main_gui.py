@@ -65,6 +65,7 @@ def set_pval_dval():
 
     if g_prev_prob == []:
         like = 0
+        sim = 0
     else:
         if g_graph_settings.pdp_kde_hist == 0:
             curr_prob = g_kde
@@ -73,7 +74,8 @@ def set_pval_dval():
         else:
             curr_prob = []
         like = likeness(curr_prob, g_prev_prob)
-    g_pval_dval = [pval, dval, like]
+        sim = similarity(curr_prob, g_prev_prob)
+    g_pval_dval = [pval, dval, like, sim]
 
 
 def peaks():
@@ -107,7 +109,7 @@ def show_calc_frame(container):
             list_of_labels[counter*2 + 1].configure(text=round(g_number_of_good_grains[counter], 2))
             counter += 1
 
-        for x in range(0, 8):
+        for x in range(0, 10):
             list_of_labels.append(Label(frContainer))
         list_of_labels[counter * 2 + 0].grid(row=counter, column=0, pady=5, padx=5, sticky='e')
         list_of_labels[counter * 2 + 0].configure(text="peaks: weight")
@@ -128,6 +130,11 @@ def show_calc_frame(container):
         list_of_labels[counter * 2 + 6].configure(text="Likeness")
         list_of_labels[counter * 2 + 7].grid(row=counter + 3, column=1, pady=5, padx=5, sticky='w')
         list_of_labels[counter * 2 + 7].configure(text=round(g_pval_dval[2], 2))
+
+        list_of_labels[counter * 2 + 8].grid(row=counter + 4, column=0, pady=5, padx=5, sticky='e')
+        list_of_labels[counter * 2 + 8].configure(text="Similarity")
+        list_of_labels[counter * 2 + 9].grid(row=counter + 4, column=1, pady=5, padx=5, sticky='w')
+        list_of_labels[counter * 2 + 9].configure(text=round(g_pval_dval[3], 2))
 
 
 class OperationWindow(Frame):
@@ -1398,6 +1405,7 @@ class OperationWindow(Frame):
                 "KS p-value="+str(round(pval, 2))+"; " \
                 "d-value="+str(round(dval, 2))+"\n" \
                 "Likeness="+str(round(g_pval_dval[2], 2))+"\n" \
+                "Similarity=" + str(round(g_pval_dval[3], 2)) + "\n"\
                 "peaks at "
                 i = 1
                 for p in peaks():

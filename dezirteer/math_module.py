@@ -1561,6 +1561,16 @@ def likeness(list1, list2):
     return 1-(i/2)
 
 
+def similarity (list1, list2):
+    i = 0
+    if list1 is not None and list2 is not None:
+        for age in range(len(list1[0])):
+            i = i + sqrt(list1[0][age] * list2[0][age])
+    else:
+        i = -1
+    return i
+
+
 # calculates KS d-value
 def d_value(list1, list2):
     d = 0
