@@ -1492,7 +1492,8 @@ class AnalysesSet(object):
                 #print("kde at i=" + str(index) + "equals to " + str(total_kde))
                 temp_list.append(curr_kde)
                 ckde += curr_kde
-                if index > 2 and temp_list[int(index/2 - 2)] < temp_list[int(index/2 - 1)] and temp_list[int(index/2)] < temp_list[int(index/2 - 1)]:  # peak recognizing
+                if index > 2 and temp_list[int(index/2 - 2)] < temp_list[int(index/2 - 1)] and temp_list[int(index/2)] \
+                        <= temp_list[int(index/2 - 1)]:  # peak recognizing
                     list_peaks.append(index - 1)
                 index += 2
             list_kde = [i * (1 / ckde) for i in temp_list]

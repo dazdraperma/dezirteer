@@ -19,7 +19,7 @@ from matplotlib.patches import Rectangle
 from tkinter import filedialog
 from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
 from scipy import stats
-from numpy import log10
+from numpy import log10, log
 from gui_support import set_all_ui_elements
 
 try:
@@ -193,12 +193,17 @@ class OperationWindow(Frame):
             self.fig = plt.figure()
         self.ax_conc = self.fig.add_subplot(111)
         self.ax_conc.axes
+        if g_graph_settings.conc_type == 2:
+            self.ax_conc.axes.set_yscale("log")
+
         self.ax_conc.set_xlabel('207Pb/235U')
         self.ax_conc.set_ylabel('206Pb/238U')
         self.ax_conc.set_title('Concordia')
         self.ax_conc.axes.format_coord = lambda x, y: ""
         try:
             self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
+
+
         except UnboundLocalError:
             pass
 
@@ -1452,6 +1457,17 @@ class OperationWindow(Frame):
             conc_graph_ytitle = "207/206"
             xconc = 3
             yconc = 2
+        '''else: #ln T-W
+            #for i in concordia_table
+            conc_graph_x = [(1 / i[0]) for i in concordia_table]
+            #conc_graph_x = [1 / log(i[0]) for i in concordia_table[1:]]
+            conc_graph_y = [i[2] for i in concordia_table]
+            #conc_graph_y = [log(i[2]) for i in concordia_table[1:]]
+            conc_title = "ln Tera-Wasserburg Concordia"
+            conc_graph_xtitle = "ln(238/206)"
+            conc_graph_ytitle = "ln(207/206)"
+            xconc = 3
+            yconc = 2'''
         return [conc_graph_x, conc_graph_y, conc_title, conc_graph_xtitle, conc_graph_ytitle, xconc, yconc]
 
     def kde_pdp_hist(self):
@@ -1496,8 +1512,12 @@ class OperationWindow(Frame):
                 t += 1
             x = calc_ratio(t)[xconc]
             y = calc_ratio(t)[yconc]
+            if g_graph_settings.conc_type == 2:
+                x = log(x)
+                y = log(y)
             self.ax_conc.plot(x, y, 'ks', markersize=3)
             self.ax_conc.text(x, y, str(t), style='italic')
+
 
     def plot_conc_ellipses(self, args):
         # plots ellipses on concordia-discordia diagram
@@ -1543,11 +1563,19 @@ class OperationWindow(Frame):
                     # Tera-Wasserburg concordia
                     else:
                         corr_coef = corr_coef_86_76
-                        #u238_pb206 = u238_pb206(False)
                         x_conc = u238_pb206[0]
                         x_err = u238_pb206[gui_support.varUncType.get()]
                         y_conc = pb207_pb206[0]
                         y_err = pb207_pb206[gui_support.varUncType.get()]
+                    '''else: #ln T-W concordia
+                        if u238_pb206[0]>0 and pb207_pb206[0]>0:
+                            corr_coef = corr_coef_86_76
+                            x_conc = log(u238_pb206[0])
+                            x_err = 0.434*(u238_pb206[gui_support.varUncType.get()])/(u238_pb206[0])
+                            y_conc = (pb207_pb206[0])
+                            y_err = 0.434*(pb207_pb206[gui_support.varUncType.get()])/(pb207_pb206[0])
+                        else:
+                            shall_plot = False'''
 
                     if (x_conc > 0) and (x_err > 0) and (y_conc > 0) and (y_err > 0):
                         a1 = x_err * corr_coef * sqrt(2) * sigma_level
@@ -1621,6 +1649,8 @@ class OperationWindow(Frame):
         self.ax_conc.plot(conc_graph_x, conc_graph_y)
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
+        if g_graph_settings.conc_type == 2:
+            self.ax_conc.axes.set_yscale("log")
 
     def plot_peaks(self, min_age, max_age):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
