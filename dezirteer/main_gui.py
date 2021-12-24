@@ -80,10 +80,14 @@ def set_pval_dval():
 
 def peaks():
     global g_kde, g_pdp
-    if g_graph_settings.pdp_kde_hist == 0:
+    if g_graph_settings.pdp_kde_hist == 0 and len(g_kde) > 0:
         return g_kde[1]
-    else:
+
+    elif g_graph_settings.pdp_kde_hist == 1 and len(g_pdp) > 0:
         return g_pdp[1]
+
+    else:
+        return []
 
 
 def show_calc_frame(container):
@@ -1590,7 +1594,6 @@ class OperationWindow(Frame):
                         a = sqrt(test_major_axis)
                         test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
                         b = sqrt(test_minor_axis)
-
 
                         if i == 1: #bad grains
                             if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
