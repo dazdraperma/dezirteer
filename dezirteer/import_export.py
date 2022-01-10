@@ -1,4 +1,5 @@
 from math_module import *
+from math import sqrt
 try:
     import cPickle as pickle
 except ModuleNotFoundError:
@@ -420,9 +421,16 @@ def file_to_analysis(imp_file, index):
         pb206_u238.append(float(an[4]) / sigma_level)
         pb206_u238.append(float(an[4]) / sigma_level)
 
-        pb207_u235.append(float(an[5]))
-        pb207_u235.append(float(an[6]) / sigma_level)
-        pb207_u235.append(float(an[6]) / sigma_level)
+        if float(an[5]) != -1:
+            pb207_u235.append(float(an[5]))
+            pb207_u235.append(float(an[6]) / sigma_level)
+            pb207_u235.append(float(an[6]) / sigma_level)
+        else:
+            temp75=float(an[7])*float(an[3])*U238_U235
+            temp75err=temp75*sqrt(((float(an[8]))**2/(float(an[7]))**2)+((float(an[4]))**2/(float(an[3]))**2)+((ERR_U238_U235)**2/(U238_U235)**2))/ sigma_level
+            pb207_u235.append(temp75)
+            pb207_u235.append(temp75err)
+            pb207_u235.append(temp75err)
 
         pb207_pb206.append(float(an[7]))
         pb207_pb206.append(float(an[8]) / sigma_level)

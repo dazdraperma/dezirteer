@@ -1554,22 +1554,24 @@ class AnalysesSet(object):
 # calculates likeness (Satskovski et al., 2013)
 def likeness(list1, list2):
     i = 0
-    if list1 is not None and list2 is not None:
+    if list1 is not None and list1 != [] and list2 is not None and list2 != []:
         for age in range(len(list1[0])):
             i = i + abs(list1[0][age] - list2[0][age])
+        return 1 - (i / 2)
     else:
-        i = -1
-    return 1-(i/2)
+        return -1
+
 
 
 def similarity (list1, list2):
     i = 0
-    if list1 is not None and list2 is not None:
+    if list1 is not None and list1 != [] and list2 is not None and list2 != []:
         for age in range(len(list1[0])):
             i = i + sqrt(list1[0][age] * list2[0][age])
+        return i
     else:
-        i = -1
-    return i
+        return -1
+
 
 
 # calculates KS d-value

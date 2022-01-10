@@ -138,7 +138,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 8:
         pars[0].disc_type[0] = p_value
     elif p_number_in_list == 9:
-        pars[0].conc_type = p_value
+            pars[0].conc_type = p_value
     elif p_number_in_list == 11:
         pars[0].fit_disc = p_value
     elif p_number_in_list == 12:
