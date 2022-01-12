@@ -425,7 +425,7 @@ def file_to_analysis(imp_file, index):
             pb207_u235.append(float(an[5]))
             pb207_u235.append(float(an[6]) / sigma_level)
             pb207_u235.append(float(an[6]) / sigma_level)
-        else:
+        else: #calculate 75 fromz 76, 68 and 238/235
             temp75=float(an[7])*float(an[3])*U238_U235
             temp75err=temp75*sqrt(((float(an[8]))**2/(float(an[7]))**2)+((float(an[4]))**2/(float(an[3]))**2)+((ERR_U238_U235)**2/(U238_U235)**2))/ sigma_level
             pb207_u235.append(temp75)
