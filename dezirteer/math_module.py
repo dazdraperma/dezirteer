@@ -366,10 +366,12 @@ def fill_concordia_table():
             ratios = []
             t += 1
 
+
 def find_conc_value(val68, val75):
     pos68 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][0]-val68))
-    pos75 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][1] - val75))
+    pos75 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][1]-val75))
     return pos68, pos75
+
 
 # calculates pb-pb age from the table of pb-pb ratios,filled in fill_Pb206207_table()
 def find_age(pLeadRatio):
@@ -1191,8 +1193,6 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-
-
         if discOrIntersect == 0:
             if use_pbc[0] in (0, 1):
                 disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
@@ -1203,9 +1203,7 @@ class Analysis(object):
             else:
                 is_disc_good = True
         else:
-            correct_75 = calc_ratio(age_206_238[0])[1]
-            correct_68 = calc_ratio(age_206_238[0])[0]
-            #correct_68 = calc_ratio(age_207_235[0])[0]
+
 
             if ((self.pb206_u238[0] > correct_68) and (self.pb206_u238[0] - intersectAt * self.pb206_u238[int(pFilter.unc_type)] < correct_68))\
                     or ((self.pb206_u238[0] < correct_68) and (self.pb206_u238[0] + intersectAt * self.pb206_u238[int(pFilter.unc_type)] > correct_68)):
