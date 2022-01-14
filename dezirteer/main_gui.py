@@ -1644,7 +1644,8 @@ class OperationWindow(Frame):
 
                             self.ax_conc.add_patch(el)
                             if plot_error_bars == 1:
-                                self.ax_conc.errorbar(x_conc, y_conc, xerr=x_err, yerr=y_err, xlolims=True, xuplims=True, uplims=True, lolims=True, ecolor='black', fmt='-o')
+
+                                self.ax_conc.errorbar(x_conc, y_conc, xerr=x_err*sigma_level, yerr=y_err*sigma_level, xlolims=True, xuplims=True, uplims=True, lolims=True, ecolor='black', fmt='-o')
 
 
     def plot_hist(self, min_age, max_age):
