@@ -15,6 +15,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
+#from matplotlib.pyplot import errorbar
+from matplotlib.collections import LineCollection
+
 from matplotlib.patches import Rectangle
 from tkinter import filedialog
 from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
@@ -836,15 +839,23 @@ class OperationWindow(Frame):
         self.chbIncludeBadEllipses.configure(state=DISABLED)
         self.chbIncludeBadEllipses.configure(variable=gui_support.varIncludeBadEllipses)
 
+        self.chbShowErrors = Checkbutton(self.frGraphSettings)
+        self.chbShowErrors.grid(row=3, column=2, columnspan=2, sticky='w', pady=5)
+        self.apply_style(self.chbShowErrors)
+        self.chbShowErrors.configure(text="show error bars")
+        self.chbShowErrors.configure(justify=LEFT)
+        self.chbShowErrors.configure(state=DISABLED)
+        self.chbShowErrors.configure(variable=gui_support.varShowErrorBars)
+
 
         self.lbDensityPlot = Label(self.frGraphSettings)
-        self.lbDensityPlot.grid(row=3, columnspan=3, pady=5, sticky='ew')
+        self.lbDensityPlot.grid(row=4, columnspan=3, pady=5, sticky='ew')
         self.apply_style(self.lbDensityPlot)
         self.lbDensityPlot.configure(font=font9)
         self.lbDensityPlot.configure(text='Density plot:')
 
         self.lbDensityPlotType = Label(self.frGraphSettings)
-        self.lbDensityPlotType.grid(row=4, column=0, pady=5, sticky='w')
+        self.lbDensityPlotType.grid(row=5, column=0, pady=5, sticky='w')
         self.apply_style(self.lbDensityPlotType)
         self.lbDensityPlotType.configure(text='Type:')
 
@@ -886,7 +897,7 @@ class OperationWindow(Frame):
 
 
         self.cbDensityPlotType = ttk.Combobox(self.frGraphSettings)
-        self.cbDensityPlotType.grid(row=4, column=1, sticky='w')
+        self.cbDensityPlotType.grid(row=5, column=1, sticky='w')
         self.cbDensityPlotType.configure(takefocus="")
         self.cbDensityPlotType.configure(state=DISABLED)
         self.cbDensityPlotType.configure(values=('KDE', 'PDP', 'Histogram'))
@@ -1103,6 +1114,7 @@ class OperationWindow(Frame):
         gui_elements.append(self.cbDiscIntersect.get())    #29
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
         gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
+        gui_elements.append(gui_support.varShowErrorBars.get())  # 32
 
         return gui_elements
 
@@ -1172,6 +1184,7 @@ class OperationWindow(Frame):
         self.cbDiscIntersect.set(args[29])
         self.cbShowUncorrCorrBothEllipses.set(args[30])
         gui_support.varIncludeBadEllipses.set(args[31])
+        gui_support.varShowErrorBars.set(args[32])
 
     def show_frame(self):
         winCalc = Toplevel()
@@ -1534,6 +1547,7 @@ class OperationWindow(Frame):
         #plot_good_ellipses = gui_support.varIncludeUncorrEllipses.get()
         #plot_204_ellipses = gui_support.varInclude204Ellipses.get()
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
+        plot_error_bars = gui_support.varShowErrorBars.get()
 
         for i in (0, 1):
             for k in range(0, j):
@@ -1625,7 +1639,13 @@ class OperationWindow(Frame):
                         if shall_plot:
                             el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
                                      fill=oval_fill, linewidth=line_thickness, linestyle=line_style)
+
+                            #rect_coords = [x_conc-x_err, y_conc-y_err, x_err*2, y_err*2]
+
                             self.ax_conc.add_patch(el)
+                            if plot_error_bars == 1:
+                                self.ax_conc.errorbar(x_conc, y_conc, xerr=x_err, yerr=y_err, xlolims=True, xuplims=True, uplims=True, lolims=True, ecolor='black', fmt='-o')
+
 
     def plot_hist(self, min_age, max_age):
         global g_prob_graph_to_draw
@@ -1650,6 +1670,8 @@ class OperationWindow(Frame):
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.plot(conc_graph_x, conc_graph_y)
+
+
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
         if g_graph_settings.conc_type == 2:

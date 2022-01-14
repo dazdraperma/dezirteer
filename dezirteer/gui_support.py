@@ -237,7 +237,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
-    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses
+    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses, varShowErrorBars
     #global varSpeedOrPbc
     varUConc = IntVar()
     varUConc.set(1000)
@@ -291,6 +291,8 @@ def set_Tk_var():
     varInclude204Ellipses.set(0)
     varIncludeBadEllipses = IntVar()
     varIncludeBadEllipses.set(0)
+    varShowErrorBars = IntVar()
+    varShowErrorBars.set(0)
     varIncludeUncorrEllipses = IntVar()
     varIncludeUncorrEllipses.set(1)
     #varSpeedOrPbc = IntVar()

@@ -1204,6 +1204,9 @@ class Analysis(object):
                 is_disc_good = True
         else:
 
+            correct_75 = calc_ratio(age_206_238[0])[1]
+            correct_68 = calc_ratio(age_207_235[0])[0]
+
 
             if ((self.pb206_u238[0] > correct_68) and (self.pb206_u238[0] - intersectAt * self.pb206_u238[int(pFilter.unc_type)] < correct_68))\
                     or ((self.pb206_u238[0] < correct_68) and (self.pb206_u238[0] + intersectAt * self.pb206_u238[int(pFilter.unc_type)] > correct_68)):
