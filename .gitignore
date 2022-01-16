@@ -2,3 +2,4 @@ venv/
 .idea/
 dezirteer/__pycache__/
 tests/logs/
+exe/

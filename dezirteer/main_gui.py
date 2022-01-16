@@ -209,8 +209,6 @@ class OperationWindow(Frame):
         self.ax_conc.axes.format_coord = lambda x, y: ""
         try:
             self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
-
-
         except UnboundLocalError:
             pass
 
@@ -1489,24 +1487,30 @@ class OperationWindow(Frame):
 
     def kde_pdp_hist(self):
         # choosing kde/pdp/hist based on user input
-        global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
+        global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
         if g_graph_settings.pdp_kde_hist == 0:
             g_prob_graph_to_draw = g_kde[0]
             g_cum_graph_to_draw = g_kde[2]
             g_prob_title = "Kernel Density Estimates (KDE)"
             g_cum_title = "Cumulative KDE"
+            g_prob_yaxis_title = "relative probability"
+            g_cum_yaxis_title = "cumulative probability"
         elif g_graph_settings.pdp_kde_hist == 1:
             g_prob_graph_to_draw = g_pdp[0]
             g_cum_graph_to_draw = g_cpdp
             g_prob_title = "Probability Density Plot (PDP)"
             g_cum_title = "Cumulative PDP"
+            g_prob_yaxis_title = "relative probability"
+            g_cum_yaxis_title = "cumulative probability"
         else:
             tuple_list = sorted(list(g_grainset.good_set.values()), key=lambda x: x[0])
             g_prob_graph_to_draw = [x[0] for x in tuple_list]
             g_cum_graph_to_draw = []
             g_prob_title = "Histogram"
             g_cum_title = "Cumulative Histogram"
-        return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title]
+            g_prob_yaxis_title = "# of analyses"
+            g_cum_yaxis_title = "# of analyses"
+        return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
         if max_age-min_age > 1000:
@@ -1647,31 +1651,37 @@ class OperationWindow(Frame):
 
                                 self.ax_conc.errorbar(x_conc, y_conc, xerr=x_err*sigma_level, yerr=y_err*sigma_level, xlolims=True, xuplims=True, uplims=True, lolims=True, ecolor='black', fmt='-o')
 
-
     def plot_hist(self, min_age, max_age):
-        global g_prob_graph_to_draw
+        global g_prob_graph_to_draw, g_prob_yaxis_title, g_cum_yaxis_title
+        self.ax_prob.axes.get_yaxis().set_visible(True)
+        self.ax_cum.axes.get_yaxis().set_visible(True)
         bin_sequence = []
         age = min_age
         bin_width = float(self.entHistBinwidth.get())
         while age < max_age:
             bin_sequence.append(age)
             age += bin_width
-        self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
-        self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
+        self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=False, cumulative=False)
+        g_prob_yaxis_title = g_cum_yaxis_title = "number of grains"
+        self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=False, cumulative=True)
 
     def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
                  min_conc_x, max_conc_x, min_conc_y, max_conc_y):
         # set axis of all graphs
-        global g_prob_title, g_cum_title
+        global g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
         self.ax_conc.set_title(conc_title)
         self.ax_conc.set_xlabel(conc_graph_xtitle, labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.set_ylabel(conc_graph_ytitle, labelpad=-38, fontsize=8)
+
         self.ax_prob.set_title(g_prob_title)
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        self.ax_prob.set_ylabel(g_prob_yaxis_title)
+
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        self.ax_cum.set_ylabel(g_cum_yaxis_title)
+        #self.ax_cum.set_ylabel(g_cum_yaxis_title, labelpad=-38, fontsize=8)
         self.ax_conc.plot(conc_graph_x, conc_graph_y)
-
 
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
@@ -1681,9 +1691,7 @@ class OperationWindow(Frame):
     def plot_peaks(self, min_age, max_age):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
-        # min_max_age = self.min_max_ages()
-        # min_age = min_max_age[0]
-        # max_age = min_max_age[1]len(g_prob_graph_to_draw[min_age: max_age])
+
         self.ax_prob.clear()
         self.canvas_prob.draw()
         l_min_age = min_age
@@ -1707,11 +1715,14 @@ class OperationWindow(Frame):
                 list_peaks = g_pdp[1]
             else:
                 list_peaks = []
+
             while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], ymin=0, ymax=0.03, color='red')
                 i += 1
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        #self.ax_prob.set_ylabel('test', labelpad=-16, fontsize=8, position=(0, 0))
         self.ax_prob.set_title(g_prob_title)
+
 
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
@@ -1730,6 +1741,8 @@ class OperationWindow(Frame):
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
         if not do_hist:
+            self.ax_prob.axes.get_yaxis().set_visible(False)
+            self.ax_cum.axes.get_yaxis().set_visible(False)
             self.prob_cum_plot(min_age, max_age)
         else:
             self.plot_hist(min_age, max_age)
@@ -1799,8 +1812,6 @@ class OperationWindow(Frame):
             #end_kde = time.time()
             #total_kde = end_kde - start_kde
             #print("kde: " + str(total_kde))
-
-
 
         elif g_graph_settings.pdp_kde_hist == 1:
             #start_pdp = time.time()
@@ -1985,7 +1996,7 @@ def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_prob, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version, g_release_date, g_current_date, g_days_since_release
-    global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
+    global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
     g_dezirteer_version = __version__
     g_release_date = datetime.date(__release_year__, __release_month__, __release_date__)
     g_current_date = datetime.date.today()
