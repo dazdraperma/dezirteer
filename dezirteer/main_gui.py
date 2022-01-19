@@ -1112,7 +1112,22 @@ class OperationWindow(Frame):
         gui_elements.append(self.cbDiscIntersect.get())    #29
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
         gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
-        gui_elements.append(gui_support.varShowErrorBars.get())  # 32
+
+        # for web version
+        gui_elements.append([self.lboxSamples.get(idx) for idx in self.lboxSamples.curselection()])  # 32 select names
+        gui_elements.append(self.cbWhichAge.current())  # 33 (2)
+        gui_elements.append(self.cbPbc.current())  # 34 (4)
+        gui_elements.append(self.cbWhichConc.current())  # 35 (5)
+        gui_elements.append(self.cbErrFilter.current())  # 36 (9)
+        gui_elements.append(self.cbUConc.current())  # 37 (13)
+        gui_elements.append(self.cbConcType.current())  # 38 (14)
+        gui_elements.append(self.cbEllipsesAt.current())  # 39 (15)
+        gui_elements.append(self.cbDensityPlotType.current())  # 40 (16)
+        gui_elements.append(self.cbDiscIntersect.current())  # 41 (29)
+        gui_elements.append(self.cbShowUncorrCorrBothEllipses.current())  # 42 (30)
+
+        # again for the desktop version
+        gui_elements.append(gui_support.varShowErrorBars.get())  # 43
 
         return gui_elements
 
@@ -1182,7 +1197,7 @@ class OperationWindow(Frame):
         self.cbDiscIntersect.set(args[29])
         self.cbShowUncorrCorrBothEllipses.set(args[30])
         gui_support.varIncludeBadEllipses.set(args[31])
-        gui_support.varShowErrorBars.set(args[32])
+        gui_support.varShowErrorBars.set(args[43])
 
     def show_frame(self):
         winCalc = Toplevel()
