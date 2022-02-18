@@ -1692,6 +1692,7 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_prob.set_ylabel(g_prob_yaxis_title)
 
+
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_cum.set_ylabel(g_cum_yaxis_title)
@@ -1737,7 +1738,6 @@ class OperationWindow(Frame):
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         #self.ax_prob.set_ylabel('test', labelpad=-16, fontsize=8, position=(0, 0))
         self.ax_prob.set_title(g_prob_title)
-
 
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw

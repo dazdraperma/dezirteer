@@ -1121,10 +1121,15 @@ class Analysis(object):
             age_208_232 = self.calc_age(2, pFilter.use_pbc)
 
         # cut out negative ratios
-        if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0 or self.pb208_th232[0] < 0:
+        if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
             are_ratios_positive = False
         else:
             are_ratios_positive = True
+
+        if self.pb208_th232[0] < 0:
+            is_82_ratio_positive = False
+        else:
+            is_82_ratio_positive = True
 
         # filter by Uconc
         if do_uconc and (self.u_conc[0] > uconc_ppm_cutoff):
@@ -1231,7 +1236,7 @@ class Analysis(object):
             is_disc_good = is_75_good & is_68_good
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
-               is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age
+               is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age, is_82_ratio_positive
 
 
 class AnalysesSet(object):
@@ -1470,8 +1475,6 @@ class AnalysesSet(object):
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
         return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
-
-
 
 
     # calculates kernel density estimate for a given age
