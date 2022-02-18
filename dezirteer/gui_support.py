@@ -360,6 +360,10 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             elif p_filters.which_age[0] == 2:
                 which_age = "207Pb/206Pb"
                 which_age_cutoff = ""
+            elif p_filters.which_age[0] == 4:
+                which_age = "208Pb/232Th"
+                which_age_cutoff = ""
+
             else:
                 which_age = "206Pb/238U"
                 which_age_cutoff = ""
@@ -480,6 +484,8 @@ def line_with_data (p_grainset, p_filters):
         is_grain_good = an_list[j].is_grain_good(filters)
         if is_grain_good[1] == 3:
             best_age_system = "207Pb/206Pb"
+        elif is_grain_good[1] == 2:
+            best_age_system = "208Pb/232Th"
         else:
             best_age_system = "206Pb/238U"
         best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)

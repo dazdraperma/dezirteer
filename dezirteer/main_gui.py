@@ -502,7 +502,7 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(width=15)
         self.cbWhichAge.configure(takefocus="")
         self.cbWhichAge.configure(state=DISABLED)
-        self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
+        self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U', '208Pb/232Th'))
         self.cbWhichAge.current(0)
         self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(3, self.cbWhichAge.current(),
                                                                                         pars_onChange, self))

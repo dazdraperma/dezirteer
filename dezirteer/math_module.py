@@ -1106,21 +1106,22 @@ class Analysis(object):
                 age_206_238 = self.age68_204corr #pbc_corr(self, 1, 0)
                 age_207_206 = self.age76_204corr#pbc_corr(self, 1, 3)
                 age_207_235 = self.age75_204corr
+                age_208_232 = self.age82_204corr
             elif use_pbc[0] == 2:
-                age_206_238 = age_207_206 = age_207_235 = self.age_207corr #pbc_corr(self, 2)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = self.age_207corr #pbc_corr(self, 2)
             elif use_pbc[0] == 3:
-                age_206_238 = age_207_206 = age_207_235 = self.age_208corr#pbc_corr(self, 3)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = self.age_208corr#pbc_corr(self, 3)
             elif use_pbc[0] == 4:
-                age_206_238 = age_207_206 = age_207_235 = pbc_corr(self, 4, 0, pFilter.andersenAge)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = pbc_corr(self, 4, 0, pFilter.andersenAge)
         else:
            # increment_to_this_age = 0
             age_206_238 = self.calc_age(0, pFilter.use_pbc)
             age_207_206 = self.calc_age(3, pFilter.use_pbc)
             age_207_235 = self.calc_age(1, pFilter.use_pbc)
-
+            age_208_232 = self.calc_age(2, pFilter.use_pbc)
 
         # cut out negative ratios
-        if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
+        if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0 or self.pb208_th232[0] < 0:
             are_ratios_positive = False
         else:
             are_ratios_positive = True
@@ -1153,6 +1154,11 @@ class Analysis(object):
         elif (which_age == 1 and age_206_238[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
             age_system = 0
             this_age = 0
+
+        elif which_age == 4: #208/232
+            age_system = 2
+            this_age = 2
+
         else:
             age_system = -1
             this_age = 0
@@ -1160,6 +1166,9 @@ class Analysis(object):
         if age_system == 0:
             age = age_206_238[0]
             err = age_206_238[int(pFilter.unc_type)]
+        elif age_system == 2:
+            age = age_208_232[0]
+            err = age_208_232[int(pFilter.unc_type)]
         else:
             age = age_207_206[0]
             err = age_207_206[int(pFilter.unc_type)]
