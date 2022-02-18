@@ -422,8 +422,8 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             #cpdp_list = p_grainset.cpdp(int(p_filters.unc_type))
             #ckde_list = p_grainset.ckde(bandwidth)
             probcum_file.write("Age," + p_kde_or_pdp+"(Prob)," + p_kde_or_pdp+"(Cum)," + "bandwidth=" + bandwidth)
-            while age < EarthAge:
-                probcum_file.write('\n' + str(age) + ',' + str(prob_list[0][age]) + ',' + str(cum_list[age]))
+            while age < EarthAge/2:
+                probcum_file.write('\n' + str(age*2) + ',' + str(prob_list[0][age]) + ',' + str(cum_list[age]))
                 age += 1
             probcum_file.close()
 
