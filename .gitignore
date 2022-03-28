@@ -1,5 +1,7 @@
 venv/
 .idea/
 dezirteer/__pycache__/
+dezirteer/*.spec
+*.spec
 tests/logs/
 exe/
