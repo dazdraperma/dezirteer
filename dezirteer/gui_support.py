@@ -479,8 +479,8 @@ def line_with_data (p_grainset, p_filters):
             pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
         else:
             pbcAnd_age = [-1, -1, -1]
-        disc_76_68 = 100 * an_list[j].calc_discordance(2, p_filters.disc_type[1], p_filters.use_pbc)
-        disc_75_68 = 100 * an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
+        disc_76_68 = 100 * an_list[j].calc_discordance([2, 1000], p_filters.use_pbc)
+        disc_75_68 = 100 * an_list[j].calc_discordance([3, 1000], p_filters.use_pbc)
         is_grain_good = an_list[j].is_grain_good(filters)
         if is_grain_good[1] == 3:
             best_age_system = "207Pb/206Pb"

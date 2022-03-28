@@ -1018,7 +1018,9 @@ class Analysis(object):
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+    def calc_discordance(self, disc_type_and_age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+        disc_type = disc_type_and_age_cutoff[0]
+        age_cutoff = disc_type_and_age_cutoff[1]
         if args[0][0] == 0:
             age_206_238 = self.age68[0] #self.calc_age(0, args)[0]
             age_207_235 = self.age75[0]#self.calc_age(1, args)[0]
@@ -1044,9 +1046,9 @@ class Analysis(object):
 
         if disc_type == 1:
             if age_206_238 > age_cutoff:
-                return disc_68_57
-            else:
                 return disc_68_76
+            else:
+                return disc_68_57
 
         if disc_type == 2:
             return disc_68_76
@@ -1054,7 +1056,7 @@ class Analysis(object):
         elif disc_type == 3:
             return disc_68_57
 
-        else: #if disc_type[0] == 4
+        else: #if disc_type == 4
             if abs(disc_68_57) < abs(disc_68_76):
                 return disc_68_57
             else:
@@ -1085,7 +1087,7 @@ class Analysis(object):
         do_err = pFilter.filter_by_err[0]
         do_207235_err = pFilter.include207235Err
         err_cutoff = pFilter.filter_by_err[1]
-        type_disc = pFilter.disc_type[0]
+        type_disc = pFilter.disc_type
         pos_disc_cutoff = pFilter.pos_disc_filter
         neg_disc_cutoff = pFilter.neg_disc_filter
         sample_name_filter = pFilter.sample_name_filter
@@ -1209,7 +1211,7 @@ class Analysis(object):
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
         if discOrIntersect == 0:
             if use_pbc[0] in (0, 1):
-                disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
+                disc = self.calc_discordance(type_disc, pFilter.use_pbc)
                 if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
                     is_disc_good = True
                 else:
