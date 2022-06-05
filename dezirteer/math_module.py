@@ -1476,7 +1476,9 @@ class AnalysesSet(object):
 
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
-        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
+        good_set_sorted_by_age = sorted(self.good_set, key=self.good_set.get)
+        sorted(self.good_set, key=self.good_set.get)
+        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age, good_set_sorted_by_age]
 
 
     # calculates kernel density estimate for a given age
@@ -1567,6 +1569,7 @@ class AnalysesSet(object):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
             return list_pdp'''
 
+
 # calculates likeness (Satskovski et al., 2013)
 def likeness(list1, list2):
     i = 0
@@ -1578,7 +1581,6 @@ def likeness(list1, list2):
         return -1
 
 
-
 def similarity (list1, list2):
     i = 0
     if list1 is not None and list1 != [] and list2 is not None and list2 != []:
@@ -1587,7 +1589,6 @@ def similarity (list1, list2):
         return i
     else:
         return -1
-
 
 
 # calculates KS d-value
@@ -1665,6 +1666,7 @@ def conf_lim(sigma_level):
     else:
         return -1
 
+
 def parse_sample_analysis(full_name):
     last_underscore = full_name.rfind('_')
     last_dash = full_name.rfind('-')
@@ -1674,6 +1676,7 @@ def parse_sample_analysis(full_name):
     sample_number = full_name[:pos]
     analysis_number = full_name[pos+1:]
     return sample_number, analysis_number
+
 
 def calc_peaks_weight(peaks, an_set):
     peak_weight = dict.fromkeys(peaks, 0)
