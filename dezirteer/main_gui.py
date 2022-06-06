@@ -1441,6 +1441,7 @@ class OperationWindow(Frame):
                 "d-value="+str(round(dval, 2))+"\n" \
                 "Likeness="+str(round(g_pval_dval[2], 2))+"\n" \
                 "Similarity=" + str(round(g_pval_dval[3], 2)) + "\n"\
+                "Maximum depositional age=" +str(round(g_number_of_good_grains[8][1][0], 1))+"±"+str(round(g_number_of_good_grains[8][1][1], 1))+"\n" \
                 "peaks at "
                 i = 1
                 for p in peaks():
@@ -1799,7 +1800,7 @@ class OperationWindow(Frame):
     #depending on user settings
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_prob, g_prev_n, g_pval_dval
-        global g_cpdp, g_ckde, g_kde, g_pdp
+        global g_cpdp, g_ckde, g_kde, g_pdp, g_wa_mda
         g_filters.sample_name_filter = []
 
         if gui_support.varMinAgeCrop.get() == 1:

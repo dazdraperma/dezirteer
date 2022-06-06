@@ -14,6 +14,53 @@ pbpb_table =  []
 concordia_table = []
 
 
+def wa_for_analysesSet(good_slice):
+    errs_inv_sq=[]
+    slice_list=[]
+
+    for item in good_slice:
+        slice_list.append(item[1][0])
+        errs_inv_sq.append(1 / (item[1][1] ** 2))
+    l_wa=wa_and_mswd(slice_list, errs_inv_sq)
+    return l_wa
+
+
+def wa_and_mswd(ages, errs_inv_sq):
+    l_sum_err=sum(errs_inv_sq)
+
+
+    if l_sum_err!=0:
+        wa_age = sumproduct(ages, errs_inv_sq) / l_sum_err
+        wa_age_err = sqrt(1 / l_sum_err)
+        aux_list = [(x - wa_age) ** 2 for x in ages]
+        mswd = sumproduct(errs_inv_sq, aux_list) / (len(ages) - 1)
+    else:
+        wa_age=-1
+        wa_age_err=-1
+        mswd=-1
+    return [wa_age, wa_age_err, mswd]
+
+
+def find_mda_wa (set_sorted_by_age, number_of_sigmas, unc_type):
+    found_slice = False
+    i = 0
+    l_slice = []
+    l_good_slice=[]
+    l_unc_type = int(unc_type)
+    for i in range(len(set_sorted_by_age)-3):
+        l_slice = set_sorted_by_age[i:i+3]
+        if (l_slice[0][1][0]+l_slice[0][1][l_unc_type]*number_of_sigmas>=l_slice[1][1][0]) \
+                and (l_slice[1][1][0]-l_slice[1][1][l_unc_type]*number_of_sigmas<=l_slice[0][1][0]) \
+                and (l_slice[1][1][0]+l_slice[1][1][l_unc_type]*number_of_sigmas>=l_slice[2][1][0]) \
+                and (l_slice[2][1][0]-l_slice[2][1][l_unc_type]*number_of_sigmas<=l_slice[1][1][0]):
+            if l_good_slice==[]:
+                l_good_slice=l_slice
+
+        i+=1
+    l_wa = wa_for_analysesSet(l_good_slice)
+    return l_good_slice, l_wa
+
+
 def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
     any_error = False
     corr_coef_75_68 = (rat68err / rat68) / (rat75err / rat75)
@@ -400,7 +447,7 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__andersenAge = andersenAge
         self.__discOrIntersect = discOrIntersect
         self.__intersectAt = intersectAt
-
+#unc_type
     @property
     def filter_by_uconc(self):
         return self.__filter_by_uconc
@@ -543,7 +590,7 @@ class Analysis(object):
                  pb206_u238=(0, 0, 0), pb207_u235=(0, 0, 0), corr_coef_75_68=0, corr_coef_86_76=0,
                  pb208_th232=(0, 0, 0), pb207_pb206=(0, 0, 0), u_conc=(0, 0, 0), pbc=(0, 0, 0), pb206_pb204=(0, 0, 0),
                  pb207_pb204=(0, 0, 0), pb208_pb204=(0, 0, 0), th232_pb204=(0, 0, 0), u238_pb204=(0, 0, 0),
-                 sigma_level=0, final_U_Th_Ratio = (0, 0, 0), th232_u238=(0, 0, 0)):
+                 sigma_level=1, final_U_Th_Ratio = (0, 0, 0), th232_u238=(0, 0, 0)):
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
         self.__pb206_u238 = pb206_u238
@@ -1448,10 +1495,11 @@ class AnalysesSet(object):
             index += 1
 
         if number_of_good_grains > 1:
-            wa_age = sumproduct(ages, errs_inv_sq) / sum(errs_inv_sq)
-            wa_age_err = sqrt(1 / sum(errs_inv_sq))
-            aux_list = [(x - wa_age) ** 2 for x in ages]
-            mswd = sumproduct(errs_inv_sq, aux_list) / (number_of_good_grains - 1)
+            l_wa_and_mswd = wa_and_mswd(ages, errs_inv_sq)
+            wa_age = l_wa_and_mswd[0] #sumproduct(ages, errs_inv_sq) / sum(errs_inv_sq)
+            wa_age_err = l_wa_and_mswd[1]#sqrt(1 / sum(errs_inv_sq))
+            #aux_list = [(x - wa_age) ** 2 for x in ages]
+            mswd = l_wa_and_mswd[2] #sumproduct(errs_inv_sq, aux_list) / (number_of_good_grains - 1)
         elif number_of_good_grains == 1:
             wa_age = ages[0]
             wa_age_err = 0
@@ -1476,9 +1524,11 @@ class AnalysesSet(object):
 
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
-        good_set_sorted_by_age = sorted(self.good_set, key=self.good_set.get)
-        sorted(self.good_set, key=self.good_set.get)
-        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age, good_set_sorted_by_age]
+        good_set_sorted_by_age = sorted(self.good_set.items(), key=lambda x:x[1])
+        l_sigma_level=1
+        l_unc_type=p_filter.unc_type
+        l_wa_mda=find_mda_wa(good_set_sorted_by_age, l_sigma_level, l_unc_type)
+        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age, good_set_sorted_by_age, l_wa_mda]
 
 
     # calculates kernel density estimate for a given age
@@ -1568,6 +1618,9 @@ class AnalysesSet(object):
             for index in range(1, len(pdp)):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
             return list_pdp'''
+
+
+
 
 
 # calculates likeness (Satskovski et al., 2013)
