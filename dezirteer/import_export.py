@@ -409,7 +409,10 @@ def file_to_analysis(imp_file, index):
 
     else: #template
         sigma_level = 1
-        an = full_data[index].split(",")
+        if ";" in full_data[index]:
+            an = full_data[index].split(";")
+        else:
+            an = full_data[index].split(",")
         analysis_name = an[0]
         exposure_time = 0
 
