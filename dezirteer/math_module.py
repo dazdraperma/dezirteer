@@ -14,6 +14,53 @@ pbpb_table =  []
 concordia_table = []
 
 
+def wa_for_analysesSet(good_slice):
+    errs_inv_sq=[]
+    slice_list=[]
+
+    for item in good_slice:
+        slice_list.append(item[1][0])
+        errs_inv_sq.append(1 / (item[1][1] ** 2))
+    l_wa=wa_and_mswd(slice_list, errs_inv_sq)
+    return l_wa
+
+
+def wa_and_mswd(ages, errs_inv_sq):
+    l_sum_err=sum(errs_inv_sq)
+
+
+    if l_sum_err!=0:
+        wa_age = sumproduct(ages, errs_inv_sq) / l_sum_err
+        wa_age_err = sqrt(1 / l_sum_err)
+        aux_list = [(x - wa_age) ** 2 for x in ages]
+        mswd = sumproduct(errs_inv_sq, aux_list) / (len(ages) - 1)
+    else:
+        wa_age=-1
+        wa_age_err=-1
+        mswd=-1
+    return [wa_age, wa_age_err, mswd]
+
+
+def find_mda_wa (set_sorted_by_age, number_of_sigmas, unc_type):
+    found_slice = False
+    i = 0
+    l_slice = []
+    l_good_slice=[]
+    l_unc_type = int(unc_type)
+    for i in range(len(set_sorted_by_age)-3):
+        l_slice = set_sorted_by_age[i:i+3]
+        if (l_slice[0][1][0]+l_slice[0][1][l_unc_type]*number_of_sigmas>=l_slice[1][1][0]) \
+                and (l_slice[1][1][0]-l_slice[1][1][l_unc_type]*number_of_sigmas<=l_slice[0][1][0]) \
+                and (l_slice[1][1][0]+l_slice[1][1][l_unc_type]*number_of_sigmas>=l_slice[2][1][0]) \
+                and (l_slice[2][1][0]-l_slice[2][1][l_unc_type]*number_of_sigmas<=l_slice[1][1][0]):
+            if l_good_slice==[]:
+                l_good_slice=l_slice
+
+        i+=1
+    l_wa = wa_for_analysesSet(l_good_slice)
+    return l_good_slice, l_wa
+
+
 def calc_rho(rat68, rat68err, rat75, rat75err, rat76, rat76err):
     any_error = False
     corr_coef_75_68 = (rat68err / rat68) / (rat75err / rat75)
@@ -366,10 +413,12 @@ def fill_concordia_table():
             ratios = []
             t += 1
 
+
 def find_conc_value(val68, val75):
     pos68 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][0]-val68))
-    pos75 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][1] - val75))
+    pos75 = min(range(len(concordia_table)), key=lambda i: abs(concordia_table[i][1]-val75))
     return pos68, pos75
+
 
 # calculates pb-pb age from the table of pb-pb ratios,filled in fill_Pb206207_table()
 def find_age(pLeadRatio):
@@ -398,7 +447,7 @@ class Filters(object):  # describes filters that should be applied to data in An
         self.__andersenAge = andersenAge
         self.__discOrIntersect = discOrIntersect
         self.__intersectAt = intersectAt
-
+#unc_type
     @property
     def filter_by_uconc(self):
         return self.__filter_by_uconc
@@ -541,7 +590,7 @@ class Analysis(object):
                  pb206_u238=(0, 0, 0), pb207_u235=(0, 0, 0), corr_coef_75_68=0, corr_coef_86_76=0,
                  pb208_th232=(0, 0, 0), pb207_pb206=(0, 0, 0), u_conc=(0, 0, 0), pbc=(0, 0, 0), pb206_pb204=(0, 0, 0),
                  pb207_pb204=(0, 0, 0), pb208_pb204=(0, 0, 0), th232_pb204=(0, 0, 0), u238_pb204=(0, 0, 0),
-                 sigma_level=0, final_U_Th_Ratio = (0, 0, 0), th232_u238=(0, 0, 0)):
+                 sigma_level=1, final_U_Th_Ratio = (0, 0, 0), th232_u238=(0, 0, 0)):
         self.__analysis_name = analysis_name
         self.__exposure_time = exposure_time
         self.__pb206_u238 = pb206_u238
@@ -1016,7 +1065,9 @@ class Analysis(object):
             pass
 
     # calculates two type of discordance: (1) between 206_238 and 207_235 and (2) between 206_238 and 206_207
-    def calc_discordance(self, disc_type, age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+    def calc_discordance(self, disc_type_and_age_cutoff, *args): #0: u-conc, #1 - fixed limit, #2 - 67-86, #3- 57-86 #4 - the one with the lesser value
+        disc_type = disc_type_and_age_cutoff[0]
+        age_cutoff = disc_type_and_age_cutoff[1]
         if args[0][0] == 0:
             age_206_238 = self.age68[0] #self.calc_age(0, args)[0]
             age_207_235 = self.age75[0]#self.calc_age(1, args)[0]
@@ -1042,9 +1093,9 @@ class Analysis(object):
 
         if disc_type == 1:
             if age_206_238 > age_cutoff:
-                return disc_68_57
-            else:
                 return disc_68_76
+            else:
+                return disc_68_57
 
         if disc_type == 2:
             return disc_68_76
@@ -1052,7 +1103,7 @@ class Analysis(object):
         elif disc_type == 3:
             return disc_68_57
 
-        else: #if disc_type[0] == 4
+        else: #if disc_type == 4
             if abs(disc_68_57) < abs(disc_68_76):
                 return disc_68_57
             else:
@@ -1083,7 +1134,7 @@ class Analysis(object):
         do_err = pFilter.filter_by_err[0]
         do_207235_err = pFilter.include207235Err
         err_cutoff = pFilter.filter_by_err[1]
-        type_disc = pFilter.disc_type[0]
+        type_disc = pFilter.disc_type
         pos_disc_cutoff = pFilter.pos_disc_filter
         neg_disc_cutoff = pFilter.neg_disc_filter
         sample_name_filter = pFilter.sample_name_filter
@@ -1104,24 +1155,30 @@ class Analysis(object):
                 age_206_238 = self.age68_204corr #pbc_corr(self, 1, 0)
                 age_207_206 = self.age76_204corr#pbc_corr(self, 1, 3)
                 age_207_235 = self.age75_204corr
+                age_208_232 = self.age82_204corr
             elif use_pbc[0] == 2:
-                age_206_238 = age_207_206 = age_207_235 = self.age_207corr #pbc_corr(self, 2)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = self.age_207corr #pbc_corr(self, 2)
             elif use_pbc[0] == 3:
-                age_206_238 = age_207_206 = age_207_235 = self.age_208corr#pbc_corr(self, 3)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = self.age_208corr#pbc_corr(self, 3)
             elif use_pbc[0] == 4:
-                age_206_238 = age_207_206 = age_207_235 = pbc_corr(self, 4, 0, pFilter.andersenAge)
+                age_206_238 = age_207_206 = age_207_235 = age_208_232 = pbc_corr(self, 4, 0, pFilter.andersenAge)
         else:
            # increment_to_this_age = 0
             age_206_238 = self.calc_age(0, pFilter.use_pbc)
             age_207_206 = self.calc_age(3, pFilter.use_pbc)
             age_207_235 = self.calc_age(1, pFilter.use_pbc)
-
+            age_208_232 = self.calc_age(2, pFilter.use_pbc)
 
         # cut out negative ratios
         if self.pb206_u238[0] < 0 or self.pb207_u235[0] < 0 or self.pb207_pb206[0] < 0:
             are_ratios_positive = False
         else:
             are_ratios_positive = True
+
+        if self.pb208_th232[0] < 0:
+            is_82_ratio_positive = False
+        else:
+            is_82_ratio_positive = True
 
         # filter by Uconc
         if do_uconc and (self.u_conc[0] > uconc_ppm_cutoff):
@@ -1151,6 +1208,11 @@ class Analysis(object):
         elif (which_age == 1 and age_206_238[0] < age_fixed_limit) or which_age == 3:  # fixed limit, age<limit
             age_system = 0
             this_age = 0
+
+        elif which_age == 4: #208/232
+            age_system = 2
+            this_age = 2
+
         else:
             age_system = -1
             this_age = 0
@@ -1158,6 +1220,9 @@ class Analysis(object):
         if age_system == 0:
             age = age_206_238[0]
             err = age_206_238[int(pFilter.unc_type)]
+        elif age_system == 2:
+            age = age_208_232[0]
+            err = age_208_232[int(pFilter.unc_type)]
         else:
             age = age_207_206[0]
             err = age_207_206[int(pFilter.unc_type)]
@@ -1191,11 +1256,9 @@ class Analysis(object):
             is_207235err_good = True
 
         # filter by discordance #0: u-conc, #1 - fixed limit, #2 - 57-86, #3- 67-86 #4 - the one with the lesser value
-
-
         if discOrIntersect == 0:
             if use_pbc[0] in (0, 1):
-                disc = self.calc_discordance(type_disc, pos_disc_cutoff, pFilter.use_pbc)
+                disc = self.calc_discordance(type_disc, pFilter.use_pbc)
                 if (disc < pos_disc_cutoff) & (disc > neg_disc_cutoff):
                     is_disc_good = True
                 else:
@@ -1203,8 +1266,10 @@ class Analysis(object):
             else:
                 is_disc_good = True
         else:
+
             correct_75 = calc_ratio(age_206_238[0])[1]
             correct_68 = calc_ratio(age_207_235[0])[0]
+
 
             if ((self.pb206_u238[0] > correct_68) and (self.pb206_u238[0] - intersectAt * self.pb206_u238[int(pFilter.unc_type)] < correct_68))\
                     or ((self.pb206_u238[0] < correct_68) and (self.pb206_u238[0] + intersectAt * self.pb206_u238[int(pFilter.unc_type)] > correct_68)):
@@ -1220,7 +1285,7 @@ class Analysis(object):
             is_disc_good = is_75_good & is_68_good
 
         return are_ratios_positive & is_uconc_good & is_err_good & is_207235err_good & is_disc_good & \
-               is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age
+               is_grain_in_chosen_sample & is_age_good & is_pbc_good, this_age, is_82_ratio_positive
 
 
 class AnalysesSet(object):
@@ -1430,10 +1495,11 @@ class AnalysesSet(object):
             index += 1
 
         if number_of_good_grains > 1:
-            wa_age = sumproduct(ages, errs_inv_sq) / sum(errs_inv_sq)
-            wa_age_err = sqrt(1 / sum(errs_inv_sq))
-            aux_list = [(x - wa_age) ** 2 for x in ages]
-            mswd = sumproduct(errs_inv_sq, aux_list) / (number_of_good_grains - 1)
+            l_wa_and_mswd = wa_and_mswd(ages, errs_inv_sq)
+            wa_age = l_wa_and_mswd[0] #sumproduct(ages, errs_inv_sq) / sum(errs_inv_sq)
+            wa_age_err = l_wa_and_mswd[1]#sqrt(1 / sum(errs_inv_sq))
+            #aux_list = [(x - wa_age) ** 2 for x in ages]
+            mswd = l_wa_and_mswd[2] #sumproduct(errs_inv_sq, aux_list) / (number_of_good_grains - 1)
         elif number_of_good_grains == 1:
             wa_age = ages[0]
             wa_age_err = 0
@@ -1458,9 +1524,11 @@ class AnalysesSet(object):
 
         self.__min_207_206 = min_207_206
         self.__max_207_206 = max_207_206
-        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age]
-
-
+        good_set_sorted_by_age = sorted(self.good_set.items(), key=lambda x:x[1])
+        l_sigma_level=1
+        l_unc_type=p_filter.unc_type
+        l_wa_mda=find_mda_wa(good_set_sorted_by_age, l_sigma_level, l_unc_type)
+        return [number_of_good_grains, wa_age, wa_age_err, wa_age_err_scatter, mswd, max_age, min_age, good_set_sorted_by_age, l_wa_mda]
 
 
     # calculates kernel density estimate for a given age
@@ -1551,25 +1619,29 @@ class AnalysesSet(object):
                 list_pdp.append(list_pdp[index - 1] + pdp[index])
             return list_pdp'''
 
+
+
+
+
 # calculates likeness (Satskovski et al., 2013)
 def likeness(list1, list2):
     i = 0
-    if list1 is not None and list2 is not None:
+    if list1 is not None and list1 != [] and list2 is not None and list2 != []:
         for age in range(len(list1[0])):
             i = i + abs(list1[0][age] - list2[0][age])
+        return 1 - (i / 2)
     else:
-        i = -1
-    return 1-(i/2)
+        return -1
 
 
 def similarity (list1, list2):
     i = 0
-    if list1 is not None and list2 is not None:
+    if list1 is not None and list1 != [] and list2 is not None and list2 != []:
         for age in range(len(list1[0])):
             i = i + sqrt(list1[0][age] * list2[0][age])
+        return i
     else:
-        i = -1
-    return i
+        return -1
 
 
 # calculates KS d-value
@@ -1647,6 +1719,7 @@ def conf_lim(sigma_level):
     else:
         return -1
 
+
 def parse_sample_analysis(full_name):
     last_underscore = full_name.rfind('_')
     last_dash = full_name.rfind('-')
@@ -1656,6 +1729,7 @@ def parse_sample_analysis(full_name):
     sample_number = full_name[:pos]
     analysis_number = full_name[pos+1:]
     return sample_number, analysis_number
+
 
 def calc_peaks_weight(peaks, an_set):
     peak_weight = dict.fromkeys(peaks, 0)

@@ -15,6 +15,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
+#from matplotlib.pyplot import errorbar
+from matplotlib.collections import LineCollection
+
 from matplotlib.patches import Rectangle
 from tkinter import filedialog
 from math import sqrt, tan, atan, degrees, cos, sin, pi, floor
@@ -80,10 +83,14 @@ def set_pval_dval():
 
 def peaks():
     global g_kde, g_pdp
-    if g_graph_settings.pdp_kde_hist == 0:
+    if g_graph_settings.pdp_kde_hist == 0 and len(g_kde) > 0:
         return g_kde[1]
-    else:
+
+    elif g_graph_settings.pdp_kde_hist == 1 and len(g_pdp) > 0:
         return g_pdp[1]
+
+    else:
+        return []
 
 
 def show_calc_frame(container):
@@ -202,8 +209,6 @@ class OperationWindow(Frame):
         self.ax_conc.axes.format_coord = lambda x, y: ""
         try:
             self.ax_conc.plot(list(range(0, EarthAge)), graph_to_draw)
-
-
         except UnboundLocalError:
             pass
 
@@ -497,7 +502,7 @@ class OperationWindow(Frame):
         self.cbWhichAge.configure(width=15)
         self.cbWhichAge.configure(takefocus="")
         self.cbWhichAge.configure(state=DISABLED)
-        self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U'))
+        self.cbWhichAge.configure(values=('From lesser error', 'Fixed Limit', '207Pb/206Pb', '206Pb/238U', '208Pb/232Th'))
         self.cbWhichAge.current(0)
         self.cbWhichAge.bind('<<ComboboxSelected>>', lambda event: gui_support.onChange(3, self.cbWhichAge.current(),
                                                                                         pars_onChange, self))
@@ -832,15 +837,23 @@ class OperationWindow(Frame):
         self.chbIncludeBadEllipses.configure(state=DISABLED)
         self.chbIncludeBadEllipses.configure(variable=gui_support.varIncludeBadEllipses)
 
+        self.chbShowErrors = Checkbutton(self.frGraphSettings)
+        self.chbShowErrors.grid(row=3, column=2, columnspan=2, sticky='w', pady=5)
+        self.apply_style(self.chbShowErrors)
+        self.chbShowErrors.configure(text="show error bars")
+        self.chbShowErrors.configure(justify=LEFT)
+        self.chbShowErrors.configure(state=DISABLED)
+        self.chbShowErrors.configure(variable=gui_support.varShowErrorBars)
+
 
         self.lbDensityPlot = Label(self.frGraphSettings)
-        self.lbDensityPlot.grid(row=3, columnspan=3, pady=5, sticky='ew')
+        self.lbDensityPlot.grid(row=4, columnspan=3, pady=5, sticky='ew')
         self.apply_style(self.lbDensityPlot)
         self.lbDensityPlot.configure(font=font9)
         self.lbDensityPlot.configure(text='Density plot:')
 
         self.lbDensityPlotType = Label(self.frGraphSettings)
-        self.lbDensityPlotType.grid(row=4, column=0, pady=5, sticky='w')
+        self.lbDensityPlotType.grid(row=5, column=0, pady=5, sticky='w')
         self.apply_style(self.lbDensityPlotType)
         self.lbDensityPlotType.configure(text='Type:')
 
@@ -882,7 +895,7 @@ class OperationWindow(Frame):
 
 
         self.cbDensityPlotType = ttk.Combobox(self.frGraphSettings)
-        self.cbDensityPlotType.grid(row=4, column=1, sticky='w')
+        self.cbDensityPlotType.grid(row=5, column=1, sticky='w')
         self.cbDensityPlotType.configure(takefocus="")
         self.cbDensityPlotType.configure(state=DISABLED)
         self.cbDensityPlotType.configure(values=('KDE', 'PDP', 'Histogram'))
@@ -1100,6 +1113,22 @@ class OperationWindow(Frame):
         gui_elements.append(self.cbShowUncorrCorrBothEllipses.get())  # 30
         gui_elements.append(gui_support.varIncludeBadEllipses.get())  # 31
 
+        # for web version
+        gui_elements.append([self.lboxSamples.get(idx) for idx in self.lboxSamples.curselection()])  # 32 select names
+        gui_elements.append(self.cbWhichAge.current())  # 33 (2)
+        gui_elements.append(self.cbPbc.current())  # 34 (4)
+        gui_elements.append(self.cbWhichConc.current())  # 35 (5)
+        gui_elements.append(self.cbErrFilter.current())  # 36 (9)
+        gui_elements.append(self.cbUConc.current())  # 37 (13)
+        gui_elements.append(self.cbConcType.current())  # 38 (14)
+        gui_elements.append(self.cbEllipsesAt.current())  # 39 (15)
+        gui_elements.append(self.cbDensityPlotType.current())  # 40 (16)
+        gui_elements.append(self.cbDiscIntersect.current())  # 41 (29)
+        gui_elements.append(self.cbShowUncorrCorrBothEllipses.current())  # 42 (30)
+
+        # again for the desktop version
+        gui_elements.append(gui_support.varShowErrorBars.get())  # 43
+
         return gui_elements
 
 
@@ -1168,6 +1197,7 @@ class OperationWindow(Frame):
         self.cbDiscIntersect.set(args[29])
         self.cbShowUncorrCorrBothEllipses.set(args[30])
         gui_support.varIncludeBadEllipses.set(args[31])
+        gui_support.varShowErrorBars.set(args[43])
 
     def show_frame(self):
         winCalc = Toplevel()
@@ -1411,6 +1441,7 @@ class OperationWindow(Frame):
                 "d-value="+str(round(dval, 2))+"\n" \
                 "Likeness="+str(round(g_pval_dval[2], 2))+"\n" \
                 "Similarity=" + str(round(g_pval_dval[3], 2)) + "\n"\
+                "Maximum depositional age=" +str(round(g_number_of_good_grains[8][1][0], 1))+"±"+str(round(g_number_of_good_grains[8][1][1], 1))+"\n" \
                 "peaks at "
                 i = 1
                 for p in peaks():
@@ -1472,24 +1503,30 @@ class OperationWindow(Frame):
 
     def kde_pdp_hist(self):
         # choosing kde/pdp/hist based on user input
-        global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
+        global g_ckde, g_cpdp, g_kde, g_pdp, g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
         if g_graph_settings.pdp_kde_hist == 0:
             g_prob_graph_to_draw = g_kde[0]
             g_cum_graph_to_draw = g_kde[2]
             g_prob_title = "Kernel Density Estimates (KDE)"
             g_cum_title = "Cumulative KDE"
+            g_prob_yaxis_title = "relative probability"
+            g_cum_yaxis_title = "cumulative probability"
         elif g_graph_settings.pdp_kde_hist == 1:
             g_prob_graph_to_draw = g_pdp[0]
             g_cum_graph_to_draw = g_cpdp
             g_prob_title = "Probability Density Plot (PDP)"
             g_cum_title = "Cumulative PDP"
+            g_prob_yaxis_title = "relative probability"
+            g_cum_yaxis_title = "cumulative probability"
         else:
             tuple_list = sorted(list(g_grainset.good_set.values()), key=lambda x: x[0])
             g_prob_graph_to_draw = [x[0] for x in tuple_list]
             g_cum_graph_to_draw = []
             g_prob_title = "Histogram"
             g_cum_title = "Cumulative Histogram"
-        return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title]
+            g_prob_yaxis_title = "# of analyses"
+            g_cum_yaxis_title = "# of analyses"
+        return[g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title]
 
     def draw_concordia_ticks(self, xconc, yconc, min_age, max_age):
         if max_age-min_age > 1000:
@@ -1530,6 +1567,7 @@ class OperationWindow(Frame):
         #plot_good_ellipses = gui_support.varIncludeUncorrEllipses.get()
         #plot_204_ellipses = gui_support.varInclude204Ellipses.get()
         plot_bad_ellipses = gui_support.varIncludeBadEllipses.get()
+        plot_error_bars = gui_support.varShowErrorBars.get()
 
         for i in (0, 1):
             for k in range(0, j):
@@ -1591,7 +1629,6 @@ class OperationWindow(Frame):
                         test_minor_axis = c1 / ((1 - c2) / vx + (1 + c2) / vy)
                         b = sqrt(test_minor_axis)
 
-
                         if i == 1: #bad grains
                             if plot_bad_ellipses == 1 and ((parse_sample_analysis(zir.analysis_name)[0] in g_filters.sample_name_filter) or g_filters.sample_name_filter == []):
                                 if args != "":
@@ -1622,31 +1659,47 @@ class OperationWindow(Frame):
                         if shall_plot:
                             el = Ellipse(xy=(x_conc, y_conc), width=a * 2, height=b * 2, angle=degrees(ang), color=oval_color,
                                      fill=oval_fill, linewidth=line_thickness, linestyle=line_style)
+
+                            #rect_coords = [x_conc-x_err, y_conc-y_err, x_err*2, y_err*2]
+
                             self.ax_conc.add_patch(el)
+                            if plot_error_bars == 1:
+
+                                self.ax_conc.errorbar(x_conc, y_conc, xerr=x_err*sigma_level, yerr=y_err*sigma_level, xlolims=True, xuplims=True, uplims=True, lolims=True, ecolor='black', fmt='-o')
 
     def plot_hist(self, min_age, max_age):
-        global g_prob_graph_to_draw
+        global g_prob_graph_to_draw, g_prob_yaxis_title, g_cum_yaxis_title
+        self.ax_prob.axes.get_yaxis().set_visible(True)
+        self.ax_cum.axes.get_yaxis().set_visible(True)
         bin_sequence = []
         age = min_age
         bin_width = float(self.entHistBinwidth.get())
         while age < max_age:
             bin_sequence.append(age)
             age += bin_width
-        self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=False)
-        self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=True, cumulative=True)
+        self.ax_prob.hist(g_prob_graph_to_draw, bins=bin_sequence, density=False, cumulative=False)
+        g_prob_yaxis_title = g_cum_yaxis_title = "number of grains"
+        self.ax_cum.hist(g_prob_graph_to_draw, bins=bin_sequence, density=False, cumulative=True)
 
     def set_axes(self, conc_title, conc_graph_xtitle, conc_graph_ytitle, conc_graph_x, conc_graph_y, min_age, max_age,
                  min_conc_x, max_conc_x, min_conc_y, max_conc_y):
         # set axis of all graphs
-        global g_prob_title, g_cum_title
+        global g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
         self.ax_conc.set_title(conc_title)
         self.ax_conc.set_xlabel(conc_graph_xtitle, labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_conc.set_ylabel(conc_graph_ytitle, labelpad=-38, fontsize=8)
+
         self.ax_prob.set_title(g_prob_title)
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        self.ax_prob.set_ylabel(g_prob_yaxis_title)
+
+
         self.ax_cum.set_title(g_cum_title)
         self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        self.ax_cum.set_ylabel(g_cum_yaxis_title)
+        #self.ax_cum.set_ylabel(g_cum_yaxis_title, labelpad=-38, fontsize=8)
         self.ax_conc.plot(conc_graph_x, conc_graph_y)
+
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
         self.ax_conc.set_ylim(min_conc_y, max_conc_y)
         if g_graph_settings.conc_type == 2:
@@ -1655,9 +1708,7 @@ class OperationWindow(Frame):
     def plot_peaks(self, min_age, max_age):
         global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
-        # min_max_age = self.min_max_ages()
-        # min_age = min_max_age[0]
-        # max_age = min_max_age[1]len(g_prob_graph_to_draw[min_age: max_age])
+
         self.ax_prob.clear()
         self.canvas_prob.draw()
         l_min_age = min_age
@@ -1681,10 +1732,12 @@ class OperationWindow(Frame):
                 list_peaks = g_pdp[1]
             else:
                 list_peaks = []
+
             while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], ymin=0, ymax=0.03, color='red')
                 i += 1
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        #self.ax_prob.set_ylabel('test', labelpad=-16, fontsize=8, position=(0, 0))
         self.ax_prob.set_title(g_prob_title)
 
     def prob_cum_plot(self, min_age, max_age):
@@ -1704,6 +1757,8 @@ class OperationWindow(Frame):
 
     def prob_cum_hist_plot(self, do_hist, min_age, max_age):
         if not do_hist:
+            self.ax_prob.axes.get_yaxis().set_visible(False)
+            self.ax_cum.axes.get_yaxis().set_visible(False)
             self.prob_cum_plot(min_age, max_age)
         else:
             self.plot_hist(min_age, max_age)
@@ -1745,7 +1800,7 @@ class OperationWindow(Frame):
     #depending on user settings
     def clear_and_plot(self, *args):
         global g_filters, g_grainset, g_number_of_good_grains, g_plot_txt, g_prev_cum, g_prev_prob, g_prev_n, g_pval_dval
-        global g_cpdp, g_ckde, g_kde, g_pdp
+        global g_cpdp, g_ckde, g_kde, g_pdp, g_wa_mda
         g_filters.sample_name_filter = []
 
         if gui_support.varMinAgeCrop.get() == 1:
@@ -1773,8 +1828,6 @@ class OperationWindow(Frame):
             #end_kde = time.time()
             #total_kde = end_kde - start_kde
             #print("kde: " + str(total_kde))
-
-
 
         elif g_graph_settings.pdp_kde_hist == 1:
             #start_pdp = time.time()
@@ -1959,7 +2012,7 @@ def main():
     global root, g_list_col_names, g_grainset, g_filters, g_graph_settings, prob_fig, prob_subplot
     global g_list_of_samples, g_directory, g_number_of_good_grains, g_prev_cum, g_prev_prob, g_prev_n
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version, g_release_date, g_current_date, g_days_since_release
-    global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title
+    global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
     g_dezirteer_version = __version__
     g_release_date = datetime.date(__release_year__, __release_month__, __release_date__)
     g_current_date = datetime.date.today()

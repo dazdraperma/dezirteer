@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import *
-#import sys
+import sys
 import ctypes
 try:
     from Tkinter import *
@@ -138,7 +138,7 @@ def onChange(p_number_in_list, p_value, pars, *args, **kwargs):
     elif p_number_in_list == 8:
         pars[0].disc_type[0] = p_value
     elif p_number_in_list == 9:
-        pars[0].conc_type = p_value
+            pars[0].conc_type = p_value
     elif p_number_in_list == 11:
         pars[0].fit_disc = p_value
     elif p_number_in_list == 12:
@@ -237,7 +237,7 @@ def set_Tk_var():
     global varDrawKDE, varDrawCPDP, varDrawCKDE, varDrawHist, var_pdp_kde_hist, varAnchored, varDiscLinked2Age
     global varKeepPrev, varTypePbc, varShowCalc, varInclude207235Err, varLimitAgeSpectrum, varUncType
     global varCommPb, varMinAgeCrop, varMaxAgeCrop, varAgeCutoff, varDiscCutoff, varKDEBandwidth, varHistBinwidth
-    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses
+    global varAgeAndersen, varDiscPerc, varInclude204Ellipses, varIncludeBadEllipses, varIncludeUncorrEllipses, varShowErrorBars
     #global varSpeedOrPbc
     varUConc = IntVar()
     varUConc.set(1000)
@@ -291,6 +291,8 @@ def set_Tk_var():
     varInclude204Ellipses.set(0)
     varIncludeBadEllipses = IntVar()
     varIncludeBadEllipses.set(0)
+    varShowErrorBars = IntVar()
+    varShowErrorBars.set(0)
     varIncludeUncorrEllipses = IntVar()
     varIncludeUncorrEllipses.set(1)
     #varSpeedOrPbc = IntVar()
@@ -358,6 +360,10 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             elif p_filters.which_age[0] == 2:
                 which_age = "207Pb/206Pb"
                 which_age_cutoff = ""
+            elif p_filters.which_age[0] == 4:
+                which_age = "208Pb/232Th"
+                which_age_cutoff = ""
+
             else:
                 which_age = "206Pb/238U"
                 which_age_cutoff = ""
@@ -416,8 +422,8 @@ def export_table(p_grainset, p_filters, p_colnames, p_graph_settings, p_filename
             #cpdp_list = p_grainset.cpdp(int(p_filters.unc_type))
             #ckde_list = p_grainset.ckde(bandwidth)
             probcum_file.write("Age," + p_kde_or_pdp+"(Prob)," + p_kde_or_pdp+"(Cum)," + "bandwidth=" + bandwidth)
-            while age < EarthAge:
-                probcum_file.write('\n' + str(age) + ',' + str(prob_list[0][age]) + ',' + str(cum_list[age]))
+            while age < EarthAge/2:
+                probcum_file.write('\n' + str(age*2) + ',' + str(prob_list[0][age]) + ',' + str(cum_list[age]))
                 age += 1
             probcum_file.close()
 
@@ -473,11 +479,13 @@ def line_with_data (p_grainset, p_filters):
             pbcAnd_age = an_list[j].calc_age(0, [4, varAgeAndersen.get()])
         else:
             pbcAnd_age = [-1, -1, -1]
-        disc_76_68 = 100 * an_list[j].calc_discordance(2, p_filters.disc_type[1], p_filters.use_pbc)
-        disc_75_68 = 100 * an_list[j].calc_discordance(3, p_filters.disc_type[1], p_filters.use_pbc)
+        disc_76_68 = 100 * an_list[j].calc_discordance([2, 1000], p_filters.use_pbc)
+        disc_75_68 = 100 * an_list[j].calc_discordance([3, 1000], p_filters.use_pbc)
         is_grain_good = an_list[j].is_grain_good(filters)
         if is_grain_good[1] == 3:
             best_age_system = "207Pb/206Pb"
+        elif is_grain_good[1] == 2:
+            best_age_system = "208Pb/232Th"
         else:
             best_age_system = "206Pb/238U"
         best_age = an_list[j].calc_age(is_grain_good[1], p_filters.use_pbc)
