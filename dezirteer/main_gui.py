@@ -45,6 +45,31 @@ if platform != "darwin":
 def truncate(f, n):
     return floor(f * 10 ** n) / 10 ** n
 
+def save_last_dir():
+    global g_directory
+    dirname=os.getenv('APPDATA')+"\dezirteer"
+    completeName = os.path.join(dirname, "lastdir.dzrst")
+    f = open(completeName, "w+")
+    if isinstance(g_directory, str) and (g_directory != ""):
+        f.write(g_directory)   #(g_directory)
+    f.close()
+
+def get_last_dir():
+    dirname=os.getenv('APPDATA')+"\dezirteer"
+    completeName = os.path.join(dirname, "lastdir.dzrst")
+    mode = 'r' if os.path.exists(completeName) else 'a'
+    f = open(completeName, mode)
+    if mode == "r":
+        lines=f.readlines()
+        if lines:
+            dirpath=lines[0]
+        else:
+            dirpath = dirname
+    else:
+        dirpath=dirname
+    return dirpath
+    f.close()
+
 #calculates KS p- and d-values from current and previous grainsets. If previous grainset doesn't exist,
 #sets 0 values to both variables
 def set_pval_dval():
@@ -1079,6 +1104,7 @@ class OperationWindow(Frame):
 
 
     def get_ui_values(self):
+        global g_directory
         gui_elements = []
         gui_elements.append(self.lbShowStatus.cget("text")) #0
         gui_elements.append(gui_support.varUncType.get())   #1
@@ -1129,11 +1155,13 @@ class OperationWindow(Frame):
         # again for the desktop version
         gui_elements.append(gui_support.varShowErrorBars.get())  # 43
 
+
         return gui_elements
 
 
 
     def set_ui_values(self, args):
+        global g_directory
         self.enable_all_ui_elements()
 
         self.lbShowStatus.configure(text=args[0])
@@ -1199,6 +1227,7 @@ class OperationWindow(Frame):
         gui_support.varIncludeBadEllipses.set(args[31])
         gui_support.varShowErrorBars.set(args[43])
 
+
     def show_frame(self):
         winCalc = Toplevel()
         winCalc.resizable(height=None, width=None)
@@ -1214,6 +1243,7 @@ class OperationWindow(Frame):
         obj.configure(highlightcolor="black")
 
     def open_and_load_file(self, *args):
+        global g_directory
         try:
             try:
                 global g_plot_txt, g_directory, g_file_type, g_filters, g_list_col_names, g_list_of_samples, \
@@ -1270,6 +1300,8 @@ class OperationWindow(Frame):
                     self.clear_prev_or_remove_text()
                 else:
                     pass
+
+                save_last_dir()
 
             except ValueError:
                 self.reset_controls(False)
@@ -1328,6 +1360,7 @@ class OperationWindow(Frame):
                                              filetypes=[("Dezirteer session", "*.dzr")])
         l_ui_values = self.get_ui_values()
         save_object([g_grainset, g_graph_settings, g_filters, l_ui_values], filename.name)
+
 
     def fill_listbox(self):
         global g_list_of_samples
@@ -2025,7 +2058,11 @@ def main():
     g_pval_dval = [-1, -1]
     g_prev_cum = []
     g_prev_prob = []
-    g_directory = "C:\Program Files (x86)\Dezirteer\Examples"
+    last_dir = get_last_dir()
+    if isinstance(last_dir, str):
+        g_directory=last_dir
+    else:
+        g_directory=os.getenv('APPDATA')+"\dezirteer"
     g_list_col_names = ['232Th/238U', '232/238Err 1s(Int)', '232/238Err 1s(Prop)',
                         '208Pb/232Th', '208/232Err 1s(Int)', '208/232Err 1s(Prop)',
                         '207Pb/206Pb', '207/206Err 1s(Int)', '207/206Err 1s(Prop)',
