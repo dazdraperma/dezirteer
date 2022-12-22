@@ -56,6 +56,8 @@ def save_last_dir():
 
 def get_last_dir():
     dirname=os.getenv('APPDATA')+"\dezirteer"
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
     completeName = os.path.join(dirname, "lastdir.dzrst")
     mode = 'r' if os.path.exists(completeName) else 'a'
     f = open(completeName, mode)
