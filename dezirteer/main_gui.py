@@ -185,6 +185,7 @@ class OperationWindow(Frame):
         font9 = "-family {Segoe UI} -size 8 -weight bold -slant roman" \
                 " -underline 0 -overstrike 0"
 
+        root.iconbitmap("dezirteer_icon.ico")
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')

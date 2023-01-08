@@ -40,6 +40,14 @@ def imported_file(p_file_name):
             file_type = "template"
             length = len(lines)
 
+
+        elif any("Final Pb206/U238_mean" in s for s in lines):
+            for str in range(len(lines)):
+                lines[str] = lines[str].replace(" ", "")
+                lines[str] = lines[str].replace("\t\t", "\tNAN\t")
+            file_type = "iolite4"
+            length = len(lines)
+
         else:
             for str in range(len(lines)):
                 lines[str] = lines[str].replace(" ", "")
@@ -202,7 +210,7 @@ def file_to_analysis(imp_file, index):
     u238_pb204 = []
     final_U_Th_Ratio = []
 
-    if imp_file[1] == 'iolite':  # iolite routine
+    if imp_file[1] in ('iolite', 'iolite4'):  # iolite routine
         #replacing Iolite NaNs and no values
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
