@@ -1726,14 +1726,14 @@ class OperationWindow(Frame):
         self.ax_conc.set_ylabel(conc_graph_ytitle, labelpad=-38, fontsize=8)
 
         self.ax_prob.set_title(g_prob_title)
-        self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        #self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
         self.ax_prob.set_ylabel(g_prob_yaxis_title)
 
-
         self.ax_cum.set_title(g_cum_title)
-        self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
-        self.ax_cum.set_ylabel(g_cum_yaxis_title)
-        #self.ax_cum.set_ylabel(g_cum_yaxis_title, labelpad=-38, fontsize=8)
+        #self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+        #self.ax_cum.set_ylabel(g_cum_yaxis_title)
+        self.ax_cum.set_ylabel(g_cum_yaxis_title, labelpad=-38, fontsize=8)
+
         self.ax_conc.plot(conc_graph_x, conc_graph_y)
 
         self.ax_conc.set_xlim(min_conc_x, max_conc_x)
@@ -1742,7 +1742,7 @@ class OperationWindow(Frame):
             self.ax_conc.axes.set_yscale("log")
 
     def plot_peaks(self, min_age, max_age):
-        global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title
+        global g_kde, g_pdp, g_prob_graph_to_draw, g_prob_title, g_conc_title, g_cum_title
         g_prob_graph_to_draw = self.kde_pdp_hist()[0]
 
         self.ax_prob.clear()
@@ -1758,6 +1758,7 @@ class OperationWindow(Frame):
 
         #max_age -= 1
         range_of_ages = range(l_min_age, l_max_age, 2)
+
         self.ax_prob.plot(list(range_of_ages), g_prob_graph_to_draw[l_min_age//2: l_max_age//2])
         if gui_support.varShowCalc.get() == 1:
             i = 0
@@ -1772,9 +1773,14 @@ class OperationWindow(Frame):
             while i < len(list_peaks):
                 self.ax_prob.axvline(list_peaks[i], ymin=0, ymax=0.03, color='red')
                 i += 1
+
         self.ax_prob.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
-        #self.ax_prob.set_ylabel('test', labelpad=-16, fontsize=8, position=(0, 0))
+        #self.ax_prob.set_ylabel('BBBBBBBBBBBBBBBBBB')
+        self.ax_cum.set_xlabel('Age (Ma)', labelpad=-16, fontsize=8, position=(0.54, 1e6))
+
+        #self.ax_prob.set_ylabel('test', labelpad=-16, fontsize=88,  position=(1e6, 0.64))
         self.ax_prob.set_title(g_prob_title)
+
 
     def prob_cum_plot(self, min_age, max_age):
         global g_prob_graph_to_draw, g_cum_graph_to_draw
