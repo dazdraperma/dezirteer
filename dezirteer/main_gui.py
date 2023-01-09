@@ -9,7 +9,7 @@ from sys import platform
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from _version import __version__, __release_year__, __release_month__, __release_date__
+from _version import __version__, __release_yearMonthDate__
 import datetime
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as toolbar
@@ -2050,7 +2050,7 @@ def main():
     global g_pdp, g_cpdp, g_kde, g_ckde, g_pval_dval, g_dezirteer_version, g_release_date, g_current_date, g_days_since_release
     global g_prob_graph_to_draw, g_cum_graph_to_draw, g_prob_title, g_cum_title, g_prob_yaxis_title, g_cum_yaxis_title
     g_dezirteer_version = __version__
-    g_release_date = datetime.date(__release_year__, __release_month__, __release_date__)
+    g_release_date = __release_yearMonthDate__
     g_current_date = datetime.date.today()
     g_days_since_release = (g_current_date - g_release_date).total_seconds()
     g_days_since_release = int(divmod(g_days_since_release, 86400)[0])
