@@ -1677,15 +1677,19 @@ def p_value(d_val, n1, n2):
 
 
 # goes through the analyses names in AnalysesSet, returns list of samples
-def same_sample_set(p_set):
+def same_sample_set(p_set, file_type):
     prev_str = ""
     lset = []
     list_of_analyses_set = []
     i = 0
+
     p_set.analyses_list.sort(key=lambda x: x.analysis_name, reverse=False)
     while i < len(p_set):
         an = p_set.analyses_list[i]
-        temp_str = parse_sample_analysis(str(an))[0]#str(an).rpartition(p_str)[0]
+        if file_type == "iolite4":
+            temp_str = parse_sample_analysis2(str(an))[0]#str(an).rpartition(p_str)[0]
+        else:
+            temp_str = parse_sample_analysis(str(an))[0]  # str(an).rpartition(p_str)[0]
         if (temp_str != prev_str) and (prev_str == ""):
             lset.append(an)
             prev_str = temp_str
@@ -1711,6 +1715,19 @@ def same_sample_set(p_set):
     return list_of_analyses_set
 
 
+
+def parse_sample_analysis2(full_name):
+    #last_underscore = full_name.rfind('_')
+    last_dash = full_name.rfind('--')
+    last_comma = full_name.rfind(',')
+    #last_dot = full_name.rfind('.')
+    pos = max(last_comma, last_dash)
+    sample_number = full_name[:pos]
+    analysis_number = full_name[pos+1:]
+    h = 4
+    return sample_number, analysis_number
+
+
 def conf_lim(sigma_level):
     if sigma_level == 1:
         return 0.6826
@@ -1728,6 +1745,7 @@ def parse_sample_analysis(full_name):
     pos = max(last_comma, last_dash, last_dot, last_underscore)
     sample_number = full_name[:pos]
     analysis_number = full_name[pos+1:]
+    h = 4
     return sample_number, analysis_number
 
 
