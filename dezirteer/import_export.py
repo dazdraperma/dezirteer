@@ -1,6 +1,5 @@
 from math_module import *
 from math import sqrt
-import csv
 try:
     import cPickle as pickle
 except ModuleNotFoundError:
@@ -50,7 +49,6 @@ def imported_file(p_file_name):
             length = len(lines)
 
         else:
-
             for str in range(len(lines)):
                 lines[str] = lines[str].replace(" ", "")
                 lines[str] = lines[str].replace("\t\t", "\tNAN\t")
@@ -61,128 +59,12 @@ def imported_file(p_file_name):
 
 # this routine
 def header_pos(imported_list):
-
-    if imported_list[1] == "iolite4":
-        b = imported_list[0]
-        a = b[0]
-        imported_list = a.split(",")
+    if imported_list[1] == "iolite":
         l_list = []
-        file_header = imported_list
-        file_header[0] = 'Sourcefile'
-        #file_header.insert(1, 'Sourcefile')
-        file_header = list(filter(None, file_header))
-        #l_list.append(file_header.index('Samples'))
+        file_header = imported_list[0][0].split()
+        file_header.pop(2)
         l_list.append(file_header.index('Sourcefile'))
-
-
-        if 'FinalPb206/U238_mean' in file_header:
-            if 'FinalPb206/U238_2SE(int)' in file_header:
-                prop = file_header.index('FinalPb206/U238_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalPb206/U238_mean'),
-            file_header.index('FinalPb206/U238_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'FinalPb207/U235_mean' in file_header:
-            if 'FinalPb207/U235_2SE(int)' in file_header:
-                prop = file_header.index('FinalPb207/U235_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalPb207/U235_mean'),
-            file_header.index('FinalPb207/U235_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'FinalPb208/Th232_mean' in file_header:
-            if 'FinalPb208/Th232_2SE(int)' in file_header:
-                prop = file_header.index('FinalPb208/Th232_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalPb208/Th232_mean'),
-            file_header.index('FinalPb208/Th232_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'FinalPb207/Pb206_mean' in file_header:
-            if 'FinalPb207/Pb206_2SE(int)' in file_header:
-                prop = file_header.index('FinalPb207/Pb206_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalPb207/Pb206_mean'),
-            file_header.index('FinalPb207/Pb206_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'FinalU238/Pb206_mean' in file_header:
-            if 'FinalU238/Pb206_2SE(int)' in file_header:
-                prop = file_header.index('FinalU238/Pb206_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalU238/Pb206_mean'),
-            file_header.index('FinalU238/Pb206_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'FinalU/Th_mean' in file_header:
-            if 'FinalU/Th_2SE(int)' in file_header:
-                prop = file_header.index('FinalU/Th_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('FinalU/Th_mean'),
-            file_header.index('FinalU/Th_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'Approx_U_PPM_mean' in file_header:
-            if 'Approx_U_PPM_2SE(int)' in file_header:
-                prop = file_header.index('Approx_U_PPM_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('Approx_U_PPM_mean'),
-            file_header.index('Approx_U_PPM_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'Approx_Th_PPM_mean' in file_header:
-            if 'Approx_Th_PPM_2SE(int)' in file_header:
-                prop = file_header.index('Approx_Th_PPM_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('Approx_Th_PPM_mean'),
-            file_header.index('Approx_Th_PPM_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'Approx_Pb_PPM_mean' in file_header:
-            if 'Approx_Pb_PPM_2SE(int)' in file_header:
-                prop = file_header.index('Approx_Pb_PPM_2SE(int)')
-            else:
-                prop = -1
-            l_list.append([file_header.index('Approx_Pb_PPM_mean'),
-            file_header.index('Approx_Pb_PPM_2SE(int)'),
-            prop])
-        else:
-            l_list.append([-1, -1, -1])
-
-        if 'rho206Pb/238Uv207Pb/235U' in file_header:
-            l_list.append(file_header.index('rho206Pb/238Uv207Pb/235U'))
-        else:
-            l_list.append(-1)
-
-        if 'rho207Pb/206Pbv238U/206Pb' in file_header:
-            l_list.append(file_header.index('rho206Pb/238Uv207Pb/235U'))
-        else:
-            l_list.append(-1)
+        l_list.append(file_header.index('Duration(s)'))
 
         if 'Final206_238' in file_header:
             if 'Final206_238_Prop2SE' in file_header:
@@ -202,6 +84,10 @@ def header_pos(imported_list):
         else:
             l_list.append([-1, -1, -1])
 
+        if 'ErrorCorrelation_6_38vs7_35' in file_header:
+            l_list.append(file_header.index('ErrorCorrelation_6_38vs7_35'))
+        else:
+            l_list.append(-1)
 
         if 'Final208_232' in file_header:
             if 'Final208_232_Prop2SE' in file_header:
@@ -238,6 +124,11 @@ def header_pos(imported_list):
             l_list.append([file_header.index('Pb204'), file_header.index('Pb204_Int2SE'), prop])
         else:
             l_list.append([-1, -1, -1])
+
+        if 'ErrorCorrelation_38_6vs7_6' in file_header:
+            l_list.append(file_header.index('ErrorCorrelation_38_6vs7_6'))
+        else:
+            l_list.append(-1)
 
         if 'Final206_204' in file_header:
             if 'Final206_204_Prop2SE' in file_header:
@@ -293,10 +184,10 @@ def header_pos(imported_list):
         else:
             l_list.append([-1, -1, -1])
 
-
     elif imported_list[1] == "glitter":
         pass
     return l_list
+
 
 def find_in_glitter(lst, predicate):
     return next((i for i, j in enumerate(lst) if predicate(j)), -1)
@@ -325,149 +216,147 @@ def file_to_analysis(imp_file, index):
         str_temp = str_temp.replace("novalue", "-1")
         str_temp = str_temp.replace("NAN", "-1")
 
-        an = str_temp.split(",")  # necessary analysis, split
-        an = list(filter(None, an))
-        an[0:2] = ["--".join(an[0:2])]
-
+        an = str_temp.split()  # necessary analysis, split
+        an.pop(4)
+        an.pop(3)
         header = header_pos(imp_file)
         analysis_name = an[header[0]]
-
-        exposure_time = 0
+        exposure_time = float(an[header[1]])
         sigma_level = 2
 
-        pb206_u238.append(float(an[header[1][0]]))
-        pb206_u238.append(float(an[header[1][1]]) / sigma_level)
-        if header[1][2] != -1:
-            pb206_u238.append(float(an[header[1][2]]) / sigma_level)
-        else:
-            pb206_u238.append(float(an[header[1][1]]) / sigma_level)
-
-        pb207_u235.append(float(an[header[2][0]]))
-        pb207_u235.append(float(an[header[2][1]]) / sigma_level)
+        pb206_u238.append(float(an[header[2][0]]))
+        pb206_u238.append(float(an[header[2][1]]) / sigma_level)
         if header[2][2] != -1:
-            pb207_u235.append(float(an[header[2][2]]) / sigma_level)
+            pb206_u238.append(float(an[header[2][2]]) / sigma_level)
         else:
-            pb207_u235.append(float(an[header[2][1]]) / sigma_level)
+            pb206_u238.append(float(an[header[2][1]]) / sigma_level)
 
-        pb208_th232.append(float(an[header[3][0]]))
-        pb208_th232.append(float(an[header[3][1]]) / sigma_level)
+        pb207_u235.append(float(an[header[3][0]]))
+        pb207_u235.append(float(an[header[3][1]]) / sigma_level)
         if header[3][2] != -1:
-            pb208_th232.append(float(an[header[3][2]]) / sigma_level)
+            pb207_u235.append(float(an[header[3][2]]) / sigma_level)
         else:
-            pb208_th232.append(float(an[header[3][1]]) / sigma_level)
+            pb207_u235.append(float(an[header[3][1]]) / sigma_level)
 
-        pb207_pb206.append(float(an[header[4][0]]))
-        pb207_pb206.append(float(an[header[4][1]]) / sigma_level)
-        if header[4][2] != -1:
-            pb207_pb206.append(float(an[header[4][2]]) / sigma_level)
+        pb208_th232.append(float(an[header[5][0]]))
+        pb208_th232.append(float(an[header[5][1]]) / sigma_level)
+        if header[5][2] != -1:
+            pb208_th232.append(float(an[header[5][2]]) / sigma_level)
         else:
-            pb207_pb206.append(float(an[header[4][1]]) / sigma_level)
+            pb208_th232.append(float(an[header[5][1]]) / sigma_level)
+
+        pb207_pb206.append(float(an[header[6][0]]))
+        pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
+        if header[6][2] != -1:
+            pb207_pb206.append(float(an[header[6][2]]) / sigma_level)
+        else:
+            pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
 
         rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
         corr_coef_75_68_calculated = rho[0]
         corr_coef_86_76_calculated = rho[1]
 
-        if header[10] != -1:
-            corr_coef_75_68 = float(an[header[10]])
+        if header[4] != -1:
+            corr_coef_75_68 = float(an[header[4]])
         else:
             corr_coef_75_68 = corr_coef_75_68_calculated
 
-        if header[11] != -1:
-            corr_coef_86_76 = float(an[header[11]])
+        if header[9] != -1:
+            corr_coef_86_76 = float(an[header[9]])
         else:
             corr_coef_86_76 = corr_coef_86_76_calculated
 
-        if header[14][0] != -1:
-            u_conc.append(float(an[header[14][0]]))
-            u_conc.append(float(an[header[14][1]]) / sigma_level)
-            if header[14][2] != -1:
-                u_conc.append(float(an[header[14][2]]) / sigma_level)
+        if header[7][0] != -1:
+            u_conc.append(float(an[header[7][0]]))
+            u_conc.append(float(an[header[7][1]]) / sigma_level)
+            if header[7][2] != -1:
+                u_conc.append(float(an[header[7][2]]) / sigma_level)
             else:
-                u_conc.append(float(an[header[14][1]]) / sigma_level)
+                u_conc.append(float(an[header[7][1]]) / sigma_level)
         else:
             u_conc.append(-1)
             u_conc.append(-1)
             u_conc.append(-1)
+
+        if header[8][0] != -1:
+            pbc.append(float(an[header[8][0]]))
+            pbc.append(float(an[header[8][1]]) / sigma_level)
+            if header[8][2] != -1:
+                pbc.append(float(an[header[8][2]]) / sigma_level)
+            else:
+                pbc.append(float(an[header[8][1]]) / sigma_level)
+        else:
+            pbc.append(-1)
+            pbc.append(-1)
+            pbc.append(-1)
+
+        if header[10][0] != -1:
+            pb206_pb204.append(float(an[header[10][0]]))
+            pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
+            if header[10][2] != -1:
+                pb206_pb204.append(float(an[header[10][2]]) / sigma_level)
+            else:
+                pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
+        else:
+            pb206_pb204.append(-1)
+            pb206_pb204.append(-1)
+            pb206_pb204.append(-1)
+
+        if header[11][0] != -1:
+            pb207_pb204.append(float(an[header[11][0]]))
+            pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
+            if header[11][2] != -1:
+                pb207_pb204.append(float(an[header[11][2]]) / sigma_level)
+            else:
+                pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
+        else:
+            pb207_pb204.append(-1)
+            pb207_pb204.append(-1)
+            pb207_pb204.append(-1)
+
+        if header[12][0] != -1:
+            pb208_pb204.append(float(an[header[12][0]]))
+            pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
+            if header[12][2] != -1:
+                pb208_pb204.append(float(an[header[12][2]]) / sigma_level)
+            else:
+                pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
+        else:
+            pb208_pb204.append(-1)
+            pb208_pb204.append(-1)
+            pb208_pb204.append(-1)
+
+        if header[13][0] != -1:
+            th232_pb204.append(float(an[header[13][0]]))
+            th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+            if header[13][2] != -1:
+                th232_pb204.append(float(an[header[13][2]]) / sigma_level)
+            else:
+                th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+        else:
+            th232_pb204.append(-1)
+            th232_pb204.append(-1)
+            th232_pb204.append(-1)
+
+        if header[14][0] != -1:
+            u238_pb204.append(float(an[header[14][0]]))
+            u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+            if header[14][2] != -1:
+                u238_pb204.append(float(an[header[14][2]]) / sigma_level)
+            else:
+                u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+        else:
+            u238_pb204.append(-1)
+            u238_pb204.append(-1)
+            u238_pb204.append(-1)
 
         if header[15][0] != -1:
-            pbc.append(float(an[header[15][0]]))
-            pbc.append(float(an[header[15][1]]) / sigma_level)
+            final_U_Th_Ratio.append(float(an[header[15][0]]))
+            final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
             if header[15][2] != -1:
-                pbc.append(float(an[header[15][2]]) / sigma_level)
+                final_U_Th_Ratio.append(float(an[header[15][2]]) / sigma_level)
             else:
-                pbc.append(float(an[header[15][1]]) / sigma_level)
-        else:
-            pbc.append(-1)
-            pbc.append(-1)
-            pbc.append(-1)
-
-        if header[16][0] != -1:
-            pb206_pb204.append(float(an[header[16][1]]))
-            pb206_pb204.append(float(an[header[16][0]]) / sigma_level)
-            if header[16][2] != -1:
-                pb206_pb204.append(float(an[header[16][2]]) / sigma_level)
-            else:
-                pb206_pb204.append(float(an[header[16][1]]) / sigma_level)
-        else:
-            pb206_pb204.append(-1)
-            pb206_pb204.append(-1)
-            pb206_pb204.append(-1)
-
-        if header[17][0] != -1:
-            pb207_pb204.append(float(an[header[17][1]]))
-            pb207_pb204.append(float(an[header[17][0]]) / sigma_level)
-            if header[17][2] != -1:
-                pb207_pb204.append(float(an[header[17][2]]) / sigma_level)
-            else:
-                pb207_pb204.append(float(an[header[17][1]]) / sigma_level)
-        else:
-            pb207_pb204.append(-1)
-            pb207_pb204.append(-1)
-            pb207_pb204.append(-1)
-
-        if header[18][0] != -1:
-            pb208_pb204.append(float(an[header[18][0]]))
-            pb208_pb204.append(float(an[header[18][1]]) / sigma_level)
-            if header[18][2] != -1:
-                pb208_pb204.append(float(an[header[18][2]]) / sigma_level)
-            else:
-                pb208_pb204.append(float(an[header[18][1]]) / sigma_level)
-        else:
-            pb208_pb204.append(-1)
-            pb208_pb204.append(-1)
-            pb208_pb204.append(-1)
-
-        if header[19][0] != -1:
-            th232_pb204.append(float(an[header[19][0]]))
-            th232_pb204.append(float(an[header[19][1]]) / sigma_level)
-            if header[19][2] != -1:
-                th232_pb204.append(float(an[header[19][2]]) / sigma_level)
-            else:
-                th232_pb204.append(float(an[header[19][1]]) / sigma_level)
-        else:
-            th232_pb204.append(-1)
-            th232_pb204.append(-1)
-            th232_pb204.append(-1)
-
-        if header[20][0] != -1:
-            u238_pb204.append(float(an[header[20][0]]))
-            u238_pb204.append(float(an[header[20][1]]) / sigma_level)
-            if header[20][2] != -1:
-                u238_pb204.append(float(an[header[20][2]]) / sigma_level)
-            else:
-                u238_pb204.append(float(an[header[20][1]]) / sigma_level)
-        else:
-            u238_pb204.append(-1)
-            u238_pb204.append(-1)
-            u238_pb204.append(-1)
-
-        if header[21][0] != -1:
-            final_U_Th_Ratio.append(float(an[header[21][0]]))
-            final_U_Th_Ratio.append(float(an[header[21][1]]) / sigma_level)
-            if header[21][2] != -1:
-                final_U_Th_Ratio.append(float(an[header[21][2]]) / sigma_level)
-            else:
-                final_U_Th_Ratio.append(float(an[header[21][1]]) / sigma_level)
+                final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
         else:
             final_U_Th_Ratio.append(-1)
             final_U_Th_Ratio.append(-1)
