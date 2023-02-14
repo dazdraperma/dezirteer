@@ -58,6 +58,136 @@ def imported_file(p_file_name):
 
 
 # this routine
+
+def header_pos2(imported_list):
+    if imported_list[1] == "iolite":
+        l_list = []
+        file_header = imported_list[0][0].split()
+        file_header.pop(2)
+        l_list.append(file_header.index('Sourcefile'))
+        l_list.append(file_header.index('Duration(s)'))
+
+        if 'Final206_238' in file_header:
+            if 'Final206_238_Prop2SE' in file_header:
+                prop = file_header.index('Final206_238_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final206_238'), file_header.index('Final206_238_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final207_235' in file_header:
+            if 'Final207_235_Prop2SE' in file_header:
+                prop = file_header.index('Final207_235_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_235'), file_header.index('Final207_235_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'ErrorCorrelation_6_38vs7_35' in file_header:
+            l_list.append(file_header.index('ErrorCorrelation_6_38vs7_35'))
+        else:
+            l_list.append(-1)
+
+        if 'Final208_232' in file_header:
+            if 'Final208_232_Prop2SE' in file_header:
+                prop = file_header.index('Final208_232_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final208_232'), file_header.index('Final208_232_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final207_206' in file_header:
+            if 'Final207_206_Prop2SE' in file_header:
+                prop = file_header.index('Final207_206_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_206'), file_header.index('Final207_206_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Approx_U_PPM' in file_header:
+            if 'Approx_U_PPM_Prop2SE' in file_header:
+                prop = file_header.index('Approx_U_PPM_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Approx_U_PPM'), file_header.index('Approx_U_PPM_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Pb204' in file_header:
+            if 'Pb204_Prop2SE' in file_header:
+                prop = file_header.index('Pb204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Pb204'), file_header.index('Pb204_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'ErrorCorrelation_38_6vs7_6' in file_header:
+            l_list.append(file_header.index('ErrorCorrelation_38_6vs7_6'))
+        else:
+            l_list.append(-1)
+
+        if 'Final206_204' in file_header:
+            if 'Final206_204_Prop2SE' in file_header:
+                prop = file_header.index('Final206_204_Prop2SE')
+            else:
+                prop = -1
+                l_list.append([file_header.index('Final206_204'), file_header.index('Final206_204_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final207_204' in file_header:
+            if 'Final207_204_Prop2SE' in file_header:
+                prop = file_header.index('Final207_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final207_204'), file_header.index('Final207_204_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final208_204' in file_header:
+            if 'Final208_204_Prop2SE' in file_header:
+                prop = file_header.index('Final208_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final208_204'), file_header.index('Final208_204_Int2SE'), -1])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final232_204' in file_header:
+            if 'Final232_204_Prop2SE' in file_header:
+                prop = file_header.index('Final232_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final232_204'), file_header.index('Final232_204_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final238_204' in file_header:
+            if 'Final238_204_Prop2SE' in file_header:
+                prop = file_header.index('Final238_204_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final238_204'), file_header.index('Final238_204_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+        if 'Final_U_Th_Ratio' in file_header:
+            if 'Final_U_Th_Ratio_Prop2SE' in file_header:
+                prop = file_header.index('Final_U_Th_Ratio_Prop2SE')
+            else:
+                prop = -1
+            l_list.append([file_header.index('Final_U_Th_Ratio'), file_header.index('Final_U_Th_Ratio_Int2SE'), prop])
+        else:
+            l_list.append([-1, -1, -1])
+
+    elif imported_list[1] == "glitter":
+        pass
+    return l_list
 def header_pos(imported_list):
     if imported_list[1] == "iolite":
         l_list = []
@@ -210,7 +340,164 @@ def file_to_analysis(imp_file, index):
     u238_pb204 = []
     final_U_Th_Ratio = []
 
-    if imp_file[1] in ('iolite', 'iolite4'):  # iolite routine
+    if imp_file[1] == 'iolite':  # iolite routine
+        #replacing Iolite NaNs and no values
+        str_temp = full_data[index].replace("no value", "-1")
+        str_temp = str_temp.replace("novalue", "-1")
+        str_temp = str_temp.replace("NAN", "-1")
+
+        an = str_temp.split()  # necessary analysis, split
+        an.pop(4)
+        an.pop(3)
+        header = header_pos2(imp_file)
+        analysis_name = an[header[0]]
+        exposure_time = float(an[header[1]])
+        sigma_level = 2
+
+        pb206_u238.append(float(an[header[2][0]]))
+        pb206_u238.append(float(an[header[2][1]]) / sigma_level)
+        if header[2][2] != -1:
+            pb206_u238.append(float(an[header[2][2]]) / sigma_level)
+        else:
+            pb206_u238.append(float(an[header[2][1]]) / sigma_level)
+
+        pb207_u235.append(float(an[header[3][0]]))
+        pb207_u235.append(float(an[header[3][1]]) / sigma_level)
+        if header[3][2] != -1:
+            pb207_u235.append(float(an[header[3][2]]) / sigma_level)
+        else:
+            pb207_u235.append(float(an[header[3][1]]) / sigma_level)
+
+        pb208_th232.append(float(an[header[5][0]]))
+        pb208_th232.append(float(an[header[5][1]]) / sigma_level)
+        if header[5][2] != -1:
+            pb208_th232.append(float(an[header[5][2]]) / sigma_level)
+        else:
+            pb208_th232.append(float(an[header[5][1]]) / sigma_level)
+
+        pb207_pb206.append(float(an[header[6][0]]))
+        pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
+        if header[6][2] != -1:
+            pb207_pb206.append(float(an[header[6][2]]) / sigma_level)
+        else:
+            pb207_pb206.append(float(an[header[6][1]]) / sigma_level)
+
+        rho = calc_rho(pb206_u238[0], pb206_u238[1], pb207_u235[0], pb207_u235[1], pb207_pb206[0], pb207_pb206[1])
+        corr_coef_75_68_calculated = rho[0]
+        corr_coef_86_76_calculated = rho[1]
+
+        if header[4] != -1:
+            corr_coef_75_68 = float(an[header[4]])
+        else:
+            corr_coef_75_68 = corr_coef_75_68_calculated
+
+        if header[9] != -1:
+            corr_coef_86_76 = float(an[header[9]])
+        else:
+            corr_coef_86_76 = corr_coef_86_76_calculated
+
+        if header[7][0] != -1:
+            u_conc.append(float(an[header[7][0]]))
+            u_conc.append(float(an[header[7][1]]) / sigma_level)
+            if header[7][2] != -1:
+                u_conc.append(float(an[header[7][2]]) / sigma_level)
+            else:
+                u_conc.append(float(an[header[7][1]]) / sigma_level)
+        else:
+            u_conc.append(-1)
+            u_conc.append(-1)
+            u_conc.append(-1)
+
+        if header[8][0] != -1:
+            pbc.append(float(an[header[8][0]]))
+            pbc.append(float(an[header[8][1]]) / sigma_level)
+            if header[8][2] != -1:
+                pbc.append(float(an[header[8][2]]) / sigma_level)
+            else:
+                pbc.append(float(an[header[8][1]]) / sigma_level)
+        else:
+            pbc.append(-1)
+            pbc.append(-1)
+            pbc.append(-1)
+
+        if header[10][0] != -1:
+            pb206_pb204.append(float(an[header[10][0]]))
+            pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
+            if header[10][2] != -1:
+                pb206_pb204.append(float(an[header[10][2]]) / sigma_level)
+            else:
+                pb206_pb204.append(float(an[header[10][1]]) / sigma_level)
+        else:
+            pb206_pb204.append(-1)
+            pb206_pb204.append(-1)
+            pb206_pb204.append(-1)
+
+        if header[11][0] != -1:
+            pb207_pb204.append(float(an[header[11][0]]))
+            pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
+            if header[11][2] != -1:
+                pb207_pb204.append(float(an[header[11][2]]) / sigma_level)
+            else:
+                pb207_pb204.append(float(an[header[11][1]]) / sigma_level)
+        else:
+            pb207_pb204.append(-1)
+            pb207_pb204.append(-1)
+            pb207_pb204.append(-1)
+
+        if header[12][0] != -1:
+            pb208_pb204.append(float(an[header[12][0]]))
+            pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
+            if header[12][2] != -1:
+                pb208_pb204.append(float(an[header[12][2]]) / sigma_level)
+            else:
+                pb208_pb204.append(float(an[header[12][1]]) / sigma_level)
+        else:
+            pb208_pb204.append(-1)
+            pb208_pb204.append(-1)
+            pb208_pb204.append(-1)
+
+        if header[13][0] != -1:
+            th232_pb204.append(float(an[header[13][0]]))
+            th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+            if header[13][2] != -1:
+                th232_pb204.append(float(an[header[13][2]]) / sigma_level)
+            else:
+                th232_pb204.append(float(an[header[13][1]]) / sigma_level)
+        else:
+            th232_pb204.append(-1)
+            th232_pb204.append(-1)
+            th232_pb204.append(-1)
+
+        if header[14][0] != -1:
+            u238_pb204.append(float(an[header[14][0]]))
+            u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+            if header[14][2] != -1:
+                u238_pb204.append(float(an[header[14][2]]) / sigma_level)
+            else:
+                u238_pb204.append(float(an[header[14][1]]) / sigma_level)
+        else:
+            u238_pb204.append(-1)
+            u238_pb204.append(-1)
+            u238_pb204.append(-1)
+
+        if header[15][0] != -1:
+            final_U_Th_Ratio.append(float(an[header[15][0]]))
+            final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
+            if header[15][2] != -1:
+                final_U_Th_Ratio.append(float(an[header[15][2]]) / sigma_level)
+            else:
+                final_U_Th_Ratio.append(float(an[header[15][1]]) / sigma_level)
+        else:
+            final_U_Th_Ratio.append(-1)
+            final_U_Th_Ratio.append(-1)
+            final_U_Th_Ratio.append(-1)
+
+        #TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
+        th232_u238.append(-1)
+        th232_u238.append(-1 / sigma_level)
+        th232_u238.append(-1 / sigma_level)
+
+    elif imp_file[1] == 'iolite4':  # iolite routine
         #replacing Iolite NaNs and no values
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
