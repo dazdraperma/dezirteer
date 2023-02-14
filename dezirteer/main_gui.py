@@ -1267,8 +1267,8 @@ class OperationWindow(Frame):
 
                 # when module run directly, not imported
                 else:
-                    user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file", filetypes=(("Text files", "*.txt"),
-                                                                    ("Comma separated values files", "*.csv"),
+                    user_file = filedialog.askopenfilename(initialdir=g_directory, title="Select file", filetypes=(("CSV files", "*.csv"),
+                                                                    ("Text files", "*.txt"),
                                                                     ("All files", "*.*")))
 
                 if user_file != '':
@@ -1278,10 +1278,50 @@ class OperationWindow(Frame):
                     root.title(user_file + ' — Dezirteer: ' + g_dezirteer_version)
                     an_set = []
                     file = imported_file(user_file)
-                    g_file_type = file[1]
-                    for i in range(1, file[2]):
-                        an = file_to_analysis(file, i)
-                        an_set.append(an)
+                    if file[1] == "iolite4":
+                        file2 = file[0]
+                        fl3 = len(file2)
+                        us = []
+                        # m = []
+                        # idx = 0
+                        # for idx in range(len(file2)):
+                        #     if ',,,' in file2[idx]:
+                        #         a = file2[idx]
+                        #         flag = True
+                        #         while flag:
+                        #             if (len(file2) - 1) > idx:
+                        #                 idx += 1
+                        #             else:
+                        #                 break
+                        #             if ',,,' in file2[idx]:
+                        #                 break
+                        #             m = str(a) + file2[idx]
+                        #             us.append(m)
+                        # r = file2[0]
+                        # us.insert(0, r)
+                        # file[0] = us
+
+                        g_file_type = file[1]
+                        i = 0
+                        while i < fl3:
+                            i += 1
+                            for idx, value in enumerate(file2):
+                                if ',,,' in value:
+                                    print(idx, value)
+                                    a = idx
+                                    file2.pop(a)
+
+                        us.append(file2)
+                        b = us[0]
+
+                        for i in range(1, len(b)):
+                            an = file_to_analysis(file, i)
+                            an_set.append(an)
+                    else:
+                        g_file_type = file[1]
+                        for i in range(1, file[2]):
+                            an = file_to_analysis(file, i)
+                            an_set.append(an)
 
                     if keep_prev:
                         an_set = an_set + g_grainset.analyses_list
@@ -1297,7 +1337,7 @@ class OperationWindow(Frame):
 
 
 
-                    g_list_of_samples = same_sample_set(g_grainset)
+                    g_list_of_samples = same_sample_set(g_grainset, g_file_type)
                     self.reset_controls(True)
                     #self.set_all_ui_elements()
                     self.clear_prev_or_remove_text()
@@ -1381,7 +1421,7 @@ class OperationWindow(Frame):
         g_grainset = loaded_object[0]
         g_graph_settings = loaded_object[1]
         g_filters = loaded_object[2]
-        g_list_of_samples = same_sample_set(g_grainset)
+        g_list_of_samples = same_sample_set(g_grainset, g_file_type)
 
         g_number_of_good_grains = gui_support.fill_data_table(self.Table, g_grainset, g_filters,
                                                               g_list_col_names)
