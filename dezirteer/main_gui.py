@@ -1280,27 +1280,41 @@ class OperationWindow(Frame):
                     file = imported_file(user_file)
                     if file[1] == "iolite4":
                         file2 = file[0]
+                        fl3 = len(file2)
                         us = []
-                        m = []
-                        idx = 0
-                        for idx in range(len(file2)):
-                            if ',,,' in file2[idx]:
-                                a = file2[idx]
-                                flag = True
-                                while flag:
-                                    if (len(file2) - 1) > idx:
-                                        idx += 1
-                                    else:
-                                        break
-                                    if ',,,' in file2[idx]:
-                                        break
-                                    m = str(a) + file2[idx]
-                                    us.append(m)
-                        r = file2[0]
-                        us.insert(0, r)
-                        file[0] = us
+                        # m = []
+                        # idx = 0
+                        # for idx in range(len(file2)):
+                        #     if ',,,' in file2[idx]:
+                        #         a = file2[idx]
+                        #         flag = True
+                        #         while flag:
+                        #             if (len(file2) - 1) > idx:
+                        #                 idx += 1
+                        #             else:
+                        #                 break
+                        #             if ',,,' in file2[idx]:
+                        #                 break
+                        #             m = str(a) + file2[idx]
+                        #             us.append(m)
+                        # r = file2[0]
+                        # us.insert(0, r)
+                        # file[0] = us
+
                         g_file_type = file[1]
-                        for i in range(1, len(us)):
+                        i = 0
+                        while i < fl3:
+                            i += 1
+                            for idx, value in enumerate(file2):
+                                if ',,,' in value:
+                                    print(idx, value)
+                                    a = idx
+                                    file2.pop(a)
+
+                        us.append(file2)
+                        b = us[0]
+
+                        for i in range(1, len(b)):
                             an = file_to_analysis(file, i)
                             an_set.append(an)
                     else:

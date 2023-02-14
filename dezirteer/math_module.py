@@ -1717,11 +1717,11 @@ def same_sample_set(p_set, file_type):
 
 
 def parse_sample_analysis2(full_name):
-    #last_underscore = full_name.rfind('_')
-    last_dash = full_name.rfind('--')
+    last_underscore = full_name.rfind('_')
+    last_dash = full_name.rfind('-')
     last_comma = full_name.rfind(',')
-    #last_dot = full_name.rfind('.')
-    pos = max(last_comma, last_dash)
+    last_dot = full_name.rfind('.')
+    pos = max(last_comma, last_dash, last_dot, last_underscore)
     sample_number = full_name[:pos]
     analysis_number = full_name[pos+1:]
     h = 4

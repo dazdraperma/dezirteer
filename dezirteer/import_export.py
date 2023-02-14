@@ -614,7 +614,7 @@ def file_to_analysis(imp_file, index):
 
         an = str_temp.split(",")  # necessary analysis, split
         an = list(filter(None, an))
-        an[0:2] = ["--".join(an[0:2])]
+        #an[0:2] = ["--".join(an[0:2])]
 
         header = header_pos(imp_file)
         analysis_name = an[header[0]]
