@@ -1,6 +1,6 @@
 import sys
 import datetime
-__version__ = "1.0.4.3"
+__version__ = "1.1.0.0"
 __release_yearMonthDate__ = datetime.date.today()
 
 

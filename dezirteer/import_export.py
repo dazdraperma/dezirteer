@@ -1,16 +1,17 @@
 from math_module import *
 from math import sqrt
 import csv
+
 try:
     import cPickle as pickle
 except ModuleNotFoundError:
     import pickle
 
 
-
 def save_object(obj, filename):
     with open(filename, 'wb') as output:  # Overwrites any existing file.
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
 
 def load_object(filename):
     file = open(filename, 'rb')
@@ -18,8 +19,9 @@ def load_object(filename):
     file.close()
     return object_file
 
-#this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
-#deletes empty lines if present, returns non-empty lines and their number.
+
+# this routine imports a file, checks whether it was originated in Iolite or Glitter and returns that value;
+# deletes empty lines if present, returns non-empty lines and their number.
 def imported_file(p_file_name):
     file_type = ""
     length = 0
@@ -190,8 +192,9 @@ def header_pos2(imported_list):
     elif imported_list[1] == "glitter":
         pass
     return l_list
-def header_pos(imported_list):
 
+
+def header_pos(imported_list):
     if imported_list[1] == "iolite4":
         b = imported_list[0]
         a = b[0]
@@ -199,11 +202,10 @@ def header_pos(imported_list):
         l_list = []
         file_header = imported_list
         file_header[0] = 'Sourcefile'
-        #file_header.insert(1, 'Sourcefile')
+        # file_header.insert(1, 'Sourcefile')
         file_header = list(filter(None, file_header))
-        #l_list.append(file_header.index('Samples'))
+        # l_list.append(file_header.index('Samples'))
         l_list.append(file_header.index('Sourcefile'))
-
 
         if 'FinalPb206/U238_mean' in file_header:
             if 'FinalPb206/U238_2SE(int)' in file_header:
@@ -211,8 +213,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalPb206/U238_mean'),
-            file_header.index('FinalPb206/U238_2SE(int)'),
-            prop])
+                           file_header.index('FinalPb206/U238_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -222,8 +224,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalPb207/U235_mean'),
-            file_header.index('FinalPb207/U235_2SE(int)'),
-            prop])
+                           file_header.index('FinalPb207/U235_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -233,8 +235,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalPb208/Th232_mean'),
-            file_header.index('FinalPb208/Th232_2SE(int)'),
-            prop])
+                           file_header.index('FinalPb208/Th232_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -244,8 +246,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalPb207/Pb206_mean'),
-            file_header.index('FinalPb207/Pb206_2SE(int)'),
-            prop])
+                           file_header.index('FinalPb207/Pb206_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -255,8 +257,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalU238/Pb206_mean'),
-            file_header.index('FinalU238/Pb206_2SE(int)'),
-            prop])
+                           file_header.index('FinalU238/Pb206_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -266,8 +268,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('FinalU/Th_mean'),
-            file_header.index('FinalU/Th_2SE(int)'),
-            prop])
+                           file_header.index('FinalU/Th_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -277,8 +279,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('Approx_U_PPM_mean'),
-            file_header.index('Approx_U_PPM_2SE(int)'),
-            prop])
+                           file_header.index('Approx_U_PPM_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -288,8 +290,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('Approx_Th_PPM_mean'),
-            file_header.index('Approx_Th_PPM_2SE(int)'),
-            prop])
+                           file_header.index('Approx_Th_PPM_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -299,8 +301,8 @@ def header_pos(imported_list):
             else:
                 prop = -1
             l_list.append([file_header.index('Approx_Pb_PPM_mean'),
-            file_header.index('Approx_Pb_PPM_2SE(int)'),
-            prop])
+                           file_header.index('Approx_Pb_PPM_2SE(int)'),
+                           prop])
         else:
             l_list.append([-1, -1, -1])
 
@@ -331,7 +333,6 @@ def header_pos(imported_list):
             l_list.append([file_header.index('Final207_235'), file_header.index('Final207_235_Int2SE'), prop])
         else:
             l_list.append([-1, -1, -1])
-
 
         if 'Final208_232' in file_header:
             if 'Final208_232_Prop2SE' in file_header:
@@ -428,11 +429,12 @@ def header_pos(imported_list):
         pass
     return l_list
 
+
 def find_in_glitter(lst, predicate):
     return next((i for i, j in enumerate(lst) if predicate(j)), -1)
 
 
-#returns an object of Analysis class from a given row in file
+# returns an object of Analysis class from a given row in file
 def file_to_analysis(imp_file, index):
     full_data = imp_file[0]
     pb206_u238 = []
@@ -450,7 +452,7 @@ def file_to_analysis(imp_file, index):
     final_U_Th_Ratio = []
 
     if imp_file[1] == 'iolite':  # iolite routine
-        #replacing Iolite NaNs and no values
+        # replacing Iolite NaNs and no values
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
         str_temp = str_temp.replace("NAN", "-1")
@@ -601,20 +603,20 @@ def file_to_analysis(imp_file, index):
             final_U_Th_Ratio.append(-1)
             final_U_Th_Ratio.append(-1)
 
-        #TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
+        # TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
         th232_u238.append(-1)
         th232_u238.append(-1 / sigma_level)
         th232_u238.append(-1 / sigma_level)
 
     elif imp_file[1] == 'iolite4':  # iolite routine
-        #replacing Iolite NaNs and no values
+        # replacing Iolite NaNs and no values
         str_temp = full_data[index].replace("no value", "-1")
         str_temp = str_temp.replace("novalue", "-1")
         str_temp = str_temp.replace("NAN", "-1")
 
         an = str_temp.split(",")  # necessary analysis, split
         an = list(filter(None, an))
-        #an[0:2] = ["--".join(an[0:2])]
+        # an[0:2] = ["--".join(an[0:2])]
 
         header = header_pos(imp_file)
         analysis_name = an[header[0]]
@@ -760,7 +762,7 @@ def file_to_analysis(imp_file, index):
             final_U_Th_Ratio.append(-1)
             final_U_Th_Ratio.append(-1)
 
-        #TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
+        # TEMP WORKAROUND, SINCE IOLITE 2.X does not export 232/238
         th232_u238.append(-1)
         th232_u238.append(-1 / sigma_level)
         th232_u238.append(-1 / sigma_level)
@@ -813,7 +815,7 @@ def file_to_analysis(imp_file, index):
         corr_coef_86_76 = rho[1]
 
 
-    else: #template
+    else:  # template
         sigma_level = 1
         if ";" in full_data[index]:
             an = full_data[index].split(";")
@@ -834,9 +836,11 @@ def file_to_analysis(imp_file, index):
             pb207_u235.append(float(an[5]))
             pb207_u235.append(float(an[6]) / sigma_level)
             pb207_u235.append(float(an[6]) / sigma_level)
-        else: #calculate 75 fromz 76, 68 and 238/235
-            temp75=float(an[7])*float(an[3])*U238_U235
-            temp75err=temp75*sqrt(((float(an[8]))**2/(float(an[7]))**2)+((float(an[4]))**2/(float(an[3]))**2)+((ERR_U238_U235)**2/(U238_U235)**2))/ sigma_level
+        else:  # calculate 75 fromz 76, 68 and 238/235
+            temp75 = float(an[7]) * float(an[3]) * U238_U235
+            temp75err = temp75 * sqrt(
+                ((float(an[8])) ** 2 / (float(an[7])) ** 2) + ((float(an[4])) ** 2 / (float(an[3])) ** 2) + (
+                            (ERR_U238_U235) ** 2 / (U238_U235) ** 2)) / sigma_level
             pb207_u235.append(temp75)
             pb207_u235.append(temp75err)
             pb207_u235.append(temp75err)
@@ -885,9 +889,7 @@ def file_to_analysis(imp_file, index):
         th232_u238.append(float(an[26]) / sigma_level)
         th232_u238.append(float(an[26]) / sigma_level)
 
-
-
     l_analysis = Analysis(analysis_name, exposure_time, pb206_u238, pb207_u235, corr_coef_75_68, corr_coef_86_76,
                           pb208_th232, pb207_pb206, u_conc, pbc, pb206_pb204, pb207_pb204, pb208_pb204,
-                          th232_pb204, u238_pb204,sigma_level, final_U_Th_Ratio,  th232_u238)
+                          th232_pb204, u238_pb204, sigma_level, final_U_Th_Ratio, th232_u238)
     return l_analysis
